@@ -6,23 +6,22 @@ export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
 
-  // Зураг-1 дээрх 6 хичээл
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 md:p-6 space-y-6">
+    <main className="min-h-screen bg-slate-100/80 p-4 md:p-6 space-y-6">
       
-      {/* 1. HEADER ХЭСЭГ */}
-      <header className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* 1. HEADER ХЭСЭГ (Цайвар шаргал суурьтай) */}
+      <header className="max-w-7xl mx-auto bg-amber-50/60 rounded-2xl shadow-sm border border-amber-200/80 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Төслийн Лого */}
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner">
+        {/* Лого хэсэг */}
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/logo.png" 
               alt="Лого" 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               onError={(e) => {
                 const target = e.currentTarget;
                 target.style.display = 'none';
@@ -42,19 +41,19 @@ export default function HomePage() {
 
         {/* Төв хэсэг: Гарчиг ба Товчлуурууд */}
         <div className="flex flex-col items-center gap-2">
-          <div className="bg-amber-400 border border-amber-500/30 px-6 py-2 rounded-2xl shadow-sm">
+          <div className="bg-amber-400/90 border border-amber-500/30 px-6 py-2 rounded-2xl shadow-sm">
             <h2 className="text-lg md:text-xl font-black text-slate-900 tracking-wide text-center">
               Mentor AI Цэндао багштай
             </h2>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button className="bg-amber-200 hover:bg-amber-300 border border-amber-300 px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-900 transition shadow-sm">
+            <button className="bg-amber-200/90 hover:bg-amber-300/90 border border-amber-300 px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-900 transition shadow-sm">
               PISA шалгалтын жишиг даалгавар боловсруулах
             </button>
             <button 
               onClick={() => setIsChatOpen(!isChatOpen)}
-              className="bg-amber-200 hover:bg-amber-300 border border-amber-300 px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-900 transition shadow-sm flex items-center gap-1.5"
+              className="bg-amber-200/90 hover:bg-amber-300/90 border border-amber-300 px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-900 transition shadow-sm flex items-center gap-1.5"
             >
               <span>мэргэжил, арга зүйн яриа өрнүүлэх</span>
               <span className="text-xs">{isChatOpen ? "▲" : "▼"}</span>
@@ -71,7 +70,7 @@ export default function HomePage() {
               Онлайн
             </p>
           </div>
-          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-slate-200 shadow-md flex items-center justify-center">
+          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-100 shadow-md flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/tsendao.png" 
@@ -89,7 +88,7 @@ export default function HomePage() {
 
       {/* Дэлгэгддэг Арга зүйн чат цонх */}
       {isChatOpen && (
-        <section className="max-w-7xl mx-auto bg-amber-50/90 border-2 border-amber-300 rounded-2xl p-4 shadow-md transition-all duration-300 space-y-3">
+        <section className="max-w-7xl mx-auto bg-amber-50/95 border-2 border-amber-300 rounded-2xl p-4 shadow-md transition-all duration-300 space-y-3">
           <div className="flex items-center justify-between border-b border-amber-200 pb-2">
             <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
               💬 Цэндао багштай арга зүйн яриа өрнүүлэх
@@ -102,7 +101,7 @@ export default function HomePage() {
             </button>
           </div>
           <div className="h-40 bg-white rounded-xl border border-amber-200 p-3 overflow-y-auto text-xs space-y-2 text-slate-700">
-            <div className="bg-amber-100 p-2.5 rounded-lg max-w-md font-medium">
+            <div className="bg-amber-100/80 p-2.5 rounded-lg max-w-md font-medium">
               👨‍🏫 <strong>Цэндао багш:</strong> Сайн байна уу! PISA даалгавар боловсруулах эсвэл хичээлийн арга зүйн талаар юу асуухыг хүсэж байна вэ?
             </div>
           </div>
@@ -119,11 +118,11 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ (8:5 ба 8:3 Харьцаатай цонхнууд) */}
+      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ (Цайвар шаргал туяатай) */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Зүүн тал: ЭХ БИЧВЭР ЦОНХ (Харьцаа 8:5) */}
-        <section className="lg:col-span-7 bg-amber-50/60 rounded-2xl border border-amber-200 p-5 shadow-sm space-y-4 flex flex-col justify-between">
+        {/* Зүүн тал: ЭХ БИЧВЭР ЦОНХ */}
+        <section className="lg:col-span-7 bg-amber-50/50 rounded-2xl border border-amber-200/80 p-5 shadow-sm space-y-4 flex flex-col justify-between">
           
           <div className="space-y-4">
             {/* Header + Даалгаврын сан товч */}
@@ -133,7 +132,7 @@ export default function HomePage() {
                 Эх бичвэр
               </h3>
 
-              <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm flex items-center gap-1 transition">
+              <button className="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm flex items-center gap-1 transition">
                 <span>Даалгаврын сан</span>
                 <span>➔</span>
               </button>
@@ -166,31 +165,31 @@ export default function HomePage() {
               <input 
                 type="text" 
                 placeholder="Эх бичвэрийн гарчгийг оруулна уу..." 
-                className="w-full px-3 py-2 bg-white border border-amber-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full px-3 py-2 bg-white/90 border border-amber-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
             </div>
 
-            {/* Урт, дэлгэгддэг эх бичвэрийн талбар */}
+            {/* Зассан placeholder: Зөвхөн "Эх бичвэрээ оруулаарай." */}
             <div className="space-y-1 flex-1 flex flex-col">
               <label className="text-xs font-bold text-slate-700">Унших эх бичвэр (Эх сурвалж)</label>
               <textarea 
-                placeholder="Энд урт эх бичвэрээ буулгана уу..." 
-                className="w-full p-3.5 bg-white border border-amber-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[480px] resize-y leading-relaxed"
+                placeholder="Эх бичвэрээ оруулаарай." 
+                className="w-full p-3.5 bg-white/90 border border-amber-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[480px] resize-y leading-relaxed placeholder:text-slate-400"
               />
             </div>
           </div>
 
-          {/* Доод хэсгийн Ногоон Товч 1 */}
+          {/* Зөөлрүүлсэн бүдэг ногоон товч 1 */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
-            <button className="w-full bg-lime-400 hover:bg-lime-500 text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
+            <button className="w-full bg-[#8ac926] hover:bg-[#7cb721] text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
               Даалгавар боловсруулах
             </button>
           </div>
 
         </section>
 
-        {/* Баруун тал: АСУУЛТ ДААЛГАВАР ЦОНХ (Харьцаа 8:3) */}
-        <section className="lg:col-span-5 bg-amber-50/60 rounded-2xl border border-amber-200 p-5 shadow-sm space-y-4 flex flex-col justify-between">
+        {/* Баруун тал: АСУУЛТ ДААЛГАВАР ЦОНХ */}
+        <section className="lg:col-span-5 bg-amber-50/50 rounded-2xl border border-amber-200/80 p-5 shadow-sm space-y-4 flex flex-col justify-between">
           
           <div className="space-y-4">
             {/* Header + Хяналт шинжилгээ товч */}
@@ -200,14 +199,14 @@ export default function HomePage() {
                 Асуулт даалгавар
               </h3>
 
-              <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm flex items-center gap-1 transition">
+              <button className="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm flex items-center gap-1 transition">
                 <span>Хяналт шинжилгээ</span>
                 <span>➔</span>
               </button>
             </div>
 
             {/* AI Боловсруулсан Асуултууд гарах талбар */}
-            <div className="bg-white rounded-xl border border-amber-200 p-4 min-h-[580px] flex flex-col items-center justify-center text-center space-y-2">
+            <div className="bg-white/90 rounded-xl border border-amber-200 p-4 min-h-[580px] flex flex-col items-center justify-center text-center space-y-2">
               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-2xl text-amber-600">
                 📝
               </div>
@@ -220,9 +219,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Доод хэсгийн Ногоон Товч 2 */}
+          {/* Зөөлрүүлсэн бүдэг ногоон товч 2 */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
-            <button className="w-full bg-lime-400 hover:bg-lime-500 text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
+            <button className="w-full bg-[#8ac926] hover:bg-[#7cb721] text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
               Даалгаврыг баталж, санд илгээх
             </button>
           </div>

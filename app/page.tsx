@@ -18,12 +18,14 @@ export default function HomePage() {
         {/* Төслийн Лого */}
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/logo.png" 
               alt="Лого" 
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
+                const target = e.currentTarget;
+                target.style.display = 'none';
               }}
             />
             <span className="text-2xl">📚</span>
@@ -69,13 +71,15 @@ export default function HomePage() {
               Онлайн
             </p>
           </div>
-          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-slate-200 shadow-md">
+          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-slate-200 shadow-md flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/tsendao.png" 
               alt="Цэндао багш" 
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
+                const target = e.currentTarget;
+                target.style.display = 'none';
               }}
             />
             <div className="w-full h-full flex items-center justify-center text-xl bg-amber-100">👨‍🏫</div>
@@ -135,11 +139,98 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* 1. ЗУРАГ-1 ДАГУУХ ХИЧЭЭЛИЙН ТОБЧЛУУРУУД */}
+            {/* Хичээлийн капсул товчлуурууд */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700">Хичээл сонгох:</label>
               <div className="flex flex-wrap gap-2">
                 {subjects.map((sub) => (
                   <button
                     key={sub}
+                    type="button"
                     onClick={() => setSelectedSubject(sub)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition shadow-sm ${
+                      selectedSubject === sub
+                        ? "bg-sky-600 text-white shadow-md ring-2 ring-sky-300"
+                        : "bg-sky-500/80 hover:bg-sky-600 text-white"
+                    }`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Гарчиг оруулах */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700">Эх бичвэрийн гарчиг</label>
+              <input 
+                type="text" 
+                placeholder="Эх бичвэрийн гарчгийг оруулна уу..." 
+                className="w-full px-3 py-2 bg-white border border-amber-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+            </div>
+
+            {/* Урт, дэлгэгддэг эх бичвэрийн талбар */}
+            <div className="space-y-1 flex-1 flex flex-col">
+              <label className="text-xs font-bold text-slate-700">Унших эх бичвэр (Эх сурвалж)</label>
+              <textarea 
+                placeholder="Энд урт эх бичвэрээ буулгана уу..." 
+                className="w-full p-3.5 bg-white border border-amber-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 min-h-[480px] resize-y leading-relaxed"
+              />
+            </div>
+          </div>
+
+          {/* Доод хэсгийн Ногоон Товч 1 */}
+          <div className="pt-3 border-t border-amber-200/60 mt-auto">
+            <button className="w-full bg-lime-400 hover:bg-lime-500 text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
+              Даалгавар боловсруулах
+            </button>
+          </div>
+
+        </section>
+
+        {/* Баруун тал: АСУУЛТ ДААЛГАВАР ЦОНХ (Харьцаа 8:3) */}
+        <section className="lg:col-span-5 bg-amber-50/60 rounded-2xl border border-amber-200 p-5 shadow-sm space-y-4 flex flex-col justify-between">
+          
+          <div className="space-y-4">
+            {/* Header + Хяналт шинжилгээ товч */}
+            <div className="flex items-center justify-between pb-2 border-b border-amber-200/60">
+              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-amber-400"></span>
+                Асуулт даалгавар
+              </h3>
+
+              <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-sm flex items-center gap-1 transition">
+                <span>Хяналт шинжилгээ</span>
+                <span>➔</span>
+              </button>
+            </div>
+
+            {/* AI Боловсруулсан Асуултууд гарах талбар */}
+            <div className="bg-white rounded-xl border border-amber-200 p-4 min-h-[580px] flex flex-col items-center justify-center text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-2xl text-amber-600">
+                📝
+              </div>
+              <p className="text-xs font-bold text-slate-700">
+                PISA Стандарт 6 Даалгавар (12 Оноо)
+              </p>
+              <p className="text-[11px] text-slate-500 max-w-xs">
+                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд энд бэлэн болно.
+              </p>
+            </div>
+          </div>
+
+          {/* Доод хэсгийн Ногоон Товч 2 */}
+          <div className="pt-3 border-t border-amber-200/60 mt-auto">
+            <button className="w-full bg-lime-400 hover:bg-lime-500 text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
+              Даалгаврыг баталж, санд илгээх
+            </button>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+  );
+}

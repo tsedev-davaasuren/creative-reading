@@ -11,14 +11,14 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-100/80 p-4 md:p-6 space-y-6">
       
-      {/* 1. HEADER ХЭСЭГ */}
+      {/* 1. HEADER ХЭСЭГ (Цайвар шаргал суурьтай) */}
       <header className="max-w-7xl mx-auto bg-amber-50/60 rounded-2xl shadow-sm border border-amber-200/80 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Лого хэсэг */}
+        {/* Төслийн Лого */}
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1">
             <img 
-              src="/logo.png" 
+              src="/project-logo.jpg" 
               alt="Лого" 
               className="w-full h-full object-contain"
             />
@@ -67,7 +67,7 @@ export default function HomePage() {
           </div>
           <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-100 shadow-md flex items-center justify-center">
             <img 
-              src="/tsendao.png" 
+              src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
               className="w-full h-full object-cover"
             />

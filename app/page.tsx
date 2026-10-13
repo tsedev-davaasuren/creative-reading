@@ -1,43 +1,61 @@
+import Image from 'next/image'
+
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-100 p-6 flex flex-col items-center justify-center">
-      <div className="max-w-xl w-full bg-amber-50 border-2 border-amber-300 rounded-3xl p-8 shadow-xl text-center space-y-6">
+    <main className="min-h-screen bg-slate-100 p-4 md:p-8 space-y-6">
+      
+      {/* 1. Header Хэсэг (Дээд навигаци ба Ментор хэсэг) */}
+      <header className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Төлөвийн тэмдэг */}
-        <div className="inline-block bg-amber-200 border border-amber-300 text-amber-900 font-bold px-4 py-1.5 rounded-full text-xs uppercase tracking-wider">
-          ⚙️ Алхам 1: Vercel CSS Тохиргоо Шалгах
+        {/* Зүүн тал: Төслийн Лого ба Нэр */}
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-2xl shadow-inner">
+            📚
+          </div>
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-slate-900 leading-tight">
+              Бүтээлч уншлага-2 төсөл
+            </h1>
+            <p className="text-xs text-slate-500 font-medium tracking-wide">
+              Creative reading-2 project
+            </p>
+          </div>
         </div>
-        
-        {/* Гарчиг */}
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900">
-          Бүтээлч уншлага-2 төсөл
-        </h1>
-        
-        <p className="text-slate-700 text-sm leading-relaxed font-medium">
-          Энэхүү цайвар шаргал фон, шар хүрээ, сүүдэр болон товчлууруудын өнгө Vercel дээр яг энэ хэвээрээ гарвал дизайн дахин хэзээ ч унахгүй!
+
+        {/* Дунд хэсэг: Шар дэвсгэртэй Ментор AI Гарчиг */}
+        <div className="bg-amber-400/90 border border-amber-500/30 px-6 py-2.5 rounded-2xl shadow-sm">
+          <h2 className="text-lg md:text-2xl font-black text-slate-900 tracking-wide text-center">
+            Mentor AI Цэндао багштай
+          </h2>
+        </div>
+
+        {/* Баруун тал: Цэндао Багшийн Профайл ба Төлөв */}
+        <div className="flex items-center gap-3">
+          <div className="text-right hidden sm:block">
+            <p className="text-xs font-bold text-slate-800">Таны Ментор</p>
+            <p className="text-[10px] font-semibold text-emerald-600 flex items-center justify-end gap-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Онлайн
+            </p>
+          </div>
+          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-slate-200 shadow-md flex items-center justify-center text-xl">
+            👨‍🏫
+          </div>
+        </div>
+
+      </header>
+
+      {/* Шалгалтын Заавар Карточка */}
+      <section className="max-w-7xl mx-auto bg-amber-50/60 border border-amber-200 rounded-2xl p-6 text-center space-y-3">
+        <span className="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full border border-emerald-200">
+          ✅ Алхам 2 Бэлэн
+        </span>
+        <h3 className="text-lg font-bold text-slate-800">Дээд Header хэсэг ажиллаж байна</h3>
+        <p className="text-sm text-slate-600 max-w-xl mx-auto">
+          Одоо энэ өөрчлөлтийг Vercel рүү шахаж, гар утас болон компьютер дээр Лого, Шар гарчиг, Багшийн профайл хэсэг зөв харагдаж байгааг шалгана.
         </p>
+      </section>
 
-        {/* Шалгах картууд */}
-        <div className="p-4 bg-white rounded-2xl border border-amber-200 text-left text-xs text-slate-700 space-y-2 shadow-sm">
-          <p className="font-bold text-slate-900">✅ Баталгаажуулах элементүүд:</p>
-          <ul className="list-disc list-inside space-y-1 text-slate-600">
-            <li>Цайвар шаргал дэвсгэр фон (Amber-50)</li>
-            <li>Дугуйруулсан булан ба сүүдэр (Shadow-xl)</li>
-            <li>Тод цэнхэр болон ногоон товчлуурууд</li>
-          </ul>
-        </div>
-
-        {/* Интерактив Товчлуурууд */}
-        <div className="flex justify-center gap-3 pt-2">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-xs shadow-md transition active:scale-95">
-            Багшийн цонх (Алхам 2-т хийгдэнэ)
-          </button>
-          <button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl text-xs shadow-md transition active:scale-95">
-            Vercel Шалгалт Бэлэн
-          </button>
-        </div>
-
-      </div>
     </main>
   )
 }

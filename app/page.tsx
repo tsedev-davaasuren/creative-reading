@@ -118,14 +118,13 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ (Цайвар шаргал туяатай) */}
+      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Зүүн тал: ЭХ БИЧВЭР ЦОНХ */}
         <section className="lg:col-span-7 bg-amber-50/50 rounded-2xl border border-amber-200/80 p-5 shadow-sm space-y-4 flex flex-col justify-between">
           
           <div className="space-y-4">
-            {/* Header + Даалгаврын сан товч */}
             <div className="flex items-center justify-between pb-2 border-b border-amber-200/60">
               <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-amber-400"></span>
@@ -138,7 +137,6 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Хичээлийн капсул товчлуурууд */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700">Хичээл сонгох:</label>
               <div className="flex flex-wrap gap-2">
@@ -159,7 +157,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Гарчиг оруулах */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-700">Эх бичвэрийн гарчиг</label>
               <input 
@@ -169,7 +166,6 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Зассан placeholder: Зөвхөн "Эх бичвэрээ оруулаарай." */}
             <div className="space-y-1 flex-1 flex flex-col">
               <label className="text-xs font-bold text-slate-700">Унших эх бичвэр (Эх сурвалж)</label>
               <textarea 
@@ -179,7 +175,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Зөөлрүүлсэн бүдэг ногоон товч 1 */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
             <button className="w-full bg-[#8ac926] hover:bg-[#7cb721] text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
               Даалгавар боловсруулах
@@ -192,7 +187,6 @@ export default function HomePage() {
         <section className="lg:col-span-5 bg-amber-50/50 rounded-2xl border border-amber-200/80 p-5 shadow-sm space-y-4 flex flex-col justify-between">
           
           <div className="space-y-4">
-            {/* Header + Хяналт шинжилгээ товч */}
             <div className="flex items-center justify-between pb-2 border-b border-amber-200/60">
               <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-amber-400"></span>
@@ -205,7 +199,6 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* AI Боловсруулсан Асуултууд гарах талбар */}
             <div className="bg-white/90 rounded-xl border border-amber-200 p-4 min-h-[580px] flex flex-col items-center justify-center text-center space-y-2">
               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-2xl text-amber-600">
                 📝
@@ -219,7 +212,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Зөөлрүүлсэн бүдэг ногоон товч 2 */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
             <button className="w-full bg-[#8ac926] hover:bg-[#7cb721] text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
               Даалгаврыг баталж, санд илгээх

@@ -14,14 +14,20 @@ export default function HomePage() {
       {/* 1. HEADER ХЭСЭГ (Цайвар шаргал суурьтай) */}
       <header className="max-w-7xl mx-auto bg-amber-50/60 rounded-2xl shadow-sm border border-amber-200/80 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Төслийн Лого */}
+        {/* Лого хэсэг */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1">
+          <div className="w-12 h-12 rounded-xl bg-amber-200/60 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
             <img 
               src="/project-logo.jpg" 
               alt="Лого" 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain relative z-10"
+              onError={(e) => {
+                const target = e.currentTarget;
+                target.onerror = null; 
+                target.style.display = 'none';
+              }}
             />
+            <span className="text-2xl absolute inset-0 flex items-center justify-center z-0">📚</span>
           </div>
           <div>
             <h1 className="text-lg md:text-xl font-bold text-slate-900 leading-tight">
@@ -65,12 +71,18 @@ export default function HomePage() {
               Онлайн
             </p>
           </div>
-          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-100 shadow-md flex items-center justify-center">
+          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-200/80 shadow-md flex items-center justify-center">
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover relative z-10"
+              onError={(e) => {
+                const target = e.currentTarget;
+                target.onerror = null; 
+                target.style.display = 'none';
+              }}
             />
+            <span className="text-2xl absolute inset-0 flex items-center justify-center z-0">👨‍🏫</span>
           </div>
         </div>
       </header>
@@ -165,9 +177,11 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* ДООД ТОБЧЛУУР (bg-emerald-600) */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
-            <button type="button" className="w-full bg-[#8ac926] hover:bg-[#7cb721] text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
-              Даалгавар боловсруулах
+            <button type="button" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md text-xs md:text-sm transition flex items-center justify-center gap-2">
+              <span>⚡</span>
+              <span>Даалгавар боловсруулах</span>
             </button>
           </div>
 
@@ -197,21 +211,4 @@ export default function HomePage() {
                 PISA Стандарт 6 Даалгавар (12 Оноо)
               </p>
               <p className="text-[11px] text-slate-500 max-w-xs">
-                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд энд бэлэн болно.
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-3 border-t border-amber-200/60 mt-auto">
-            <button type="button" className="w-full bg-[#8ac926] hover:bg-[#7cb721] text-slate-900 font-bold py-3 px-4 rounded-xl shadow-sm text-xs md:text-sm transition flex items-center justify-center">
-              Даалгаврыг баталж, санд илгээх
-            </button>
-          </div>
-
-        </section>
-
-      </div>
-
-    </main>
-  );
-}
+                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар а

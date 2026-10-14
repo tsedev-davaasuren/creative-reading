@@ -8,9 +8,6 @@ export default function HomePage() {
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
-  // Найдвартай шууд ачаалагдах Цэндао багшийн зураг
-  const mentorImageUrl = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=300"; 
-
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", padding: "20px", fontFamily: "sans-serif" }}>
       
@@ -50,7 +47,6 @@ export default function HomePage() {
               src="/project-logo.jpg" 
               alt="Бүтээлч уншлага лого" 
               onError={(e) => {
-                // Лого зураг ачаалагдахгүй бол засах fallback
                 e.currentTarget.src = "/logo-project.jpg";
               }}
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
@@ -115,7 +111,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ШУУД АЧААЛАХ ШИНЭ АРГА) */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ҮНДЭСНИЙ ДЭЭЛТЭЙ БАГШИЙН ЗУРАГ БҮХИЙ ЛОКАЛ ФАЙЛ) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -137,12 +133,8 @@ export default function HomePage() {
             position: "relative"
           }}>
             <img 
-              src="/tsendao-bagsh.jpg" 
+              src="/tsendao-bagsh.jpg?v=2" 
               alt="Цэндао багш" 
-              onError={(e) => {
-                // Файл олдохгүй байвал эндээс шууд бэлэн портрет зургийг ачаалж засна
-                e.currentTarget.src = mentorImageUrl;
-              }}
               style={{ 
                 width: "100%", 
                 height: "100%", 

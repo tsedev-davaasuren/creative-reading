@@ -16,18 +16,21 @@ export default function HomePage() {
         
         {/* Лого хэсэг */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-200/60 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
+          <div className="w-12 h-12 rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
             <img 
               src="/project-logo.jpg" 
               alt="Лого" 
               className="w-full h-full object-contain relative z-10"
               onError={(e) => {
                 const target = e.currentTarget;
-                target.onerror = null; 
-                target.style.display = 'none';
+                if (target.src.includes('project-logo.jpg')) {
+                  target.src = '/logo.jpg';
+                } else {
+                  target.style.display = 'none';
+                }
               }}
             />
-            <span className="text-2xl absolute inset-0 flex items-center justify-center z-0">📚</span>
+            <span className="text-xl absolute inset-0 flex items-center justify-center z-0 font-bold text-amber-700">📚</span>
           </div>
           <div>
             <h1 className="text-lg md:text-xl font-bold text-slate-900 leading-tight">
@@ -71,15 +74,18 @@ export default function HomePage() {
               Онлайн
             </p>
           </div>
-          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-200/80 shadow-md flex items-center justify-center">
+          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-100 shadow-md flex items-center justify-center">
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
               className="w-full h-full object-cover relative z-10"
               onError={(e) => {
                 const target = e.currentTarget;
-                target.onerror = null; 
-                target.style.display = 'none';
+                if (target.src.includes('tsendao-bagsh.jpg')) {
+                  target.src = '/tsendao.jpg';
+                } else {
+                  target.style.display = 'none';
+                }
               }}
             />
             <span className="text-2xl absolute inset-0 flex items-center justify-center z-0">👨‍🏫</span>
@@ -211,4 +217,23 @@ export default function HomePage() {
                 PISA Стандарт 6 Даалгавар (12 Оноо)
               </p>
               <p className="text-[11px] text-slate-500 max-w-xs">
-                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар а
+                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд энд бэлэн болно.
+              </p>
+            </div>
+          </div>
+
+          {/* ДООД ТОБЧЛУУР (bg-emerald-600) */}
+          <div className="pt-3 border-t border-amber-200/60 mt-auto">
+            <button type="button" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md text-xs md:text-sm transition flex items-center justify-center gap-2">
+              <span>💾</span>
+              <span>Даалгаврыг баталж, санд илгээх</span>
+            </button>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+  );
+}

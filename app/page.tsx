@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-// Цэндао багшийн зургийг кодон дотор шууд шигтгэсэн Base64 код (Сүлжээний холболт, файл хайх шаардлагагүй)
-const TSENDAO_BAGSH_IMAGE = "data:image/jpeg;base64,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";
-
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
@@ -30,7 +27,7 @@ export default function HomePage() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
       }}>
         
-        {/* ТӨСЛИЙН ЛОГО */}
+        {/* ТӨСЛИЙН ЛОГО (СТАНДАРТ IMG ТАГ) */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
           <div style={{
             width: "68px",
@@ -48,10 +45,7 @@ export default function HomePage() {
           }}>
             <img 
               src="/project-logo.jpg" 
-              alt="" 
-              onError={(e) => {
-                e.currentTarget.src = "/logo-project.jpg";
-              }}
+              alt="Бүтээлч уншлага лого" 
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
             />
           </div>
@@ -114,7 +108,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ДЭЭЛТЭЙ ЗУРАГ (100% АЧААЛАХ BASE64) */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ТӨСЛИЙН ЛОГОТОЙ ЯГ АДИЛХАН СТАНДАРТ АРГААР) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -132,19 +126,12 @@ export default function HomePage() {
             border: "3px solid #f59e0b",
             overflow: "hidden",
             backgroundColor: "#fef3c7",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
-            position: "relative"
+            boxShadow: "0 2px 6px rgba(0,0,0,0.12)"
           }}>
             <img 
-              src={TSENDAO_BAGSH_IMAGE} 
-              alt="" 
-              style={{ 
-                width: "100%", 
-                height: "100%", 
-                objectFit: "cover", 
-                objectPosition: "center",
-                display: "block" 
-              }}
+              src="/tsendao-bagsh.jpg" 
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
             />
           </div>
         </div>

@@ -11,23 +11,19 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-100/80 p-4 md:p-6 space-y-6">
       
-      {/* 1. HEADER ХЭСЭГ (Цайвар шаргал суурьтай) */}
+      {/* 1. HEADER ХЭСЭГ */}
       <header className="max-w-7xl mx-auto bg-amber-50/60 rounded-2xl shadow-sm border border-amber-200/80 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Лого хэсэг */}
+        {/* Төслийн Лого - Өндөр ба өргөнийг кодоор хатуу хязгаарлав */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
+          <div className="w-12 h-12 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
             <img 
               src="/project-logo.jpg" 
               alt="Лого" 
-              className="w-full h-full object-contain relative z-10"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              className="relative z-10"
               onError={(e) => {
-                const target = e.currentTarget;
-                if (target.src.includes('project-logo.jpg')) {
-                  target.src = '/logo.jpg';
-                } else {
-                  target.style.display = 'none';
-                }
+                e.currentTarget.style.display = 'none';
               }}
             />
             <span className="text-xl absolute inset-0 flex items-center justify-center z-0 font-bold text-amber-700">📚</span>
@@ -42,7 +38,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Төв хэсэг: Гарчиг ба Товчлуурууд */}
+        {/* Төв хэсэг */}
         <div className="flex flex-col items-center gap-2">
           <div className="bg-amber-400/90 border border-amber-500/30 px-6 py-2 rounded-2xl shadow-sm">
             <h2 className="text-lg md:text-xl font-black text-slate-900 tracking-wide text-center">
@@ -65,7 +61,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Цэндао багшийн зураг & Төлөв */}
+        {/* Цэндао багшийн зураг - Өндөр ба өргөнийг хатуу хязгаарлав */}
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-slate-800">Таны Ментор</p>
@@ -74,18 +70,14 @@ export default function HomePage() {
               Онлайн
             </p>
           </div>
-          <div className="relative w-12 h-12 rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-100 shadow-md flex items-center justify-center">
+          <div className="relative w-12 h-12 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] rounded-full ring-2 ring-amber-400 ring-offset-2 overflow-hidden bg-amber-100 shadow-md flex items-center justify-center">
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
-              className="w-full h-full object-cover relative z-10"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              className="relative z-10"
               onError={(e) => {
-                const target = e.currentTarget;
-                if (target.src.includes('tsendao-bagsh.jpg')) {
-                  target.src = '/tsendao.jpg';
-                } else {
-                  target.style.display = 'none';
-                }
+                e.currentTarget.style.display = 'none';
               }}
             />
             <span className="text-2xl absolute inset-0 flex items-center justify-center z-0">👨‍🏫</span>
@@ -183,7 +175,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ДООД ТОБЧЛУУР (bg-emerald-600) */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
             <button type="button" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md text-xs md:text-sm transition flex items-center justify-center gap-2">
               <span>⚡</span>
@@ -222,7 +213,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ДООД ТОБЧЛУУР (bg-emerald-600) */}
           <div className="pt-3 border-t border-amber-200/60 mt-auto">
             <button type="button" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md text-xs md:text-sm transition flex items-center justify-center gap-2">
               <span>💾</span>

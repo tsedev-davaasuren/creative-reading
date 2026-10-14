@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", padding: "20px", fontFamily: "sans-serif" }}>
       
-      {/* HEADER */}
+      {/* 1. HEADER ХЭСЭГ */}
       <header style={{
         maxWidth: "1280px",
         margin: "0 auto 20px auto",
@@ -28,12 +28,12 @@ export default function HomePage() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
       }}>
         
-        {/* ЛОГО */}
+        {/* ТӨСЛИЙН ЛОГО */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
           <div style={{
-            width: "72px",
-            height: "72px",
-            minWidth: "72px",
+            width: "68px",
+            height: "68px",
+            minWidth: "68px",
             borderRadius: "14px",
             backgroundColor: "#ffffff",
             border: "2px solid #fcd34d",
@@ -41,7 +41,8 @@ export default function HomePage() {
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            padding: "2px"
+            padding: "2px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
           }}>
             <img 
               src="/project-logo.jpg" 
@@ -108,7 +109,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ / АВАТАР */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ЗАСРАСАН АВАТАР) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -119,9 +120,9 @@ export default function HomePage() {
           </div>
           
           <div style={{
-            width: "72px",
-            height: "72px",
-            minWidth: "72px",
+            width: "76px",
+            height: "76px",
+            minWidth: "76px",
             borderRadius: "50%",
             border: "3px solid #f59e0b",
             overflow: "hidden",
@@ -129,7 +130,7 @@ export default function HomePage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
             position: "relative"
           }}>
             {!imgError ? (
@@ -137,7 +138,13 @@ export default function HomePage() {
                 src="/tsendao-bagsh.jpg" 
                 alt="Цэндао багш" 
                 onError={() => setImgError(true)}
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                style={{ 
+                  width: "100%", 
+                  height: "100%", 
+                  objectFit: "cover", 
+                  objectPosition: "65% 20%", /* Цэндао багшийн нүүр, цээж хэсэгт яг таг тааруулав */
+                  display: "block" 
+                }}
               />
             ) : (
               <div style={{
@@ -151,11 +158,10 @@ export default function HomePage() {
                 color: "#b45309",
                 fontWeight: "bold",
                 fontSize: "10px",
-                textAlign: "center",
-                lineHeight: "1.1"
+                textAlign: "center"
               }}>
-                <span style={{ fontSize: "24px", marginBottom: "2px" }}>👨‍🏫</span>
-                <span>Цэндао<br />багш</span>
+                <span style={{ fontSize: "26px", marginBottom: "2px" }}>👨‍🏫</span>
+                <span>Цэндао багш</span>
               </div>
             )}
           </div>
@@ -163,7 +169,7 @@ export default function HomePage() {
 
       </header>
 
-      {/* ЧАТ ХЭСЭГ */}
+      {/* ДЭЛГЭГДДЭГ ЧАТ ХЭСЭГ */}
       {isChatOpen && (
         <section style={{
           maxWidth: "1280px",
@@ -203,10 +209,10 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* АЖЛЫН ХЭСЭГ */}
+      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ */}
       <div style={{ maxWidth: "1280px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
         
-        {/* ЭХ БИЧВЭР */}
+        {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
         <section style={{ backgroundColor: "#fffbeb", borderRadius: "16px", border: "1px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "560px" }}>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -272,7 +278,7 @@ export default function HomePage() {
 
         </section>
 
-        {/* АСУУЛТ ДААЛГАВАР */}
+        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР */}
         <section style={{ backgroundColor: "#fffbeb", borderRadius: "16px", border: "1px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "560px" }}>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>

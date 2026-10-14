@@ -27,38 +27,33 @@ export default function HomePage() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
       }}>
         
-        {/* 1. ТОМРУУЛСАН ТӨСЛИЙН ЛОГО */}
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        {/* 1. ТОД, ТОМ ТӨСЛИЙН ЛОГО (80px) */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <div style={{
-            width: "64px",
-            height: "64px",
-            minWidth: "64px",
-            borderRadius: "14px",
+            width: "80px",
+            height: "80px",
+            minWidth: "80px",
+            borderRadius: "16px",
             backgroundColor: "#ffffff",
             border: "2px solid #fcd34d",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            position: "relative",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-            padding: "2px"
+            boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+            padding: "4px"
           }}>
             <img 
               src="/project-logo.jpg" 
-              alt="Лого" 
-              style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 10 }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
+              alt="Бүтээлч уншлага лого" 
+              style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
             />
-            <span style={{ fontSize: "28px", position: "absolute", zIndex: 0 }}>📚</span>
           </div>
           <div>
-            <h1 style={{ fontSize: "19px", fontWeight: "bold", color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
+            <h1 style={{ fontSize: "20px", fontWeight: "bold", color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
               Бүтээлч уншлага-2 төсөл
             </h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0", fontWeight: "500" }}>
+            <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0", fontWeight: "500" }}>
               Creative reading-2 project
             </p>
           </div>
@@ -69,7 +64,7 @@ export default function HomePage() {
           <div style={{
             backgroundColor: "#fbbf24",
             border: "1px solid #f59e0b",
-            padding: "6px 24px",
+            padding: "8px 28px",
             borderRadius: "16px",
             boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
           }}>
@@ -114,8 +109,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 2. ТОМРУУЛСАН ЦЭНДАО БАГШИЙН ЗУРАГ */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        {/* 2. ЦЭНДАО БАГШИЙН ТОМ ЗУРАГ (80px) */}
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "13px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
             <p style={{ fontSize: "11px", fontWeight: "600", color: "#059669", margin: "2px 0 0 0", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px" }}>
@@ -124,9 +119,9 @@ export default function HomePage() {
             </p>
           </div>
           <div style={{
-            width: "64px",
-            height: "64px",
-            minWidth: "64px",
+            width: "80px",
+            height: "80px",
+            minWidth: "80px",
             borderRadius: "50%",
             border: "3px solid #f59e0b",
             overflow: "hidden",
@@ -134,18 +129,13 @@ export default function HomePage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+            boxShadow: "0 2px 8px rgba(0,0,0,0.12)"
           }}>
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
-              style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative", zIndex: 10 }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
-            <span style={{ fontSize: "32px", position: "absolute", zIndex: 0 }}>👨‍🏫</span>
           </div>
         </div>
       </header>

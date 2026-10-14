@@ -11,16 +11,16 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-100/80 p-4 md:p-6 space-y-6">
       
-      {/* 1. HEADER ХЭСЭГ */}
+      {/* HEADER ХЭСЭГ */}
       <header className="max-w-7xl mx-auto bg-amber-50/60 rounded-2xl shadow-sm border border-amber-200/80 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Төслийн Лого - Өндөр ба өргөнийг кодоор хатуу хязгаарлав */}
+        {/* Лого хэсэг */}
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center overflow-hidden shadow-inner p-1 relative">
             <img 
               src="/project-logo.jpg" 
               alt="Лого" 
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              style={{ width: '48px', height: '48px', objectFit: 'contain' }}
               className="relative z-10"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -61,7 +61,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Цэндао багшийн зураг - Өндөр ба өргөнийг хатуу хязгаарлав */}
+        {/* Цэндао багшийн зураг */}
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-slate-800">Таны Ментор</p>
@@ -74,7 +74,7 @@ export default function HomePage() {
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: '48px', height: '48px', objectFit: 'cover' }}
               className="relative z-10"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';

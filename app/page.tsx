@@ -5,7 +5,6 @@ import { useState } from "react";
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
-  const [imgError, setImgError] = useState(false);
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
@@ -109,7 +108,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ЗАСРАСАН АВАТАР) */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ДУГУЙ ХҮРЭЭНД ЯГ ТААРУУЛСАН) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -127,43 +126,22 @@ export default function HomePage() {
             border: "3px solid #f59e0b",
             overflow: "hidden",
             backgroundColor: "#fef3c7",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
             position: "relative"
           }}>
-            {!imgError ? (
-              <img 
-                src="/tsendao-bagsh.jpg" 
-                alt="Цэндао багш" 
-                onError={() => setImgError(true)}
-                style={{ 
-                  width: "100%", 
-                  height: "100%", 
-                  objectFit: "cover", 
-                  objectPosition: "65% 20%", /* Цэндао багшийн нүүр, цээж хэсэгт яг таг тааруулав */
-                  display: "block" 
-                }}
-              />
-            ) : (
-              <div style={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#fef3c7",
-                color: "#b45309",
-                fontWeight: "bold",
-                fontSize: "10px",
-                textAlign: "center"
-              }}>
-                <span style={{ fontSize: "26px", marginBottom: "2px" }}>👨‍🏫</span>
-                <span>Цэндао багш</span>
-              </div>
-            )}
+            <img 
+              src="/tsendao-bagsh.jpg" 
+              alt="Цэндао багш" 
+              style={{ 
+                width: "140%", 
+                height: "140%", 
+                objectFit: "cover", 
+                objectPosition: "center",
+                marginLeft: "-20%",
+                marginTop: "-20%",
+                display: "block" 
+              }}
+            />
           </div>
         </div>
 
@@ -261,61 +239,4 @@ export default function HomePage() {
               />
             </div>
 
-            <div>
-              <label style={{ fontSize: "12px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Унших эх бичвэр (Эх сурвалж)</label>
-              <textarea 
-                placeholder="Эх бичвэрээ оруулаарай." 
-                style={{ width: "100%", height: "280px", padding: "12px", border: "1px solid #fde68a", borderRadius: "8px", fontSize: "12px", resize: "vertical", boxSizing: "border-box" }}
-              />
-            </div>
-          </div>
-
-          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
-            <button type="button" style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>
-              ⚡ Даалгавар боловсруулах
-            </button>
-          </div>
-
-        </section>
-
-        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР */}
-        <section style={{ backgroundColor: "#fffbeb", borderRadius: "16px", border: "1px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "560px" }}>
-          
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
-              <h3 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#fbbf24", display: "inline-block" }}></span>
-                Асуулт даалгавар
-              </h3>
-
-              <button type="button" style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
-                Хяналт шинжилгээ ➔
-              </button>
-            </div>
-
-            <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "20px", minHeight: "360px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-              <div style={{ width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", marginBottom: "8px" }}>
-                📝
-              </div>
-              <p style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", margin: "0 0 4px 0" }}>
-                PISA Стандарт 6 Даалгавар (12 Оноо)
-              </p>
-              <p style={{ fontSize: "11px", color: "#64748b", maxWidth: "260px", margin: 0 }}>
-                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд энд бэлэн болно.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
-            <button type="button" style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>
-              💾 Даалгаврыг баталж, санд илгээх
-            </button>
-          </div>
-
-        </section>
-
-      </div>
-
-    </main>
-  );
-}
+            <div></div>

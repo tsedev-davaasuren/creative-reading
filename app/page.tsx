@@ -113,7 +113,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ШУУД BUNDLE ХИЙЖ АЧААЛАХ) */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (IMPORT ХИЙЖ ЗУРАГ БҮРЭН АЧААЛАХ) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>

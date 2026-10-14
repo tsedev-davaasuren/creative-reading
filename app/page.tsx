@@ -27,13 +27,13 @@ export default function HomePage() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
       }}>
         
-        {/* 1. ТОД, ТОМ ТӨСЛИЙН ЛОГО (80px) */}
+        {/* 1. ТОМРУУЛСАН ТОД ЛОГО (110px) */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <div style={{
-            width: "80px",
-            height: "80px",
-            minWidth: "80px",
-            borderRadius: "16px",
+            width: "110px",
+            height: "85px",
+            minWidth: "110px",
+            borderRadius: "14px",
             backgroundColor: "#ffffff",
             border: "2px solid #fcd34d",
             display: "flex",
@@ -41,12 +41,18 @@ export default function HomePage() {
             justifyContent: "center",
             overflow: "hidden",
             boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-            padding: "4px"
+            padding: "2px"
           }}>
             <img 
               src="/project-logo.jpg" 
               alt="Бүтээлч уншлага лого" 
-              style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+              style={{ 
+                width: "100%", 
+                height: "100%", 
+                objectFit: "contain", 
+                transform: "scale(1.25)", 
+                display: "block" 
+              }}
             />
           </div>
           <div>
@@ -109,7 +115,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 2. ЦЭНДАО БАГШИЙН ТОМ ЗУРАГ (80px) */}
+        {/* 2. БҮРЭН БАЙРЛУУЛСАН ЦЭНДАО БАГШИЙН ЗУРАГ (90px) */}
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "13px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -119,22 +125,23 @@ export default function HomePage() {
             </p>
           </div>
           <div style={{
-            width: "80px",
-            height: "80px",
-            minWidth: "80px",
+            width: "90px",
+            height: "90px",
+            minWidth: "90px",
             borderRadius: "50%",
             border: "3px solid #f59e0b",
             overflow: "hidden",
-            backgroundColor: "#fef3c7",
+            backgroundColor: "#fffbeb",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.12)"
+            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+            padding: "2px"
           }}>
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "50%", display: "block" }}
             />
           </div>
         </div>

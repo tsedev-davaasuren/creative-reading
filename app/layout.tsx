@@ -1,21 +1,19 @@
-import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Бүтээлч уншлага-2 | PISA Mentor AI',
-  description: 'Mentor AI Цэндао багштай PISA уншлагын даалгаврын платформ',
-}
+  title: "Бүтээлч уншлага-2 | PISA Mentor",
+  description: "PISA шалгалтын жишиг даалгавар боловсруулах веб систем",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="mn">
-      <body className="min-h-screen bg-slate-100 text-slate-900 font-sans antialiased">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
-  )
+  );
 }

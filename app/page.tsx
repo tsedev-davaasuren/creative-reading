@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import tsendaoImg from "../public/tsendao-bagsh.jpg";
 
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -112,7 +113,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ШУУД BUNDLE ХИЙЖ АЧААЛАХ) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -134,7 +135,7 @@ export default function HomePage() {
             position: "relative"
           }}>
             <Image 
-              src="/tsendao-bagsh.jpg" 
+              src={tsendaoImg} 
               alt="" 
               fill
               sizes="80px"
@@ -142,7 +143,7 @@ export default function HomePage() {
                 objectFit: "cover", 
                 objectPosition: "center"
               }}
-              unoptimized
+              priority
             />
           </div>
         </div>

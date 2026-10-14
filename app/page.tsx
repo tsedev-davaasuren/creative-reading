@@ -27,35 +27,38 @@ export default function HomePage() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
       }}>
         
-        {/* Лого хэсэг */}
-        <div style={{ display: "flex", itemsCenter: "center", gap: "12px" }}>
+        {/* 1. ТОМРУУЛСАН ТӨСЛИЙН ЛОГО */}
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <div style={{
-            width: "48px",
-            height: "48px",
-            borderRadius: "12px",
-            backgroundColor: "#fef3c7",
-            border: "1px solid #fcd34d",
+            width: "64px",
+            height: "64px",
+            minWidth: "64px",
+            borderRadius: "14px",
+            backgroundColor: "#ffffff",
+            border: "2px solid #fcd34d",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            position: "relative"
+            position: "relative",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+            padding: "2px"
           }}>
             <img 
               src="/project-logo.jpg" 
               alt="Лого" 
-              style={{ width: "48px", height: "48px", objectFit: "contain", position: "relative", zIndex: 10 }}
+              style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 10 }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
-            <span style={{ fontSize: "20px", position: "absolute", zIndex: 0 }}>📚</span>
+            <span style={{ fontSize: "28px", position: "absolute", zIndex: 0 }}>📚</span>
           </div>
           <div>
-            <h1 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+            <h1 style={{ fontSize: "19px", fontWeight: "bold", color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
               Бүтээлч уншлага-2 төсөл
             </h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: 0, fontWeight: "500" }}>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0", fontWeight: "500" }}>
               Creative reading-2 project
             </p>
           </div>
@@ -75,7 +78,7 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyCenter: "center" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center" }}>
             <button type="button" style={{
               backgroundColor: "#fde68a",
               border: "1px solid #fcd34d",
@@ -111,36 +114,38 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Цэндао багшийн зураг */}
+        {/* 2. ТОМРУУЛСАН ЦЭНДАО БАГШИЙН ЗУРАГ */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
-            <p style={{ fontSize: "10px", fontWeight: "600", color: "#059669", margin: 0, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px" }}>
+            <p style={{ fontSize: "13px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
+            <p style={{ fontSize: "11px", fontWeight: "600", color: "#059669", margin: "2px 0 0 0", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px" }}>
               <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#10b981", display: "inline-block" }}></span>
               Онлайн
             </p>
           </div>
           <div style={{
-            width: "48px",
-            height: "48px",
+            width: "64px",
+            height: "64px",
+            minWidth: "64px",
             borderRadius: "50%",
-            border: "2px solid #f59e0b",
+            border: "3px solid #f59e0b",
             overflow: "hidden",
             backgroundColor: "#fef3c7",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative"
+            position: "relative",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
           }}>
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
-              style={{ width: "48px", height: "48px", objectFit: "cover", position: "relative", zIndex: 10 }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative", zIndex: 10 }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
-            <span style={{ fontSize: "24px", position: "absolute", zIndex: 0 }}>👨‍🏫</span>
+            <span style={{ fontSize: "32px", position: "absolute", zIndex: 0 }}>👨‍🏫</span>
           </div>
         </div>
       </header>
@@ -247,7 +252,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ДООД ТОБЧЛУУР: ЗӨӨЛӨН ЭМЕРАЛЬД НОГООН (#059669) */}
           <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "16px" }}>
             <button type="button" style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
               ⚡ Даалгавар боловсруулах
@@ -272,7 +276,7 @@ export default function HomePage() {
             </div>
 
             <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "24px", minHeight: "400px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-              <div style={{ width: "48px", height: "48px", borderRadius: "50%", backgroundColor: "#fef3c7", display: "flex", alignItems: "center", justifyCenter: "center", fontSize: "24px", marginBottom: "8px" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", backgroundColor: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", marginBottom: "8px" }}>
                 📝
               </div>
               <p style={{ fontSize: "14px", fontWeight: "bold", color: "#334155", margin: "0 0 4px 0" }}>
@@ -284,7 +288,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ДООД ТОБЧЛУУР: ЗӨӨЛӨН ЭМЕРАЛЬД НОГООН (#059669) */}
           <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "16px" }}>
             <button type="button" style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
               💾 Даалгаврыг баталж, санд илгээх

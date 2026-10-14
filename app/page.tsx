@@ -8,6 +8,9 @@ export default function HomePage() {
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
+  // Найдвартай шууд ачаалагдах Цэндао багшийн зураг
+  const mentorImageUrl = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=300"; 
+
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", padding: "20px", fontFamily: "sans-serif" }}>
       
@@ -46,6 +49,10 @@ export default function HomePage() {
             <img 
               src="/project-logo.jpg" 
               alt="Бүтээлч уншлага лого" 
+              onError={(e) => {
+                // Лого зураг ачаалагдахгүй бол засах fallback
+                e.currentTarget.src = "/logo-project.jpg";
+              }}
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
             />
           </div>
@@ -108,7 +115,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ДУГУЙ ХҮРЭЭНД ЯГ ТААРУУЛСАН) */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ШУУД АЧААЛАХ ШИНЭ АРГА) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -132,13 +139,15 @@ export default function HomePage() {
             <img 
               src="/tsendao-bagsh.jpg" 
               alt="Цэндао багш" 
+              onError={(e) => {
+                // Файл олдохгүй байвал эндээс шууд бэлэн портрет зургийг ачаалж засна
+                e.currentTarget.src = mentorImageUrl;
+              }}
               style={{ 
-                width: "140%", 
-                height: "140%", 
+                width: "100%", 
+                height: "100%", 
                 objectFit: "cover", 
                 objectPosition: "center",
-                marginLeft: "-20%",
-                marginTop: "-20%",
                 display: "block" 
               }}
             />
@@ -239,4 +248,61 @@ export default function HomePage() {
               />
             </div>
 
-            <div></div>
+            <div>
+              <label style={{ fontSize: "12px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Унших эх бичвэр (Эх сурвалж)</label>
+              <textarea 
+                placeholder="Эх бичвэрээ оруулаарай." 
+                style={{ width: "100%", height: "280px", padding: "12px", border: "1px solid #fde68a", borderRadius: "8px", fontSize: "12px", resize: "vertical", boxSizing: "border-box" }}
+              />
+            </div>
+          </div>
+
+          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
+            <button type="button" style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>
+              ⚡ Даалгавар боловсруулах
+            </button>
+          </div>
+
+        </section>
+
+        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР */}
+        <section style={{ backgroundColor: "#fffbeb", borderRadius: "16px", border: "1px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "560px" }}>
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
+              <h3 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#fbbf24", display: "inline-block" }}></span>
+                Асуулт даалгавар
+              </h3>
+
+              <button type="button" style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
+                Хяналт шинжилгээ ➔
+              </button>
+            </div>
+
+            <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "20px", minHeight: "360px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+              <div style={{ width: "44px", height: "44px", borderRadius: "50%", backgroundColor: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", marginBottom: "8px" }}>
+                📝
+              </div>
+              <p style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", margin: "0 0 4px 0" }}>
+                PISA Стандарт 6 Даалгавар (12 Оноо)
+              </p>
+              <p style={{ fontSize: "11px", color: "#64748b", maxWidth: "260px", margin: 0 }}>
+                Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд энд бэлэн болно.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
+            <button type="button" style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>
+              💾 Даалгаврыг баталж, санд илгээх
+            </button>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+  );
+}

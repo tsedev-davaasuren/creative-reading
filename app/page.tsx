@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import tsendaoImg from "../public/tsendao-bagsh.jpg";
 
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -111,7 +112,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (ҮНДЭСНИЙ ДЭЭЛТЭЙ БАГШИЙН ЗУРАГ БҮХИЙ ЛОКАЛ ФАЙЛ) */}
+        {/* ЦЭНДАО БАГШИЙН ЗУРАГ (IMPORT ХИЙЖ ШУУД АЧААЛСАН) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -133,13 +134,15 @@ export default function HomePage() {
             position: "relative"
           }}>
             <img 
-              src="/tsendao-bagsh.jpg?v=2" 
+              src={tsendaoImg.src} 
               alt="Цэндао багш" 
               style={{ 
-                width: "100%", 
-                height: "100%", 
+                width: "140%", 
+                height: "140%", 
                 objectFit: "cover", 
                 objectPosition: "center",
+                marginLeft: "-20%",
+                marginTop: "-20%",
                 display: "block" 
               }}
             />

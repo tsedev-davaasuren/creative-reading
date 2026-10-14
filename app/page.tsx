@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
+  const [imgError, setImgError] = useState(false);
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
@@ -27,12 +28,12 @@ export default function HomePage() {
         boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
       }}>
         
-        {/* 1. ТОМРУУЛСАН ТОД ЛОГО (110px) */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        {/* 1. БАГАСГАЖ БАЛАНСЖУУЛСАН ЛОГО */}
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <div style={{
-            width: "110px",
-            height: "85px",
-            minWidth: "110px",
+            width: "80px",
+            height: "80px",
+            minWidth: "80px",
             borderRadius: "14px",
             backgroundColor: "#ffffff",
             border: "2px solid #fcd34d",
@@ -40,8 +41,8 @@ export default function HomePage() {
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
-            padding: "2px"
+            boxShadow: "0 2px 5px rgba(0,0,0,0.06)",
+            padding: "4px"
           }}>
             <img 
               src="/project-logo.jpg" 
@@ -50,16 +51,15 @@ export default function HomePage() {
                 width: "100%", 
                 height: "100%", 
                 objectFit: "contain", 
-                transform: "scale(1.25)", 
                 display: "block" 
               }}
             />
           </div>
           <div>
-            <h1 style={{ fontSize: "20px", fontWeight: "bold", color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
+            <h1 style={{ fontSize: "19px", fontWeight: "bold", color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
               Бүтээлч уншлага-2 төсөл
             </h1>
-            <p style={{ fontSize: "13px", color: "#64748b", margin: "4px 0 0 0", fontWeight: "500" }}>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "4px 0 0 0", fontWeight: "500" }}>
               Creative reading-2 project
             </p>
           </div>
@@ -70,7 +70,7 @@ export default function HomePage() {
           <div style={{
             backgroundColor: "#fbbf24",
             border: "1px solid #f59e0b",
-            padding: "8px 28px",
+            padding: "8px 24px",
             borderRadius: "16px",
             boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
           }}>
@@ -115,8 +115,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 2. БҮРЭН БАЙРЛУУЛСАН ЦЭНДАО БАГШИЙН ЗУРАГ (90px) */}
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        {/* 2. ЦЭНДАО БАГШИЙН ЗУРАГ БОЛОН АВАТАР */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "13px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
             <p style={{ fontSize: "11px", fontWeight: "600", color: "#059669", margin: "2px 0 0 0", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px" }}>
@@ -125,24 +125,35 @@ export default function HomePage() {
             </p>
           </div>
           <div style={{
-            width: "90px",
-            height: "90px",
-            minWidth: "90px",
+            width: "80px",
+            height: "80px",
+            minWidth: "80px",
             borderRadius: "50%",
             border: "3px solid #f59e0b",
             overflow: "hidden",
-            backgroundColor: "#fffbeb",
+            backgroundColor: "#fef3c7",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
             padding: "2px"
           }}>
-            <img 
-              src="/tsendao-bagsh.jpg" 
-              alt="Цэндао багш" 
-              style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "50%", display: "block" }}
-            />
+            {!imgError ? (
+              <img 
+                src="/tsendao-bagsh.jpg" 
+                alt="Цэндао багш" 
+                onError={() => setImgError(true)}
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%", display: "block" }}
+              />
+            ) : (
+              <div style={{ textAlign: "center", padding: "4px" }}>
+                <span style={{ fontSize: "28px", lineHeight: 1, display: "block" }}>👨‍🏫</span>
+                <span style={{ fontSize: "9px", fontWeight: "bold", color: "#b45309", display: "block", marginTop: "2px" }}>
+                  Цэндао багш
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </header>

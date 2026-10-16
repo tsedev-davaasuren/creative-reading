@@ -11,7 +11,6 @@ export default function HomePage() {
   const [bankFilterSubject, setBankFilterSubject] = useState("Бүх хичээл");
   const [imgError, setImgError] = useState(false);
 
-  // Даалгаврын санд хадгалагдсан даалгаврууд
   const [taskBank, setTaskBank] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [saveSuccessModal, setSaveSuccessModal] = useState<boolean>(false);
@@ -26,7 +25,7 @@ export default function HomePage() {
   const [teacherNote, setTeacherNote] = useState("");
   const [assignSuccessModal, setAssignSuccessModal] = useState(false);
 
-  // ✏️ ДААЛГАВАР ЗАСАХ STATE-ҮҮД (ЗУРАГ-2 ЗАГВАР)
+  // ✏️ ДААЛГАВАР ЗАСАХ STATE-ҮҮД
   const [editingTaskNum, setEditingTaskNum] = useState<number | null>(null);
   const [editQuestionText, setEditQuestionText] = useState("");
   const [editOptions, setEditOptions] = useState<string[]>(["", "", "", ""]);
@@ -45,33 +44,23 @@ export default function HomePage() {
     },
     "Физик": {
       title: 'Физик: "Механик хөдөлгөөн ба кинетик энерги"',
-      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно. Биеийн хурд 2 дахин нэмэгдэхэд кинетик энерги 4 дахин өсдөг.
-
-Автомашины тоормосны замын урт нь хурдны квадратаас шууд хамаардаг тул замын хөдөлгөөний аюулгүй байдалд хурдыг хэтрүүлэхгүй байх нь ач холбогдолтой юм. Хурд нэмэгдэхэд автомашины зогсох замын урт асар ихээр уртсаж, мөргөлдөх үеийн цохилтын энерги нэмэгддэг тул замын хөдөлгөөний дүрмийг баримтлах нь хүний амь насыг аврах физикийн үндэслэл болно.`
+      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно. Биеийн хурд 2 дахин нэмэгдэхэд кинетик энерги 4 дахин өсдөг.`
     },
     "Хими": {
       title: 'Хими: "Усны бүтэц ба химийн холбоос"',
-      story: `Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно. Ковалент туйлшралтай холбоотой тул усны молекулуудын хооронд водородон холбоо үүсдэг. Үүний дүнд ус нь өндөр буцлах температуртай, гадаргуугийн шахалт өндөртэй байдаг.
-
-Ус нь 4°C температурт хамгийн их нягттай байдаг тул нуур, цөөрмийн доод үе өвөлдөө хөлдөхгүй, усны амьтад амьдрах боломж бүрддэг. Мөн ус нь нийтлэг уусгагч болохын хувьд шим бодисыг уусган амьд биеийн эс хооронд тээвэрлэх химийн чухал үүрэгтэй.`
+      story: `Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно. Ковалент туйлшралтай холбоотой тул усны молекулуудын хооронд водородон холбоо үүсдэг.`
     },
     "Биологи": {
       title: 'Биологи: "Эсийн бүтээц ба фотосинтез"',
-      story: `Ургамлын эс нь хлоропласт хэмээх эрхтэнцэртэй бөгөөд нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий (CO2) болон уснаас (H2O) глюкоз (C6H12O6) ба хүчилтөрөгч (O2) нийлэгжүүлдэг. Энэ үйл явцыг фотосинтез гэнэ.
-
-Фотосинтезийн дүнд дэлхийн шим мандлын хүчилтөрөгчийн тэнцвэрт байдал хангагдаж, бүх амьд биетийн идэш тэжээлийн суваг бүрэлддэг. Ногоон ургамал нь агаар дахь хүлэмжийн хийг шингээн авч амьд байгалийг тэтгэдэг тул ой модыг хамгаалах нь уур амьсгалын дулаарлыг сааруулах үндэс юм.`
+      story: `Ургамлын эс нь хлоропласт хэмээх эрхтэнцэртэй бөгөөд нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий (CO2) болон уснаас (H2O) глюкоз (C6H12O6) ба хүчилтөрөгч (O2) нийлэгжүүлдэг.`
     },
     "Түүх": {
       title: 'Түүх: "Их Монгол Улсын гадаад харилцаа ба өртөөний систем"',
-      story: `Чингис хаан 1206 онд Их Монгол Улсыг байгуулсны дараа Өгэдэй хаан орон даяар Морин өртөөний сүлжээг засаж тохижуулжээ. Өртөөний систем нь мэдээ мэдээллийг түргэн шуурхай дамжуулах, худалдаа иргэншлийн аюулгүй байдлыг хангахад шийдвэрлэх үүрэг гүйцэтгэсэн.
-
-Энэхүү систем нь Ази, Европыг холбосон Торгоны замыг аюулгүй болгож, Дорно ба Өрнийн соёлын солилцоо ("Pax Mongolica") идэвхжих нөхцөлийг бүрдүүлсэн юм. Өртөөний харуул ба гэрэгэ бүхий элч нар мэдээллийг хурдан дамжуулж байсан нь тухайн үеийнхээ хамгийн том мэдээллийн хурдны сүлжээ байв.`
+      story: `Чингис хаан 1206 онд Их Монгол Улсыг байгуулсны дараа Өгэдэй хаан орон даяар Морин өртөөний сүлжээг засаж тохижуулжээ.`
     },
     "Газар зүй": {
       title: 'Газар зүй: "Монгол орны уур амьсгал ба усан сүлжээ"',
-      story: `Монгол орон нь Евразийн эх газрын төвд оршдог тул эх газрын эрс тэс уур амьсгалтай. Жилийн ба хоногийн температурын свеч ихтэй, тунадасны хэмжээ бага. Хангай, Хэнтий, Алтайн нуруунаас эх авсан Сэлэнгэ, Орхон, Туул зэрэг томоохон голууд нь Хойд мөсөн далайн болон Төв Азийн гадагш урсгалгүй айрагт хамаардаг.
-
-Сүүлийн жилүүдэд уур амьсгалын дулаарлаас шалтгаалан цөлжилт, гол нуурын ширгэлт нэмэгдэж байна. Иймд усан сүлжээ, гол мөрний эх сурвалжийг хамгаалах, усыг гамнах нь газар зүйн орчны тэнцвэрийг хадгалахад нэн чухал тулгамдсан асуудал болоод байна.`
+      story: `Монгол орон нь Евразийн эх газрын төвд оршдог тул эх газрын эрс тэс уур амьсгалтай. Жилийн ба хоногийн температурын свеч ихтэй, тунадасны хэмжээ бага.`
     }
   };
 
@@ -85,7 +74,6 @@ export default function HomePage() {
     if (savedBank) {
       try { setTaskBank(JSON.parse(savedBank)); } catch (e) { console.error(e); }
     }
-
     const savedSession = localStorage.getItem("creative_reading_active_session");
     if (savedSession) {
       try {
@@ -242,7 +230,6 @@ export default function HomePage() {
     }, 1000);
   };
 
-  // ✏️ ЗУРАГ-2 ЗАГВАРААР ДААЛГАВАР ЗАСАЖ ЭХЛЭХ
   const handleStartEditTask = (task: any) => {
     setEditingTaskNum(task.num);
     setEditQuestionText(task.question);
@@ -254,7 +241,6 @@ export default function HomePage() {
     setEditCorrectAnswerText(task.correctAnswer);
   };
 
-  // ✏️ ЗУРАГ-2 ЗАГВАРААР ДААЛГАВАР ЗАСАЖ ХАДГАЛАХ
   const handleSaveEditTask = (taskNum: number) => {
     if (!generatedTasks) return;
     const updated = generatedTasks.map((t) => {
@@ -292,7 +278,7 @@ export default function HomePage() {
   const handleOpenAssignModal = (taskItem: any) => {
     setTaskToAssign(taskItem);
     setTargetClass("9Е");
-    const autoCode = `9E-${(taskItem.subject || "TASK").slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const autoCode = `9E-${(taskItem.subject \vert{}\vert{} "TASK").slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
     setAssignmentCode(autoCode);
     const tmr = new Date();
     tmr.setDate(tmr.getDate() + 1);
@@ -336,8 +322,8 @@ export default function HomePage() {
             <img src="/project-logo.jpg" alt="Лого" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
           <div>
-            <h1 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Бүтээлч уншлага-2 төсөл (9Е анги)</h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Creative reading-2 project (Багшийн ажлын танхим)</p>
+            <h1 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>9Е ангид зориулсан PISA даалгавар боловсруулах орчин</p>
           </div>
         </div>
 
@@ -464,7 +450,7 @@ export default function HomePage() {
         <section style={{ backgroundColor: "#fffdf0", borderRadius: "16px", border: "1.5px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "580px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📖 Эх бичвэр (8:5)</h3>
+              <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📖 Эх бичвэр</h3>
               <button type="button" onClick={() => setIsTaskBankOpen(true)} style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>📂 Даалгаврын сан ({taskBank.length}) ➔</button>
             </div>
 
@@ -495,11 +481,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* АСУУЛТ ДААЛГАВАР (ЗУРАГ-2 ЗАГВАРААР ЗАСАХ БОЛОМЖТОЙ) */}
+        {/* АСУУЛТ ДААЛГАВАР */}
         <section style={{ backgroundColor: "#fffdf0", borderRadius: "16px", border: "1.5px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "580px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📝 Асуулт даалгавар (8:3)</h3>
+              <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📝 Асуулт даалгавар</h3>
               <button type="button" onClick={() => setIsAnalyticsOpen(true)} style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>📊 Хяналт шинжилгээ ➔</button>
             </div>
 
@@ -517,8 +503,6 @@ export default function HomePage() {
 
                     return (
                       <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "12px", padding: "14px", backgroundColor: "#f8fafc" }}>
-                        
-                        {/* ТӨЛӨВИЙН МӨР (ЗУРАГ-2 ЗАГВАР) */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", borderBottom: "1px dashed #cbd5e1", paddingBottom: "6px" }}>
                           <div>
                             <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7" }}>Даалгавар {t.num} ({t.form})</span>
@@ -528,57 +512,28 @@ export default function HomePage() {
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "6px" }}>{t.points} оноо</span>
 
-                            {/* ✏️ ЗАСАХ / 💾 ХАДГАЛАХ ТОВЧ (ЗУРАГ-2 ЗАГВАР) */}
                             {!isEditing ? (
-                              <button
-                                type="button"
-                                onClick={() => handleStartEditTask(t)}
-                                style={{ backgroundColor: "#fbbf24", color: "#78350f", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
-                              >
-                                ✏️ Засах
-                              </button>
+                              <button type="button" onClick={() => handleStartEditTask(t)} style={{ backgroundColor: "#fbbf24", color: "#78350f", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>✏️ Засах</button>
                             ) : (
-                              <button
-                                type="button"
-                                onClick={() => handleSaveEditTask(t.num)}
-                                style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "5px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
-                              >
-                                💾 Хадгалах
-                              </button>
+                              <button type="button" onClick={() => handleSaveEditTask(t.num)} style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "5px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>💾 Хадгалах</button>
                             )}
                           </div>
                         </div>
 
-                        {/* ЗУРАГ-2: ЗАСАХ ГОРИМ */}
                         {isEditing ? (
                           <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "10px 0" }}>
                             <div>
                               <label style={{ fontSize: "12px", fontWeight: "bold", color: "#0f172a", display: "block", marginBottom: "4px" }}>Асуулт засах:</label>
-                              <textarea
-                                value={editQuestionText}
-                                onChange={(e) => setEditQuestionText(e.target.value)}
-                                rows={2}
-                                style={{ width: "100%", padding: "8px", fontSize: "13px", fontWeight: "bold", borderRadius: "8px", border: "1.5px solid #38bdf8", boxSizing: "border-box", fontFamily: "inherit" }}
-                              />
+                              <textarea value={editQuestionText} onChange={(e) => setEditQuestionText(e.target.value)} rows={2} style={{ width: "100%", padding: "8px", fontSize: "13px", fontWeight: "bold", borderRadius: "8px", border: "1.5px solid #38bdf8", boxSizing: "border-box", fontFamily: "inherit" }} />
                             </div>
 
-                            {/* ЗУРАГ-2: ABCD СОНГОЛТУУДЫГ ТУС БҮРД НЬ РАДИО ТОВЧТОЙ ЗАХИРАХ */}
                             {isMultipleChoice && (
                               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                                 <label style={{ fontSize: "11.5px", fontWeight: "bold", color: "#475569" }}>ABCD Сонголтууд засах:</label>
                                 {editOptions.map((opt, idx) => (
                                   <div key={idx} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                     <input type="radio" disabled checked={editCorrectAnswerText.startsWith(opt.slice(0, 2))} />
-                                    <input
-                                      type="text"
-                                      value={opt}
-                                      onChange={(e) => {
-                                        const newOpts = [...editOptions];
-                                        newOpts[idx] = e.target.value;
-                                        setEditOptions(newOpts);
-                                      }}
-                                      style={{ flex: 1, padding: "6px 10px", fontSize: "12px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                    />
+                                    <input type="text" value={opt} onChange={(e) => { const newOpts = [...editOptions]; newOpts[idx] = e.target.value; setEditOptions(newOpts); }} style={{ flex: 1, padding: "6px 10px", fontSize: "12px", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
                                   </div>
                                 ))}
                               </div>
@@ -586,20 +541,13 @@ export default function HomePage() {
 
                             <div>
                               <label style={{ fontSize: "12px", fontWeight: "bold", color: "#059669", display: "block", marginBottom: "4px" }}>Зөв хариулт / Загвар засах:</label>
-                              <textarea
-                                value={editCorrectAnswerText}
-                                onChange={(e) => setEditCorrectAnswerText(e.target.value)}
-                                rows={2}
-                                style={{ width: "100%", padding: "8px", fontSize: "12.5px", borderRadius: "8px", border: "1.5px solid #10b981", backgroundColor: "#f0fdf4", color: "#166534", boxSizing: "border-box", fontFamily: "inherit" }}
-                              />
+                              <textarea value={editCorrectAnswerText} onChange={(e) => setEditCorrectAnswerText(e.target.value)} rows={2} style={{ width: "100%", padding: "8px", fontSize: "12.5px", borderRadius: "8px", border: "1.5px solid #10b981", backgroundColor: "#f0fdf4", color: "#166534", boxSizing: "border-box", fontFamily: "inherit" }} />
                             </div>
                           </div>
                         ) : (
-                          /* ЗУРАГ-2: ХАРАГДАХ ГОРИМ */
                           <>
                             <p style={{ fontSize: "13.5px", fontWeight: "bold", color: "#0f172a", margin: "6px 0 10px 0" }}>{t.question}</p>
 
-                            {/* ЗУРАГ-2 ШИГ ДУГУЙ РАДИО ТОВЧТОЙ СҮЛЖЭЭНИЙ ХАРАГДАЦ */}
                             {isMultipleChoice && t.options && (
                               <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px" }}>
                                 {t.options.map((opt: string) => (
@@ -617,7 +565,6 @@ export default function HomePage() {
                           </>
                         )}
 
-                        {/* 🔒 РУБРИК - ТҮГЖЭЭТЭЙ (ӨӨРЧЛӨХ БОЛОМЖГҮЙ) */}
                         <div style={{ backgroundColor: "#fff7ed", border: "1px solid #fed7aa", padding: "6px 10px", borderRadius: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                           <span style={{ fontSize: "11px", color: "#9a3412" }}>📊 <strong>Стандарт рубрик:</strong> {t.rubric}</span>
                           <span style={{ fontSize: "10px", color: "#c2410c", fontWeight: "bold" }}>(Түгжээтэй)</span>
@@ -645,7 +592,7 @@ export default function HomePage() {
 
       </div>
 
-      {/* 📂 ДААЛГАВРЫН САН */}
+      {/* 📂 ДААЛГАВРЫН САН (Багшийн зогсох цэг) */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1200px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
@@ -655,10 +602,8 @@ export default function HomePage() {
                 <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📂 Даалгаврын сан</h2>
                 <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: <strong>{taskBank.length}</strong> багц даалгавар</p>
               </div>
-              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                <a href="/student" style={{ backgroundColor: "#059669", color: "#ffffff", padding: "6px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "bold" }}>
-                  👨‍🎓 Сурагчийн танхим руу орох ➔
-                </a>
+              <div>
+                {/* 🔒 СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧИЙГ ЭНДЭЭС БҮРЭН АВЧ ХАЯСАН */}
                 <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
               </div>
             </div>
@@ -666,18 +611,7 @@ export default function HomePage() {
             <div style={{ padding: "16px 20px", borderBottom: "1px solid #e2e8f0", backgroundColor: "#fffdf0" }}>
               <p style={{ fontSize: "12px", fontWeight: "bold", color: "#475569", margin: "0 0 8px 0" }}>Хичээлээр ангилах (Тоо ширхэгтэй):</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px" }}>
-                <button
-                  type="button"
-                  onClick={() => setBankFilterSubject("Бүх хичээл")}
-                  style={{
-                    padding: "8px",
-                    borderRadius: "10px",
-                    border: bankFilterSubject === "Бүх хичээл" ? "2px solid #0284c7" : "1px solid #cbd5e1",
-                    backgroundColor: bankFilterSubject === "Бүх хичээл" ? "#e0f2fe" : "#ffffff",
-                    cursor: "pointer",
-                    textAlign: "center"
-                  }}
-                >
+                <button type="button" onClick={() => setBankFilterSubject("Бүх хичээл")} style={{ padding: "8px", borderRadius: "10px", border: bankFilterSubject === "Бүх хичээл" ? "2px solid #0284c7" : "1px solid #cbd5e1", backgroundColor: bankFilterSubject === "Бүх хичээл" ? "#e0f2fe" : "#ffffff", cursor: "pointer", textAlign: "center" }}>
                   <p style={{ fontSize: "11px", fontWeight: "bold", margin: 0, color: "#334155" }}>Бүх хичээл</p>
                   <span style={{ fontSize: "14px", fontWeight: "900", color: "#0284c7" }}>{taskBank.length}</span>
                 </button>
@@ -686,19 +620,7 @@ export default function HomePage() {
                   const count = taskBank.filter((t) => t.subject === sub).length;
                   const isSelected = bankFilterSubject === sub;
                   return (
-                    <button
-                      key={sub}
-                      type="button"
-                      onClick={() => setBankFilterSubject(sub)}
-                      style={{
-                        padding: "8px",
-                        borderRadius: "10px",
-                        border: isSelected ? "2px solid #0284c7" : "1px solid #cbd5e1",
-                        backgroundColor: isSelected ? "#e0f2fe" : "#ffffff",
-                        cursor: "pointer",
-                        textAlign: "center"
-                      }}
-                    >
+                    <button key={sub} type="button" onClick={() => setBankFilterSubject(sub)} style={{ padding: "8px", borderRadius: "10px", border: isSelected ? "2px solid #0284c7" : "1px solid #cbd5e1", backgroundColor: isSelected ? "#e0f2fe" : "#ffffff", cursor: "pointer", textAlign: "center" }}>
                       <p style={{ fontSize: "11px", fontWeight: "bold", margin: 0, color: "#334155" }}>{sub}</p>
                       <span style={{ fontSize: "14px", fontWeight: "900", color: count > 0 ? "#059669" : "#94a3b8" }}>{count}</span>
                     </button>
@@ -726,23 +648,11 @@ export default function HomePage() {
                           </div>
 
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); handleOpenAssignModal(item); }}
-                              style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
-                            >
-                              🚀 9Е ангид илгээх
-                            </button>
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleOpenAssignModal(item); }} style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>🚀 9Е ангид илгээх</button>
 
                             <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedSubject(item.subject); setTitle(item.title); setStoryText(item.storyText); setGeneratedTasks(item.tasks); setIsTaskBankOpen(false); }} style={{ backgroundColor: "#e0f2fe", color: "#0369a1", border: "1px solid #bae6fd", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📥 Үндсэн ажилд ачаалах</button>
                             
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); handleDeleteTaskFromBank(item.id); }}
-                              style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
-                            >
-                              🗑️ Устгах
-                            </button>
+                            <button type="button" onClick={(e) => { e.stopPropagation(); handleDeleteTaskFromBank(item.id); }} style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>🗑️ Устгах</button>
 
                             <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7" }}>{isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй"}</span>
                           </div>
@@ -830,11 +740,8 @@ export default function HomePage() {
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #10b981" }}>
             <div style={{ fontSize: "42px", marginBottom: "10px" }}>📨</div>
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>9Е ангид амжилттай илгээгдлээ!</h3>
-            <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор сурагчийн танхим руу орж даалгавраа ажиллах боломжтой.</p>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <a href="/student" style={{ flex: 1, backgroundColor: "#059669", color: "#ffffff", padding: "10px", borderRadius: "8px", textDecoration: "none", fontWeight: "bold", fontSize: "13px" }}>👨‍🎓 Сурагчийн танхим руу орох</a>
-              <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ flex: 1, backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Хаах</button>
-            </div>
+            <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор сурагчийн цонхоор орж ажиллана.</p>
+            <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ width: "100%", backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Ойлголоо, Баярлалаа</button>
           </div>
         </div>
       )}
@@ -845,7 +752,7 @@ export default function HomePage() {
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "440px", width: "90%", textAlign: "center", border: "2px solid #10b981" }}>
             <div style={{ fontSize: "42px", marginBottom: "10px" }}>🎉</div>
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>Амжилттай баталгаажлаа!</h3>
-            <p style={{ fontSize: "13.5px", color: "#334155", margin: "0 0 20px 0" }}>"{selectedSubject}" хичээлийн 6 даалгавар (12 оноо) санд хадгалагдлаа.</p>
+            <p style={{ fontSize: "13.5px", color: "#334155", margin: "0 0 20px 0" }}>"{selectedSubject}" хичээлийн 6 даалгавар санд хадгалагдлаа.</p>
             <div style={{ display: "flex", gap: "10px" }}>
               <button type="button" onClick={() => { setSaveSuccessModal(false); setIsTaskBankOpen(true); }} style={{ flex: 1, backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>📂 Даалгаврын сан руу очих</button>
               <button type="button" onClick={() => setSaveSuccessModal(false)} style={{ flex: 1, backgroundColor: "#f1f5f9", color: "#334155", border: "1px solid #cbd5e1", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Хаах</button>

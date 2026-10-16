@@ -1049,18 +1049,18 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ */}
+      {/* ҮНДСЭН АЖЛЫН ХЭСЭГ (8:5 БА 8:3 ХАРЬЦАА, БҮДЭГ ШАРГАЛ ФОН) */}
       <div style={{ 
         maxWidth: "1280px", 
         margin: "0 auto", 
         display: "grid", 
-        gridTemplateColumns: "5fr 3fr", 
+        gridTemplateColumns: "5fr 3fr", // Дэлгэцийн 8:5 ба 8:3 харьцаа
         gap: "16px" 
       }}>
         
-        {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
+        {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (8:5 хэсэг) */}
         <section style={{ 
-          backgroundColor: "#fffdf0", 
+          backgroundColor: "#fffdf0", // Бүдэг шаргал фон
           borderRadius: "16px", 
           border: "1.5px solid #fde68a", 
           padding: "18px", 
@@ -1074,7 +1074,7 @@ export default function HomePage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
               <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#fbbf24", display: "inline-block" }}></span>
-                Эх бичвэр
+                Эх бичвэр (8:5)
               </h3>
 
               <button 
@@ -1126,7 +1126,8 @@ export default function HomePage() {
                   borderRadius: "8px", 
                   fontSize: "14px", 
                   fontWeight: "500",
-                  boxSizing: "border-box" 
+                  boxSizing: "border-box",
+                  backgroundColor: "#ffffff"
                 }}
               />
             </div>
@@ -1148,7 +1149,8 @@ export default function HomePage() {
                   resize: "vertical", 
                   boxSizing: "border-box",
                   fontFamily: "inherit",
-                  whiteSpace: "pre-wrap"
+                  whiteSpace: "pre-wrap",
+                  backgroundColor: "#ffffff"
                 }}
               />
             </div>
@@ -1178,9 +1180,9 @@ export default function HomePage() {
 
         </section>
 
-        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР */}
+        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР (8:3 хэсэг) */}
         <section style={{ 
-          backgroundColor: "#fffdf0", 
+          backgroundColor: "#fffdf0", // Бүдэг шаргал фон
           borderRadius: "16px", 
           border: "1.5px solid #fde68a", 
           padding: "18px", 
@@ -1194,7 +1196,7 @@ export default function HomePage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
               <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#fbbf24", display: "inline-block" }}></span>
-                Асуулт даалгавар
+                Асуулт даалгавар (8:3)
               </h3>
 
               <button 
@@ -1423,10 +1425,10 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (СУРАГЧИД ХАРАГДАХ ШУУД ХЭЛБЭРТЭЙ) */}
+      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (ЭХ БИЧВЭР БА АСУУЛТ ЗЭРЭГЦЭЭ 8:5 БА 8:3 ХАРЬЦААТАЙ) */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1000px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
+          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1200px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
             
             {/* Толгой хэсэг */}
             <div style={{ backgroundColor: "#fffdf0", padding: "16px 20px", borderBottom: "1.5px solid #fde68a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -1440,7 +1442,7 @@ export default function HomePage() {
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                {/* ХАРАГДАЦ СОЛИХ ТОВЧ (Сурагчийн харагдац / Багшийн харагдац) */}
+                {/* ХАРАГДАЦ СОЛИХ ТОВЧ */}
                 <button
                   type="button"
                   onClick={() => setIsTeacherViewInBank(!isTeacherViewInBank)}
@@ -1603,38 +1605,55 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        {/* СУРАГЧИД ХАРАГДАХ ШУУД ХЭЛБЭР (СУРАГЧИЙН ОНЛАЙН СОРИЛ) */}
+                        {/* ЗЭРЭГЦЭЭ ХАРАГДАХ ДААЛГАВРЫН АГУУЛГА (8:5 БА 8:3 ХАРЬЦААТАЙ, БҮДЭГ ШАРГАЛ ФОН) */}
                         {isExpanded && (
-                          <div style={{ padding: "18px", borderTop: "1px solid #bae6fd", backgroundColor: "#ffffff" }}>
+                          <div style={{ 
+                            padding: "18px", 
+                            borderTop: "1px solid #bae6fd", 
+                            backgroundColor: "#f8fafc",
+                            display: "grid",
+                            gridTemplateColumns: "5fr 3fr", // Дэлгэцийн 8:5 ба 8:3 харьцаа
+                            gap: "16px"
+                          }}>
                             
-                            {/* 1. ЭХ БИЧВЭР */}
+                            {/* 1. ЭХ БИЧВЭР (ЗҮҮН ТАЛД 8:5) */}
                             <div style={{ 
-                              backgroundColor: "#fffdf0", 
+                              backgroundColor: "#fffdf0", // Бүдэг шаргал фон
                               padding: "16px 18px", 
                               borderRadius: "12px", 
                               border: "1.5px solid #fde68a", 
                               fontSize: "14px", 
                               color: "#1e293b", 
                               lineHeight: "1.7", 
-                              marginBottom: "20px",
                               whiteSpace: "pre-wrap",
-                              maxHeight: "300px",
+                              height: "fit-content",
+                              maxHeight: "600px",
                               overflowY: "auto"
                             }}>
-                              <h5 style={{ color: "#92400e", margin: "0 0 8px 0", fontSize: "15px", fontWeight: "bold" }}>
-                                📖 Унших эх бичвэр: {item.title}
+                              <h5 style={{ color: "#92400e", margin: "0 0 10px 0", fontSize: "15px", fontWeight: "bold", borderBottom: "1px solid #fde68a", paddingBottom: "6px" }}>
+                                📖 Эх бичвэр: {item.title}
                               </h5> 
                               {item.storyText}
                             </div>
 
-                            {/* 2. ДААЛГАВРУУД (СУРАГЧИЙН ШУУД ХАРАГДАЦ) */}
-                            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <h5 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
-                                  📝 Даалгаврууд ({item.tasks.length} асуулт / {item.totalPoints || 12} оноо)
+                            {/* 2. АСУУЛТ ДААЛГАВАР (БАРУУН ТАЛД 8:3) */}
+                            <div style={{ 
+                              display: "flex", 
+                              flexDirection: "column", 
+                              gap: "14px",
+                              backgroundColor: "#fffdf0", // Бүдэг шаргал фон
+                              padding: "16px",
+                              borderRadius: "12px",
+                              border: "1.5px solid #fde68a",
+                              maxHeight: "600px",
+                              overflowY: "auto"
+                            }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "6px" }}>
+                                <h5 style={{ fontSize: "14.5px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+                                  📝 Даалгаврууд ({item.tasks.length})
                                 </h5>
-                                <span style={{ fontSize: "12px", color: isTeacherViewInBank ? "#b45309" : "#0284c7", fontWeight: "bold" }}>
-                                  {isTeacherViewInBank ? "👨‍🏫 Багшийн харагдац (Хариулт + Рубриктэй)" : "👁️ Сурагчийн харагдац (Хариултыг нуусан)"}
+                                <span style={{ fontSize: "11px", color: isTeacherViewInBank ? "#b45309" : "#0284c7", fontWeight: "bold" }}>
+                                  {isTeacherViewInBank ? "👨‍🏫 Багш" : "👁️ Сурагч"}
                                 </span>
                               </div>
 
@@ -1647,22 +1666,21 @@ export default function HomePage() {
                                     key={t.num} 
                                     style={{ 
                                       border: "1.5px solid #e2e8f0", 
-                                      padding: "16px", 
+                                      padding: "14px", 
                                       borderRadius: "10px", 
                                       backgroundColor: "#ffffff", 
                                       boxShadow: "0 1px 3px rgba(0,0,0,0.02)" 
                                     }}
                                   >
-                                    {/* Асуултын толгой */}
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
-                                      <p style={{ fontWeight: "bold", fontSize: "14px", color: "#0f172a", margin: 0, lineHeight: "1.5" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                      <p style={{ fontWeight: "bold", fontSize: "13.5px", color: "#0f172a", margin: 0, lineHeight: "1.4" }}>
                                         {t.num}. {t.question} <span style={{ color: "#0284c7", fontWeight: "bold" }}>({t.points} оноо)</span>
                                       </p>
                                     </div>
 
-                                    {/* Сонгох тест бол: Сурагчийн радио сонголтууд */}
+                                    {/* Сонгох тест бол */}
                                     {t.options && (
-                                      <div style={{ display: "flex", flexDirection: "column", gap: "8px", margin: "10px 0 12px 0" }}>
+                                      <div style={{ display: "flex", flexDirection: "column", gap: "6px", margin: "8px 0" }}>
                                         {t.options.map((opt: string, optIdx: number) => {
                                           const isSelected = currentAnswer === opt;
                                           return (
@@ -1671,13 +1689,13 @@ export default function HomePage() {
                                               style={{ 
                                                 display: "flex", 
                                                 alignItems: "center", 
-                                                gap: "10px", 
-                                                padding: "8px 12px", 
-                                                borderRadius: "8px", 
+                                                gap: "8px", 
+                                                padding: "6px 10px", 
+                                                borderRadius: "6px", 
                                                 border: isSelected ? "1.5px solid #0284c7" : "1px solid #cbd5e1", 
                                                 backgroundColor: isSelected ? "#f0f9ff" : "#f8fafc", 
                                                 cursor: "pointer", 
-                                                fontSize: "13.5px",
+                                                fontSize: "12.5px",
                                                 fontWeight: isSelected ? "bold" : "normal",
                                                 color: isSelected ? "#0369a1" : "#334155"
                                               }}
@@ -1687,7 +1705,7 @@ export default function HomePage() {
                                                 name={`student-radio-${answerKey}`}
                                                 checked={isSelected}
                                                 onChange={() => setStudentAnswers((prev) => ({ ...prev, [answerKey]: opt }))}
-                                                style={{ width: "16px", height: "16px", accentColor: "#0284c7", cursor: "pointer" }}
+                                                style={{ width: "15px", height: "15px", accentColor: "#0284c7", cursor: "pointer" }}
                                               />
                                               <span>{opt}</span>
                                             </label>
@@ -1696,21 +1714,21 @@ export default function HomePage() {
                                       </div>
                                     )}
 
-                                    {/* Задгай даалгавар бол: Сурагчийн хариулт бичих текстийн цонх */}
+                                    {/* Задгай даалгавар бол */}
                                     {!t.options && (
-                                      <div style={{ margin: "10px 0 12px 0" }}>
+                                      <div style={{ margin: "8px 0" }}>
                                         <textarea
                                           value={currentAnswer}
                                           onChange={(e) => setStudentAnswers((prev) => ({ ...prev, [answerKey]: e.target.value }))}
                                           placeholder="✍️ Хариултаа энд бичнэ үү..."
-                                          rows={3}
+                                          rows={2}
                                           style={{
                                             width: "100%",
-                                            padding: "10px",
-                                            borderRadius: "8px",
+                                            padding: "8px",
+                                            borderRadius: "6px",
                                             border: "1.5px solid #cbd5e1",
-                                            fontSize: "13.5px",
-                                            lineHeight: "1.5",
+                                            fontSize: "12.5px",
+                                            lineHeight: "1.4",
                                             outline: "none",
                                             fontFamily: "inherit",
                                             boxSizing: "border-box",
@@ -1720,13 +1738,13 @@ export default function HomePage() {
                                       </div>
                                     )}
 
-                                    {/* Багшийн харагдац сонгогдсон үед л Зөв хариулт ба Рубрик харагдана */}
+                                    {/* Багшийн харагдац сонгогдсон үед */}
                                     {isTeacherViewInBank && (
-                                      <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px dashed #cbd5e1", display: "flex", flexDirection: "column", gap: "6px" }}>
-                                        <p style={{ fontSize: "12px", color: "#059669", margin: 0, backgroundColor: "#f0fdf4", padding: "6px 10px", borderRadius: "6px", border: "1px solid #bbf7d0" }}>
-                                          💡 <strong>Зөв хариулт / Загвар:</strong> {t.correctAnswer}
+                                      <div style={{ marginTop: "10px", paddingTop: "8px", borderTop: "1px dashed #cbd5e1", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                        <p style={{ fontSize: "11.5px", color: "#059669", margin: 0, backgroundColor: "#f0fdf4", padding: "5px 8px", borderRadius: "6px", border: "1px solid #bbf7d0" }}>
+                                          💡 <strong>Зөв хариулт:</strong> {t.correctAnswer}
                                         </p>
-                                        <p style={{ fontSize: "11.5px", color: "#b45309", margin: 0, backgroundColor: "#fff7ed", padding: "6px 10px", borderRadius: "6px", border: "1px solid #fed7aa" }}>
+                                        <p style={{ fontSize: "11px", color: "#b45309", margin: 0, backgroundColor: "#fff7ed", padding: "5px 8px", borderRadius: "6px", border: "1px solid #fed7aa" }}>
                                           📊 <strong>Рубрик:</strong> {t.rubric}
                                         </p>
                                       </div>

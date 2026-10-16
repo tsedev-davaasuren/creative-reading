@@ -9,22 +9,66 @@ export default function StudentPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState<number>(0);
   const [feedbackList, setFeedbackList] = useState<any[]>([]);
-  const [imgError, setImgError] = useState(false);
 
-  // Багшийн хадгалсан даалгаврын санг localStorage-аас унших
-  useEffect(() => {
-    const saved = localStorage.getItem("creative_reading_task_bank");
-    if (saved) {
+  // Багшийн хадгалсан даалгаврын санг localStorage-аас бодит цагт унших функц
+  const loadTaskBankFromStorage = () => {
+    const savedBank = localStorage.getItem("creative_reading_task_bank");
+    const activeSession = localStorage.getItem("creative_reading_active_session");
+
+    let parsedBank: any[] = [];
+    if (savedBank) {
       try {
-        const parsed = JSON.parse(saved);
-        setTaskBank(parsed);
-        if (parsed.length > 0) {
-          setSelectedTask(parsed[0]); // Хамгийн сүүлийн эх бичвэрийг сонгох
-        }
+        parsedBank = JSON.parse(savedBank);
       } catch (e) {
         console.error("Task bank load error:", e);
       }
     }
+
+    // Хэрэв санд дата байхгүй ч багш идэвхитэй ажиллаж байвал тухайн даалгаврыг унших
+    if (parsedBank.length === 0 && activeSession) {
+      try {
+        const session = JSON.parse(activeSession);
+        if (session.generatedTasks && session.generatedTasks.length > 0) {
+          parsedBank = [
+            {
+              id: Date.now(),
+              subject: session.selectedSubject || "Уран зохиол",
+              title: session.title || "Багшийн боловсруулсан эх бичвэр",
+              storyText: session.storyText || "",
+              tasks: session.generatedTasks,
+              totalPoints: 12,
+              createdDate: "Идэвхитэй хичээл"
+            }
+          ];
+        }
+      } catch (e) {
+        console.error("Active session load error:", e);
+      }
+    }
+
+    setTaskBank(parsedBank);
+
+    if (parsedBank.length > 0) {
+      // Сонгогдсон даалгаврыг сэргээх эсвэл хамгийн сүүлийнхийг сонгох
+      setSelectedTask((prevSelected: any) => {
+        if (!prevSelected) return parsedBank[0];
+        const match = parsedBank.find((item) => item.id === prevSelected.id);
+        return match || parsedBank[0];
+      });
+    }
+  };
+
+  useEffect(() => {
+    loadTaskBankFromStorage();
+
+    // Багшийн хуудаснаас шинэ даалгавар ороход сурагчийн цонх автоматаар шинэчлэгдэнэ
+    window.addEventListener("focus", loadTaskBankFromStorage);
+    window.addEventListener("storage", loadTaskBankFromStorage);
+
+    return () => {
+      window.removeEventListener("focus", loadTaskBankFromStorage);
+      window.removeEventListener("storage", loadTaskBankFromStorage);
+    };
   }, []);
 
   const handleSelectSubjectTask = (item: any) => {
@@ -34,7 +78,7 @@ export default function StudentPage() {
   };
 
   const handleQuizSubmit = () => {
-    if (!selectedTask) return;
+    if (!selectedTask || !selectedTask.tasks) return;
 
     let totalGained = 0;
     const evaluated: any[] = [];
@@ -100,33 +144,55 @@ export default function StudentPage() {
         justifyContent: "space-between"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "56px", height: "56px", borderRadius: "12px", backgroundColor: "#ffffff", border: "2px solid #fcd34d", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+          <div style={{ width: "52px", height: "52px", borderRadius: "12px", backgroundColor: "#ffffff", border: "2px solid #fcd34d", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
             <img src="/project-logo.jpg" alt="Лого" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
           <div>
-            <h1 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Бүтээлч уншлага-2 (Сурагчийн танхим)</h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Даалгавар бие даан ажиллаж, AI үнэлгээ авах</p>
+            <h1 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+              Бүтээлч уншлага-2 (Сурагчийн танхим)
+            </h1>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>
+              Даалгавар бие даан ажиллаж, AI үнэлгээ авах
+            </p>
           </div>
         </div>
 
-        {/* БАГШИЙН ХЭСЭГ РҮҮ БУЦАХ ТОВЧ */}
-        <a 
-          href="/" 
-          style={{
-            backgroundColor: "#0284c7",
-            color: "#ffffff",
-            padding: "8px 16px",
-            borderRadius: "8px",
-            fontSize: "12px",
-            fontWeight: "bold",
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px"
-          }}
-        >
-          👨‍🏫 Багшийн орчин руу буцах
-        </a>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <button
+            type="button"
+            onClick={loadTaskBankFromStorage}
+            style={{
+              backgroundColor: "#fef3c7",
+              color: "#92400e",
+              border: "1px solid #fcd34d",
+              padding: "8px 14px",
+              borderRadius: "8px",
+              fontSize: "12px",
+              fontWeight: "bold",
+              cursor: "pointer"
+            }}
+          >
+            🔄 Шинэчлэх
+          </button>
+
+          <a 
+            href="/" 
+            style={{
+              backgroundColor: "#0284c7",
+              color: "#ffffff",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              fontSize: "12px",
+              fontWeight: "bold",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px"
+            }}
+          >
+            👨‍🏫 Багшийн орчин руу буцах
+          </a>
+        </div>
       </header>
 
       {/* ХИЧЭЭЛ СӨНГӨХ СЕКЦИ */}
@@ -160,22 +226,42 @@ export default function StudentPage() {
       </div>
 
       {/* ҮНДСЭН АЖЛЫН ТАЛБАР (8:5 БА 8:3 ХАРЬЦААТАЙ, БҮДЭГ ШАРГАЛ ФОН) */}
-      {selectedTask && (
+      {selectedTask ? (
         <div style={{ maxWidth: "1280px", margin: "0 auto", display: "grid", gridTemplateColumns: "5fr 3fr", gap: "16px" }}>
           
-          {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (8:5 ХАРЬЦАА) */}
+          {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (8:5 ХАРЬЦАА, ЭХ БИЧВЭР БҮРЭН СКТРОЛЛТОЙ ХАРАГДАНА) */}
           <section style={{ backgroundColor: "#fffdf0", borderRadius: "16px", border: "1.5px solid #fde68a", padding: "20px", display: "flex", flexDirection: "column", minHeight: "580px" }}>
-            <div style={{ borderBottom: "1.5px solid #fde68a", paddingBottom: "10px", marginBottom: "14px" }}>
-              <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold" }}>
-                {selectedTask.subject}
+            <div style={{ borderBottom: "1.5px solid #fde68a", paddingBottom: "10px", marginBottom: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold" }}>
+                  {selectedTask.subject}
+                </span>
+                <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: "6px 0 0 0" }}>
+                  📖 {selectedTask.title}
+                </h2>
+              </div>
+
+              <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>
+                📄 Бүрэн эх бичвэр
               </span>
-              <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: "6px 0 0 0" }}>
-                📖 {selectedTask.title}
-              </h2>
             </div>
 
-            <div style={{ fontSize: "15px", color: "#1e293b", lineHeight: "1.8", whiteSpace: "pre-wrap", flex: 1, overflowY: "auto" }}>
-              {selectedTask.storyText}
+            {/* ЭХ БИЧВЭРИЙГ БҮРНЭЭР НЬ ХАРУУЛАХ БЛОК */}
+            <div style={{ 
+              backgroundColor: "#ffffff",
+              padding: "16px 18px",
+              borderRadius: "12px",
+              border: "1px solid #fde68a",
+              fontSize: "15px", 
+              color: "#1e293b", 
+              lineHeight: "1.8", 
+              whiteSpace: "pre-wrap", 
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
+              maxHeight: "540px",
+              overflowY: "auto"
+            }}>
+              {selectedTask.storyText || "Эх бичвэр олдсонгүй."}
             </div>
           </section>
 
@@ -188,7 +274,7 @@ export default function StudentPage() {
               </div>
 
               <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "14px", height: "430px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "14px" }}>
-                {selectedTask.tasks.map((t: any) => {
+                {selectedTask.tasks && selectedTask.tasks.map((t: any) => {
                   const ans = studentAnswers[t.num] || "";
                   return (
                     <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "10px", padding: "12px", backgroundColor: "#ffffff" }}>
@@ -231,6 +317,12 @@ export default function StudentPage() {
             </div>
           </section>
 
+        </div>
+      ) : (
+        <div style={{ textAlign: "center", padding: "80px 20px", color: "#64748b" }}>
+          <div style={{ fontSize: "48px", marginBottom: "12px" }}>📭</div>
+          <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#334155" }}>Сонгогдсон даалгавар байхгүй байна.</h3>
+          <p style={{ fontSize: "13px" }}>Багшийн орчинд даалгавраа баталж санд хадгална уу.</p>
         </div>
       )}
 

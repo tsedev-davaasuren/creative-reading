@@ -25,7 +25,15 @@ export default function HomePage() {
   const [teacherNote, setTeacherNote] = useState("");
   const [assignSuccessModal, setAssignSuccessModal] = useState(false);
 
-  const classesList = ["9Е"];
+  // 💬 ЦЭНДАО БАГШТАЙ ЯРИЛЦАХ ЧАТ МЕССЕЖҮҮД
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      sender: "bagsh",
+      text: "Сайн байна уу! Би 'Бүтээлч уншлага-2' төслийн AI Ментор Цэндао багш байна. 9Е ангид болон 6 хичээл тус бүрийн эх бичвэрт тохирсон PISA 6 даалгавар (12 оноо)-г блюпринтийн дагуу чанартай боловсруулахад туслахад бэлэн байна."
+    }
+  ]);
+  const [inputText, setInputText] = useState("");
 
   const subjectDefaults: { [key: string]: { title: string; story: string } } = {
     "Уран зохиол": {
@@ -40,23 +48,33 @@ export default function HomePage() {
     },
     "Физик": {
       title: 'Физик: "Механик хөдөлгөөн ба кинетик энерги"',
-      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно.`
+      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно. Биеийн хурд 2 дахин нэмэгдэхэд кинетик энерги 4 дахин өсдөг.
+
+Автомашины тоормосны замын урт нь хурдны квадратаас шууд хамаардаг тул замын хөдөлгөөний аюулгүй байдалд хурдыг хэтрүүлэхгүй байх нь ач холбогдолтой юм. Хурд нэмэгдэхэд автомашины зогсох замын урт асар ихээр уртсаж, мөргөлдөх үеийн цохилтын энерги нэмэгддэг тул замын хөдөлгөөний дүрмийг баримтлах нь хүний амь насыг аврах физикийн үндэслэл болно.`
     },
     "Хими": {
       title: 'Хими: "Усны бүтэц ба химийн холбоос"',
-      story: `Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно. Ковалент туйлшралтай холбоотой тул усны молекулуудын хооронд водородон холбоо үүсдэг.`
+      story: `Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно. Ковалент туйлшралтай холбоотой тул усны молекулуудын хооронд водородон холбоо үүсдэг. Үүний дүнд ус нь өндөр буцлах температуртай, гадаргуугийн шахалт өндөртэй байдаг.
+
+Ус нь 4°C температурт хамгийн их нягттай байдаг тул нуур, цөөрмийн доод үе өвөлдөө хөлдөхгүй, усны амьтад амьдрах боломж бүрддэг. Мөн ус нь нийтлэг уусгагч болохын хувьд шим бодисыг уусган амьд биеийн эс хооронд тээвэрлэх химийн чухал үүрэгтэй.`
     },
     "Биологи": {
       title: 'Биологи: "Эсийн бүтээц ба фотосинтез"',
-      story: `Ургамлын эс нь хлоропласт хэмээх эрхтэнцэртэй бөгөөд нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий болон уснаас глюкоз ба хүчилтөрөгч нийлэгжүүлдэг.`
+      story: `Ургамлын эс нь хлоропласт хэмээх эрхтэнцэртэй бөгөөд нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий (CO2) болон уснаас (H2O) глюкоз (C6H12O6) ба хүчилтөрөгч (O2) нийлэгжүүлдэг. Энэ үйл явцыг фотосинтез гэнэ.
+
+Фотосинтезийн дүнд дэлхийн шим мандлын хүчилтөрөгчийн тэнцвэрт байдал хангагдаж, бүх амьд биетийн идэш тэжээлийн суваг бүрэлддэг. Ногоон ургамал нь агаар дахь хүлэмжийн хийг шингээн авч амьд байгалийг тэтгэдэг тул ой модыг хамгаалах нь уур амьсгалын дулаарлыг сааруулах үндэс юм.`
     },
     "Түүх": {
       title: 'Түүх: "Их Монгол Улсын гадаад харилцаа ба өртөөний систем"',
-      story: `Чингис хаан 1206 онд Их Монгол Улсыг байгуулсны дараа Өгэдэй хаан орон даяар Морин өртөөний сүлжээг засаж тохижуулжээ.`
+      story: `Чингис хаан 1206 онд Их Монгол Улсыг байгуулсны дараа Өгэдэй хаан орон даяар Морин өртөөний сүлжээг засаж тохижуулжээ. Өртөөний систем нь мэдээ мэдээллийг түргэн шуурхай дамжуулах, худалдаа иргэншлийн аюулгүй байдлыг хангахад шийдвэрлэх үүрэг гүйцэтгэсэн.
+
+Энэхүү систем нь Ази, Европыг холбосон Торгоны замыг аюулгүй болгож, Дорно ба Өрнийн соёлын солилцоо ("Pax Mongolica") идэвхжих нөхцөлийг бүрдүүлсэн юм. Өртөөний харуул ба гэрэгэ бүхий элч нар мэдээллийг хурдан дамжуулж байсан нь тухайн үеийнхээ хамгийн том мэдээллийн хурдны сүлжээ байв.`
     },
     "Газар зүй": {
       title: 'Газар зүй: "Монгол орны уур амьсгал ба усан сүлжээ"',
-      story: `Монгол орон нь Евразийн эх газрын төвд оршдог тул эх газрын эрс тэс уур амьсгалтай.`
+      story: `Монгол орон нь Евразийн эх газрын төвд оршдог тул эх газрын эрс тэс уур амьсгалтай. Жилийн ба хоногийн температурын свеч ихтэй, тунадасны хэмжээ бага. Хангай, Хэнтий, Алтайн нуруунаас эх авсан Сэлэнгэ, Орхон, Туул зэрэг томоохон голууд нь Хойд мөсөн далайн болон Төв Азийн гадагш урсгалгүй айрагт хамаардаг.
+
+Сүүлийн жилүүдэд уур амьсгалын дулаарлаас шалтгаалан цөлжилт, гол нуурын ширгэлт нэмэгдэж байна. Иймд усан сүлжээ, гол мөрний эх сурвалжийг хамгаалах, усыг гамнах нь газар зүйн орчны тэнцвэрийг хадгалахад нэн чухал тулгамдсан асуудал болоод байна.`
     }
   };
 
@@ -99,6 +117,20 @@ export default function HomePage() {
   };
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
+
+  const handleSendMessage = () => {
+    if (!inputText.trim()) return;
+    const userQuery = inputText.trim();
+    setMessages((prev) => [...prev, { id: Date.now(), sender: "user", text: userQuery }]);
+    setInputText("");
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, sender: "bagsh", text: `Багш аа, ${selectedSubject} хичээлээр 9Е ангид болон шинэ блюпринтийн дагуу даалгавар боловсруулахад тусалъя.` }
+      ]);
+    }, 600);
+  };
 
   const generateDynamicTasksFromText = (sub: string, customTitle: string, customText: string) => {
     const rawSentences = customText.split(/[.!?\n]/).map((s) => s.trim()).filter((s) => s.length > 8);
@@ -167,7 +199,7 @@ export default function HomePage() {
   // 🚀 9Е ANGI-Д ИЛГЭЭХ CLICK HANDLER
   const handleOpenAssignModal = (taskItem: any) => {
     setTaskToAssign(taskItem);
-    setTargetClass("9Е"); // Шууд 9Е анги тохируулагдана
+    setTargetClass("9Е");
     const autoCode = `9E-${taskItem.subject.slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
     setAssignmentCode(autoCode);
     
@@ -217,42 +249,206 @@ export default function HomePage() {
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f8fafc", padding: "20px", fontFamily: "sans-serif" }}>
       
-      {/* HEADER ХЭСЭГ */}
+      {/* HEADER ХЭСЭГ (БҮХ БОЛОМЖУУД БҮРЭН СЭРГЭЭГДСЭН) */}
       <header style={{
-        maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", borderRadius: "16px", border: "1px solid #fde68a", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between"
+        maxWidth: "1280px",
+        margin: "0 auto 16px auto",
+        backgroundColor: "#fffdf0",
+        borderRadius: "16px",
+        border: "1px solid #fde68a",
+        padding: "12px 20px",
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "16px",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "56px", height: "56px", borderRadius: "12px", backgroundColor: "#ffffff", border: "2px solid #fcd34d", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-            <img src="/project-logo.jpg" alt="Лого" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        
+        {/* ТӨСЛИЙН ЛОГО & НЭР */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+          <div style={{
+            width: "64px",
+            height: "64px",
+            minWidth: "64px",
+            borderRadius: "14px",
+            backgroundColor: "#ffffff",
+            border: "2px solid #fcd34d",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+            padding: "2px"
+          }}>
+            <img 
+              src="/project-logo.jpg" 
+              alt="Бүтээлч уншлага лого" 
+              style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+            />
           </div>
           <div>
-            <h1 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Бүтээлч уншлага-2 төсөл (9Е анги)</h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Багшийн ажлын танхим</p>
+            <h1 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
+              Бүтээлч уншлага-2 төсөл (9Е анги)
+            </h1>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0", fontWeight: "500" }}>
+              Creative reading-2 project (Багшийн танхим)
+            </p>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <button type="button" onClick={() => setIsBlueprintOpen(!isBlueprintOpen)} style={{ backgroundColor: "#fde68a", border: "1px solid #fcd34d", padding: "6px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
-            📋 Блюпринт харах
-          </button>
-          <a href="/student" style={{ backgroundColor: "#059669", color: "#ffffff", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", textDecoration: "none" }}>
-            👨‍🎓 Сурагчийн танхим руу шилжих ➔
-          </a>
+        {/* ТОП ТОВЧНУУД */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+          <div style={{
+            backgroundColor: "#fbbf24",
+            border: "1px solid #f59e0b",
+            padding: "4px 18px",
+            borderRadius: "12px"
+          }}>
+            <h2 style={{ fontSize: "14px", fontWeight: "900", color: "#0f172a", margin: 0 }}>
+              Mentor AI Цэндао багштай
+            </h2>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center" }}>
+            <button 
+              type="button" 
+              onClick={() => setIsBlueprintOpen(!isBlueprintOpen)}
+              style={{
+                backgroundColor: "#fde68a",
+                border: "1px solid #fcd34d",
+                padding: "5px 12px",
+                borderRadius: "8px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#0f172a",
+                cursor: "pointer"
+              }}
+            >
+              📋 Блюпринт, рубрик
+            </button>
+
+            <button 
+              type="button" 
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              style={{
+                backgroundColor: "#fde68a",
+                border: "1px solid #fcd34d",
+                padding: "5px 12px",
+                borderRadius: "8px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#0f172a",
+                cursor: "pointer"
+              }}
+            >
+              💬 Цэндао багштай ярилцах
+            </button>
+
+            <a 
+              href="/student"
+              style={{
+                backgroundColor: "#059669",
+                color: "#ffffff",
+                padding: "5px 14px",
+                borderRadius: "8px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                textDecoration: "none"
+              }}
+            >
+              👨‍🎓 Сурагчийн танхим руу шилжих ➔
+            </a>
+          </div>
         </div>
+
+        {/* МЕНТОР ЦЭНДАО БАГШИЙН ЗУРАГ БА ОНЛАЙН ТӨЛӨВ */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+          <div style={{ textAlign: "right" }}>
+            <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
+            <p style={{ fontSize: "10px", fontWeight: "600", color: "#059669", margin: "2px 0 0 0", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px" }}>
+              <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#10b981", display: "inline-block" }}></span>
+              Онлайн
+            </p>
+          </div>
+          
+          <div style={{
+            width: "68px",
+            height: "68px",
+            minWidth: "68px",
+            borderRadius: "50%",
+            border: "3px solid #f59e0b",
+            overflow: "hidden",
+            backgroundColor: "#fef3c7",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            {!imgError ? (
+              <img 
+                src="/tsendao.jpg" 
+                alt="Цэндао багш"
+                onError={() => setImgError(true)}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            ) : (
+              <span style={{ fontSize: "30px" }}>👨‍🏫</span>
+            )}
+          </div>
+        </div>
+
       </header>
 
-      {/* ШИНЭ БЛЮПРИНТ ЦОНХ */}
+      {/* ШИНЭ БЛЮПРИНТ БА РУБРИКИЙН ЦОНХ */}
       {isBlueprintOpen && (
         <section style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", border: "1.5px solid #fcd34d", borderRadius: "14px", padding: "14px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "6px", marginBottom: "10px" }}>
             <h3 style={{ fontSize: "14px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📋 Шинэ блюпринт ба рубрик (6 Даалгавар / 12 Оноо)</h3>
-            <button type="button" onClick={() => setIsBlueprintOpen(false)} style={{ fontSize: "11px", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "2px 8px", cursor: "pointer" }}>Хаах ✕</button>
+            <button type="button" onClick={() => setIsBlueprintOpen(false)} style={{ fontSize: "11px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "2px 8px", cursor: "pointer", fontWeight: "600" }}>Хаах ✕</button>
           </div>
-          <p style={{ fontSize: "12px", color: "#334155" }}>1. Сонгох тест (1) | 2. Задгай-Мэдээлэл олох (1) | 3-4. Задгай-Задлан шинжлэх (4) | 5-6. Задгай-Эргэцүүлэн дүгнэх (6)</p>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+              <thead>
+                <tr style={{ backgroundColor: "#fbbf24", color: "#0f172a" }}>
+                  <th style={{ padding: "6px", border: "1px solid #fcd34d" }}>№</th>
+                  <th style={{ padding: "6px", border: "1px solid #fcd34d" }}>Хэлбэр</th>
+                  <th style={{ padding: "6px", border: "1px solid #fcd34d" }}>Танин мэдэхүй</th>
+                  <th style={{ padding: "6px", border: "1px solid #fcd34d" }}>Оноо</th>
+                  <th style={{ padding: "6px", border: "1px solid #fcd34d" }}>Рубрик</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ backgroundColor: "#ffffff" }}><td style={{ padding: "6px" }}>1</td><td style={{ padding: "6px" }}>Сонгох тест</td><td style={{ padding: "6px" }}>Мэдээлэл олох</td><td style={{ padding: "6px" }}>1</td><td style={{ padding: "6px" }}>Зөв сонгосон бол 1, буруу бол 0</td></tr>
+                <tr style={{ backgroundColor: "#fffdf0" }}><td style={{ padding: "6px" }}>2</td><td style={{ padding: "6px" }}>Задгай</td><td style={{ padding: "6px" }}>Мэдээлэл олох</td><td style={{ padding: "6px" }}>1</td><td style={{ padding: "6px" }}>1 өгүүлбэр олж бичвэл 1, үгүй бол 0</td></tr>
+                <tr style={{ backgroundColor: "#ffffff" }}><td style={{ padding: "6px" }}>3-4</td><td style={{ padding: "6px" }}>Задгай</td><td style={{ padding: "6px" }}>Задлан шинжлэх</td><td style={{ padding: "6px" }}>2 х 2 = 4</td><td style={{ padding: "6px" }}>1-2 өгүүлбэрээр задлан тайлбарлавал 2 оноо</td></tr>
+                <tr style={{ backgroundColor: "#fffdf0" }}><td style={{ padding: "6px" }}>5-6</td><td style={{ padding: "6px" }}>Задгай</td><td style={{ padding: "6px" }}>Эргэцүүлэн дүгнэх</td><td style={{ padding: "6px" }}>3 х 2 = 6</td><td style={{ padding: "6px" }}>2-3 өгүүлбэрээр шинэ санаа гаргавал 3 оноо</td></tr>
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
 
-      {/* ҮНДСЭН АЖЛЫН ТАЛБАР (8:5 БА 8:3 ХАРЬЦАА) */}
+      {/* ЧАТ СЕКЦИ: МЕНТОР ЦЭНДАО БАГШТАЙ ЯРИЛЦАХ */}
+      {isChatOpen && (
+        <section style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", border: "1.5px solid #fcd34d", borderRadius: "14px", padding: "10px 14px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "6px", marginBottom: "8px" }}>
+            <h3 style={{ fontSize: "13px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>💬 Цэндао багштай ярилцах</h3>
+            <button type="button" onClick={() => setIsChatOpen(false)} style={{ fontSize: "11px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "2px 8px", cursor: "pointer" }}>Хаах ✕</button>
+          </div>
+          <div style={{ height: "120px", backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #fde68a", padding: "8px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "6px" }}>
+            {messages.map((msg) => (
+              <div key={msg.id} style={{ alignSelf: msg.sender === "user" ? "flex-end" : "flex-start", backgroundColor: msg.sender === "user" ? "#dcfce7" : "#fef3c7", padding: "6px 10px", borderRadius: "8px", fontSize: "12.5px" }}>
+                {msg.sender === "bagsh" && <strong>👨‍🏫 Цэндао багш: </strong>} {msg.text}
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+            <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} placeholder="Асуултаа бичээрэй..." style={{ flex: 1, padding: "6px 10px", border: "1px solid #fcd34d", borderRadius: "6px", fontSize: "12.5px" }} />
+            <button type="button" onClick={handleSendMessage} style={{ backgroundColor: "#fbbf24", border: "none", padding: "6px 14px", borderRadius: "6px", fontWeight: "bold", fontSize: "12.5px", cursor: "pointer" }}>Илгээх</button>
+          </div>
+        </section>
+      )}
+
+      {/* ҮНДСЭН АЖЛЫН ТАЛБАР (8:5 БА 8:3 ХАРЬЦАА, БҮДЭГ ШАРГАЛ ФОН) */}
       <div style={{ maxWidth: "1280px", margin: "0 auto", display: "grid", gridTemplateColumns: "5fr 3fr", gap: "16px" }}>
         
         {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (8:5) */}
@@ -278,314 +474,4 @@ export default function HomePage() {
             </div>
 
             <div>
-              <label style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Унших эх бичвэр (Бүрэн эхээр)</label>
-              <textarea value={storyText} onChange={(e) => setStoryText(e.target.value)} rows={12} placeholder="Эх бичвэр..." style={{ width: "100%", minHeight: "280px", padding: "12px", border: "1.5px solid #fde68a", borderRadius: "8px", fontSize: "14.5px", lineHeight: "1.7", resize: "vertical", boxSizing: "border-box", fontFamily: "inherit", whiteSpace: "pre-wrap", wordBreak: "break-word", backgroundColor: "#ffffff" }} />
-            </div>
-          </div>
-
-          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
-            <button type="button" onClick={handleGenerateTasks} disabled={isGenerating} style={{ width: "100%", backgroundColor: isGenerating ? "#93c5fd" : "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
-              {isGenerating ? `⏳ Даалгавар боловсруулж байна...` : `⚡ ${selectedSubject} хичээлийн даалгавар боловсруулах`}
-            </button>
-          </div>
-        </section>
-
-        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР (8:3) */}
-        <section style={{ backgroundColor: "#fffdf0", borderRadius: "16px", border: "1.5px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "580px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📝 Асуулт даалгавар (8:3)</h3>
-              <button type="button" onClick={() => setIsAnalyticsOpen(true)} style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>📊 Статистик ➔</button>
-            </div>
-
-            <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "14px", height: "420px", overflowY: "auto" }}>
-              {isGenerating ? (
-                <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#0284c7" }}>
-                  <div style={{ fontSize: "32px", marginBottom: "10px" }}>⚡</div>
-                  <p style={{ fontWeight: "bold" }}>Боловсруулж байна...</p>
-                </div>
-              ) : generatedTasks && generatedTasks.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {generatedTasks.map((t) => (
-                    <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "10px", padding: "12px", backgroundColor: "#f8fafc" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-                        <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7" }}>Даалгавар {t.num} ({t.form})</span>
-                        <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "4px" }}>{t.points} оноо</span>
-                      </div>
-                      <p style={{ fontSize: "13px", fontWeight: "bold", margin: "0 0 6px 0" }}>{t.question}</p>
-                      <p style={{ fontSize: "11.5px", color: "#059669", margin: "0 0 4px 0", backgroundColor: "#f0fdf4", padding: "4px 8px", borderRadius: "4px" }}>💡 Зөв хариулт: {t.correctAnswer}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", color: "#64748b" }}>
-                  <p style={{ fontWeight: "bold" }}>Даалгавар боловсруулаагүй байна.</p>
-                  <p style={{ fontSize: "12px" }}>"⚡ Даалгавар боловсруулах" товчийг дараарай.</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
-            <button type="button" onClick={handleSaveToTaskBank} style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
-              💾 Даалгаврыг баталж, санд илгээх
-            </button>
-          </div>
-        </section>
-
-      </div>
-
-      {/* ДААЛГАВРЫН САНГИЙН ЦОНХ (9Е АНГИД ИЛГЭЭХ ТОВЧТОЙ) */}
-      {isTaskBankOpen && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1200px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
-            
-            <div style={{ backgroundColor: "#fffdf0", padding: "16px 20px", borderBottom: "1.5px solid #fde68a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📂 Даалгаврын сан</h2>
-                <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: <strong>{taskBank.length}</strong> багц даалгавар</p>
-              </div>
-              <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
-            </div>
-
-            <div style={{ padding: "20px", overflowY: "auto", flex: 1, backgroundColor: "#f8fafc" }}>
-              {taskBank.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "60px 20px", color: "#64748b" }}>
-                  <div style={{ fontSize: "48px", marginBottom: "12px" }}>📭</div>
-                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#334155" }}>Даалгаврын санд дата одоогоор байхгүй байна.</h4>
-                </div>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                  {filteredTaskBank.map((item) => {
-                    const isExpanded = expandedTaskIds.includes(item.id);
-
-                    return (
-                      <div key={item.id} style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: isExpanded ? "2px solid #0284c7" : "1.5px solid #cbd5e1", overflow: "hidden" }}>
-                        <div onClick={() => toggleExpandTask(item.id)} style={{ padding: "14px 18px", backgroundColor: isExpanded ? "#f0f9ff" : "#ffffff", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold" }}>{item.subject}</span>
-                            <h4 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>{item.title}</h4>
-                          </div>
-
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {/* 🚀 9Е АНГИД ИЛГЭЭХ ТОВЧ */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenAssignModal(item);
-                              }}
-                              style={{
-                                backgroundColor: "#059669",
-                                color: "#ffffff",
-                                border: "none",
-                                padding: "6px 14px",
-                                borderRadius: "8px",
-                                fontSize: "12px",
-                                fontWeight: "bold",
-                                cursor: "pointer",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "4px"
-                              }}
-                            >
-                              🚀 9Е ангид илгээх
-                            </button>
-
-                            <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedSubject(item.subject); setTitle(item.title); setStoryText(item.storyText); setGeneratedTasks(item.tasks); setIsTaskBankOpen(false); }} style={{ backgroundColor: "#e0f2fe", color: "#0369a1", border: "1px solid #bae6fd", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📥 Үндсэн ажилд ачаалах</button>
-                            <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7" }}>{isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй"}</span>
-                          </div>
-                        </div>
-
-                        {isExpanded && (
-                          <div style={{ padding: "18px", borderTop: "1px solid #bae6fd", backgroundColor: "#f8fafc", display: "grid", gridTemplateColumns: "5fr 3fr", gap: "16px" }}>
-                            <div style={{ backgroundColor: "#fffdf0", padding: "16px", borderRadius: "12px", border: "1.5px solid #fde68a", fontSize: "14px", lineHeight: "1.8", whiteSpace: "pre-wrap", maxHeight: "500px", overflowY: "auto" }}>
-                              <h5 style={{ color: "#92400e", margin: "0 0 10px 0", fontSize: "15px", fontWeight: "bold" }}>📖 {item.title}</h5>
-                              {item.storyText}
-                            </div>
-                            <div style={{ backgroundColor: "#fffdf0", padding: "16px", borderRadius: "12px", border: "1.5px solid #fde68a", maxHeight: "500px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "12px" }}>
-                              <h5 style={{ fontSize: "14.5px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📝 Даалгаврууд ({item.tasks.length})</h5>
-                              {item.tasks.map((t: any) => (
-                                <div key={t.num} style={{ border: "1px solid #cbd5e1", padding: "10px", borderRadius: "8px", backgroundColor: "#ffffff" }}>
-                                  <p style={{ fontWeight: "bold", fontSize: "13px", margin: "0 0 4px 0" }}>{t.num}. {t.question}</p>
-                                  <p style={{ fontSize: "11.5px", color: "#059669", margin: 0 }}>💡 Зөв хариулт: {t.correctAnswer}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* 🚀 9Е ANGI-Д ИЛГЭЭХ ЦОНХ */}
-      {isAssignModalOpen && taskToAssign && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.75)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100, padding: "20px" }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "18px", width: "100%", maxWidth: "520px", padding: "24px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.3)" }}>
-            
-            <div style={{ borderBottom: "1.5px solid #e2e8f0", paddingBottom: "12px", marginBottom: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                <span>🚀</span> 9Е ангид даалгавар илгээх
-              </h3>
-              <button type="button" onClick={() => setIsAssignModalOpen(false)} style={{ border: "none", background: "none", fontSize: "16px", cursor: "pointer", color: "#64748b" }}>✕</button>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div style={{ backgroundColor: "#f0f9ff", padding: "10px 14px", borderRadius: "10px", border: "1px solid #bae6fd" }}>
-                <p style={{ fontSize: "12px", color: "#0369a1", margin: 0, fontWeight: "bold" }}>Сонгосон даалгавар:</p>
-                <p style={{ fontSize: "14px", color: "#0f172a", margin: "2px 0 0 0", fontWeight: "bold" }}>[{taskToAssign.subject}] {taskToAssign.title}</p>
-              </div>
-
-              {/* Хүлээн авах анги (Зөвхөн 9Е) */}
-              <div>
-                <label style={{ fontSize: "12.5px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "6px" }}>Хүлээн авах анги:</label>
-                <div style={{ display: "flex", gap: "6px" }}>
-                  <button
-                    type="button"
-                    style={{
-                      padding: "8px 20px",
-                      borderRadius: "8px",
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                      border: "none",
-                      backgroundColor: "#059669",
-                      color: "#ffffff"
-                    }}
-                  >
-                    🏫 9Е анги
-                  </button>
-                </div>
-              </div>
-
-              {/* Дуусах хугацаа */}
-              <div>
-                <label style={{ fontSize: "12.5px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Дуусах хугацаа (Deadline):</label>
-                <input
-                  type="datetime-local"
-                  value={deadline}
-                  onChange={(e) => setDeadline(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1.5px solid #cbd5e1", fontSize: "13px", boxSizing: "border-box" }}
-                />
-              </div>
-
-              {/* Даалгаврын код */}
-              <div>
-                <label style={{ fontSize: "12.5px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Даалгаврын код (9Е ангийн сурагчдад өгөх):</label>
-                <input
-                  type="text"
-                  value={assignmentCode}
-                  onChange={(e) => setAssignmentCode(e.target.value)}
-                  placeholder="Жишээ: 9E-LIT-101"
-                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1.5px solid #cbd5e1", fontSize: "13px", fontWeight: "bold", color: "#0284c7", boxSizing: "border-box" }}
-                />
-              </div>
-
-              {/* Зааварчилгаа */}
-              <div>
-                <label style={{ fontSize: "12.5px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>9Е ангийн сурагчдад зориулсан санамж:</label>
-                <textarea
-                  value={teacherNote}
-                  onChange={(e) => setTeacherNote(e.target.value)}
-                  rows={2}
-                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1.5px solid #cbd5e1", fontSize: "12.5px", fontFamily: "inherit", boxSizing: "border-box" }}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-              <button
-                type="button"
-                onClick={handleConfirmAssign}
-                style={{ flex: 1, backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "13.5px", cursor: "pointer" }}
-              >
-                🚀 9Е ангид баталж илгээх
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsAssignModalOpen(false)}
-                style={{ backgroundColor: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", padding: "12px 18px", borderRadius: "10px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}
-              >
-                Цуцлах
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* ИЛГЭЭСНИЙ ДАРААХ MODAL */}
-      {assignSuccessModal && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1200 }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #10b981" }}>
-            <div style={{ fontSize: "42px", marginBottom: "10px" }}>📨</div>
-            <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>
-              9Е ангид амжилттай илгээгдлээ!
-            </h3>
-            <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>
-              9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор эсвэл Сурагчийн танхим руу шууд орж даалгавраа ажиллах боломжтой.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setAssignSuccessModal(false);
-                setIsTaskBankOpen(false);
-              }}
-              style={{ width: "100%", backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}
-            >
-              Ойлголоо
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* БАТАЛГААЖУУЛАХ MODAL */}
-      {saveSuccessModal && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "440px", width: "90%", textAlign: "center", border: "2px solid #10b981" }}>
-            <div style={{ fontSize: "42px", marginBottom: "10px" }}>🎉</div>
-            <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>Амжилттай баталгаажлаа!</h3>
-            <p style={{ fontSize: "13.5px", color: "#334155", margin: "0 0 20px 0" }}>"{selectedSubject}" хичээлийн 6 даалгавар (12 оноо) санд хадгалагдлаа.</p>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button type="button" onClick={() => { setSaveSuccessModal(false); setIsTaskBankOpen(true); }} style={{ flex: 1, backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>📂 Даалгаврын сан руу очих</button>
-              <button type="button" onClick={() => setSaveSuccessModal(false)} style={{ flex: 1, backgroundColor: "#f1f5f9", color: "#334155", border: "1px solid #cbd5e1", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Хаах</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ХЯНАЛТ ШИНЖИЛГЭЭНИЙ ЦОНХ */}
-      {isAnalyticsOpen && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "800px", padding: "24px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "12px", marginBottom: "16px" }}>
-              <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📊 9Е ангийн статистик хяналт</h3>
-              <button type="button" onClick={() => setIsAnalyticsOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-              <div style={{ backgroundColor: "#e0f2fe", padding: "14px", borderRadius: "10px", textAlign: "center" }}>
-                <p style={{ fontSize: "12px", color: "#0369a1", fontWeight: "bold", margin: 0 }}>Даалгаврын сан</p>
-                <h2 style={{ fontSize: "28px", fontWeight: "900", color: "#0284c7", margin: "4px 0 0 0" }}>{taskBank.length} / 30</h2>
-              </div>
-              <div style={{ backgroundColor: "#dcfce7", padding: "14px", borderRadius: "10px", textAlign: "center" }}>
-                <p style={{ fontSize: "12px", color: "#15803d", fontWeight: "bold", margin: 0 }}>Блюпринт биелэлт</p>
-                <h2 style={{ fontSize: "28px", fontWeight: "900", color: "#16a34a", margin: "4px 0 0 0" }}>100%</h2>
-              </div>
-              <div style={{ backgroundColor: "#fef3c7", padding: "14px", borderRadius: "10px", textAlign: "center" }}>
-                <p style={{ fontSize: "12px", color: "#a16207", fontWeight: "bold", margin: 0 }}>Хамрагдах анги</p>
-                <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#d97706", margin: "4px 0 0 0" }}>9Е анги</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-    </main>
-  );
-}
+              <label style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", display

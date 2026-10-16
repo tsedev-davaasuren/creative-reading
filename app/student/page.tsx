@@ -11,19 +11,13 @@ export default function StudentPage() {
   const [gradingResult, setGradingResult] = useState<any | null>(null);
   const [assignedList, setAssignedList] = useState<any[]>([]);
 
-  // LocalStorage-оос багшаас илгээсэн даалгавруудыг ачаалах
   useEffect(() => {
     const saved = localStorage.getItem("creative_reading_assigned_tasks");
     if (saved) {
-      try {
-        setAssignedList(JSON.parse(saved));
-      } catch (e) {
-        console.error(e);
-      }
+      try { setAssignedList(JSON.parse(saved)); } catch (e) { console.error(e); }
     }
   }, []);
 
-  // Кодоор даалгавар хайж олох
   const handleLoadAssignment = (codeToFind?: string) => {
     const code = codeToFind || assignmentCode.trim();
     if (!code) return alert("Даалгаврын кодоо оруулна уу!");
@@ -42,12 +36,10 @@ export default function StudentPage() {
     }
   };
 
-  // Сурагчийн хариулт өөрчлөгдөхөд
   const handleAnswerChange = (taskNum: number, val: string) => {
     setAnswers((prev) => ({ ...prev, [taskNum]: val }));
   };
 
-  // Даалгавар илгээж, AI автомат үнэлгээ хийх
   const handleSubmitAnswers = () => {
     if (!studentName.trim()) {
       return alert("Овог нэрээ заавал оруулна уу!");
@@ -64,22 +56,21 @@ export default function StudentPage() {
       let earnedPoints = 0;
       let feedback = "";
 
-      if (t.form === "Сонгох тест") {
-        if (studentAns && studentAns.startsWith(t.correctAnswer.slice(0, 2))) {
-          earnedPoints = t.points;
+      if (t.num === 1 || t.form === "Сонгох тест") {
+        if (studentAns && studentAns.slice(0, 1) === t.correctAnswer.slice(0, 1)) {
+          earnedPoints = 1;
           feedback = "Зөв хариулсан байна. Мэдээллийг оновчтой олж тодорхойллоо.";
         } else {
           earnedPoints = 0;
           feedback = `Буруу хариулт. Зөв хариулт нь: ${t.correctAnswer}`;
         }
       } else {
-        // Задгай даалгаврын үнэлгээний хөнгөн логик
-        if (studentAns.length >= 10) {
+        if (studentAns.length >= 8) {
           earnedPoints = t.points;
           feedback = "Даалгаврын шаардлагад тохируулан оновчтой, бүтэн бичсэн байна.";
         } else if (studentAns.length > 0) {
-          earnedPoints = Math.ceil(t.points / 2);
-          feedback = "Хариулт агуулгын хувьд тохирч байгаа ч тайлбар арай дутуу байна.";
+          earnedPoints = Math.max(1, Math.floor(t.points / 2));
+          feedback = "Хариулт бичсэн ч тайлбар арай дутуу байна.";
         } else {
           earnedPoints = 0;
           feedback = "Хариулт бичээгүй байна.";
@@ -123,7 +114,6 @@ export default function StudentPage() {
 
       <div style={{ maxWidth: "1280px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
         
-        {/* КОДООРОО ДААЛГАВАР ОЛОХ ХЭСЭГ */}
         {!activeAssignment && (
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "32px", border: "1.5px solid #cbd5e1", maxWidth: "600px", margin: "20px auto", width: "100%", boxSizing: "border-box" }}>
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: "0 0 12px 0", textAlign: "center" }}>🔑 Даалгаврын кодоо оруулна уу</h3>
@@ -169,11 +159,9 @@ export default function StudentPage() {
           </div>
         )}
 
-        {/* ИДЭВХТЭЙ ДААЛГАВАР АЖИЛЛАХ ТАЛБАР */}
         {activeAssignment && (
           <div style={{ display: "grid", gridTemplateColumns: "5fr 3fr", gap: "20px" }}>
             
-            {/* ЭХ БИЧВЭР (ЗҮҮН) */}
             <div style={{ backgroundColor: "#fffdf0", border: "1.5px solid #fde68a", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "10px" }}>
                 <span style={{ backgroundColor: "#0284c7", color: "#fff", padding: "4px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}>{activeAssignment.taskData.subject}</span>
@@ -193,7 +181,6 @@ export default function StudentPage() {
               </div>
             </div>
 
-            {/* АСУУЛТУУД ВА ХАРИУЛАХ ТАЛБАР (БАРУУН) */}
             <div style={{ backgroundColor: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxHeight: "600px", overflowY: "auto", paddingRight: "6px" }}>
                 
@@ -209,7 +196,6 @@ export default function StudentPage() {
                   />
                 </div>
 
-                {/* 6 ДААЛГАВАР */}
                 {activeAssignment.taskData.tasks.map((t: any) => (
                   <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "12px", padding: "14px", backgroundColor: "#f8fafc" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
@@ -219,11 +205,11 @@ export default function StudentPage() {
 
                     <p style={{ fontSize: "13px", fontWeight: "bold", color: "#0f172a", margin: "0 0 10px 0" }}>{t.question}</p>
 
-                    {/* Сонгох тест үү эсвэл Задгай юу */}
-                    {t.form === "Сонгох тест" ? (
-                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    {/* 1-р даалгавар Сонгох тест бол радио товчлуурууд гарч ирнэ */}
+                    {(t.num === 1 || t.form === "Сонгох тест") && t.options ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                         {t.options.map((opt: string) => (
-                          <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12.5px", cursor: "pointer", backgroundColor: "#fff", padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}>
+                          <label key={opt} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "13px", cursor: "pointer", backgroundColor: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: answers[t.num] === opt ? "2px solid #0284c7" : "1px solid #cbd5e1" }}>
                             <input
                               type="radio"
                               name={`task_${t.num}`}
@@ -270,7 +256,6 @@ export default function StudentPage() {
           </div>
         )}
 
-        {/* AI ҮНЭЛГЭЭНИЙ ДЭЛГЭРЭНГҮЙ ДҮҮРЭН ЦОНХ */}
         {gradingResult && (
           <div style={{ backgroundColor: "#ffffff", border: "2px solid #10b981", borderRadius: "16px", padding: "24px", marginTop: "20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #e2e8f0", paddingBottom: "12px", marginBottom: "16px" }}>

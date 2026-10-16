@@ -50,7 +50,6 @@ export default function HomePage() {
       setTitle(subjectDefaults[sub].title);
       setStoryText(subjectDefaults[sub].story);
     }
-    // Одоогийн боловсруулсан даалгаврыг цэвэрлэж, шинэ хичээлийн даалгавар үүсгэхэд бэлэн болгох
     setGeneratedTasks(null);
   };
 
@@ -101,7 +100,7 @@ export default function HomePage() {
     }, 600);
   };
 
-  // Сонгосон хичээл ба эх бичвэрт ЖИНХЭНЭЭСЭЭ ТӨХӨӨРЧ БОЛОВСРУУЛАХ функц
+  // Сонгосон хичээл ба эх бичвэрт боловсруулах функц
   const handleGenerateTasks = () => {
     if (!storyText.trim()) {
       alert("Эх бичвэрээ оруулна уу!");
@@ -1055,7 +1054,7 @@ export default function HomePage() {
               ) : generatedTasks && generatedTasks.length > 0 ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                   
-                  {/* Хичээлийн нэр & Толгой мэдээлэл (Шинэ даалгавар нэмэх товчлуур БҮРЭН ХАСАГДСАН) */}
+                  {/* Хичээлийн нэр & Толгой мэдээлэл */}
                   <div style={{ backgroundColor: "#fef3c7", padding: "10px 14px", borderRadius: "8px" }}>
                     <span style={{ fontSize: "13px", fontWeight: "bold", color: "#92400e" }}>
                       ✅ {selectedSubject}: {generatedTasks.length} даалгавар (Нийт {generatedTasks.reduce((a, b) => a + (b.points || 0), 0)} оноо)
@@ -1208,4 +1207,57 @@ export default function HomePage() {
                               value={t.rubric}
                               onChange={(e) => handleTaskFieldChange(idx, "rubric", e.target.value)}
                               rows={2}
-                              style={{ width: "100%", padding: "6px 8px", fontSize: "12px", borderRadius: "6px", border
+                              style={{ width: "100%", padding: "6px 8px", fontSize: "12px", borderRadius: "6px", border: "1px solid #f59e0b", outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
+                            />
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: "11px", color: "#7c2d12", margin: 0, backgroundColor: "#fff7ed", padding: "6px 8px", borderRadius: "6px", border: "1px solid #fed7aa" }}>
+                            📊 <strong>Рубрик:</strong> {t.rubric}
+                          </p>
+                        )}
+
+                      </div>
+                    );
+                  })}
+
+                </div>
+              ) : (
+                <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+                  <div style={{ width: "48px", height: "48px", borderRadius: "50%", backgroundColor: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", marginBottom: "10px" }}>
+                    📝
+                  </div>
+                  <p style={{ fontSize: "14px", fontWeight: "bold", color: "#334155", margin: "0 0 6px 0" }}>
+                    {selectedSubject}: Блюпринт 6 Даалгавар (12 Оноо)
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#64748b", maxWidth: "250px", margin: 0, lineHeight: "1.5" }}>
+                    Зүүн талд хичээлээ сонгон, эх бичвэрээ шалгаад "⚡ Даалгавар боловсруулах" товчийг дараарай.
+                  </p>
+                </div>
+              )}
+
+            </div>
+          </div>
+
+          <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
+            <button 
+              type="button" 
+              onClick={() => {
+                if (!generatedTasks || generatedTasks.length === 0) {
+                  alert("Эхлээд даалгавар боловсруулна уу!");
+                } else {
+                  alert(`${selectedSubject} хичээлийн зассан даалгаврууд санд амжилттай хадгалагдлаа!`);
+                }
+              }}
+              style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}
+            >
+              💾 Даалгаврыг баталж, санд илгээх
+            </button>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+  );
+}

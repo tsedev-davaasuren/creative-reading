@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 
-// Цэндао багшийн зургийн 100% цэвэрхэн Base64 бичвэр (Синтаксийн алдаагүй)
-const TSENDAO_BAGSH_IMAGE = "data:image/jpeg;base64,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 <span style={{display: 'none'}}>--</span>";
-
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
+  const [imgError, setImgError] = useState(false);
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
@@ -49,9 +47,6 @@ export default function HomePage() {
             <img 
               src="/project-logo.jpg" 
               alt="Бүтээлч уншлага лого" 
-              onError={(e) => {
-                e.currentTarget.src = "/logo-project.jpg";
-              }}
               style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
             />
           </div>
@@ -114,7 +109,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ЦЭНДАО БАГШИЙН ДЭЭЛТЭЙ ЗУРАГ (BASE64) */}
+        {/* ШИНЭЭР ЦЭВЭРХЭН ХИЙСЭН МЕНТОР ХЭСЭГ */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <p style={{ fontSize: "12px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Таны Ментор</p>
@@ -125,27 +120,28 @@ export default function HomePage() {
           </div>
           
           <div style={{
-            width: "80px",
-            height: "80px",
-            minWidth: "80px",
+            width: "76px",
+            height: "76px",
+            minWidth: "76px",
             borderRadius: "50%",
             border: "3px solid #f59e0b",
             overflow: "hidden",
             backgroundColor: "#fef3c7",
             boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
-            position: "relative"
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}>
-            <img 
-              src={TSENDAO_BAGSH_IMAGE} 
-              alt="" 
-              style={{ 
-                width: "100%", 
-                height: "100%", 
-                objectFit: "cover", 
-                objectPosition: "center",
-                display: "block" 
-              }}
-            />
+            {!imgError ? (
+              <img 
+                src="/tsendao.jpg" 
+                alt="Цэндао багш"
+                onError={() => setImgError(true)}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            ) : (
+              <span style={{ fontSize: "36px" }}>👨‍🏫</span>
+            )}
           </div>
         </div>
 

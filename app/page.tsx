@@ -11,9 +11,18 @@ export default function HomePage() {
   const [bankFilterSubject, setBankFilterSubject] = useState("Бүх хичээл");
   const [imgError, setImgError] = useState(false);
 
-  // Даалгаврын санд хадгалагдсан даалгавруудын төлөв
+  // Даалгаврын санд хадгалагдсан даалгаврууд
   const [taskBank, setTaskBank] = useState<any[]>([]);
   const [saveSuccessModal, setSaveSuccessModal] = useState<boolean>(false);
+
+  // Даалгаврын санд дэлгэгдсэн картны ID-ууд (Accordion төлөв)
+  const [expandedTaskIds, setExpandedTaskIds] = useState<number[]>([]);
+
+  const toggleExpandTask = (id: number) => {
+    setExpandedTaskIds((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+    );
+  };
 
   // Хичээл тус бүрийн жишээ эх бичвэрүүд
   const subjectDefaults: { [key: string]: { title: string; story: string } } = {
@@ -642,6 +651,12 @@ export default function HomePage() {
     newOpts[optIndex] = value;
     updated[taskIndex].options = newOpts;
     setGeneratedTasks(updated);
+  };
+
+  // Хичээл тус бүрд байгаа даалгаврын тоог авах функц
+  const getSubjectTaskCount = (subName: string) => {
+    if (subName === "Бүх хичээл") return taskBank.length;
+    return taskBank.filter((t) => t.subject === subName).length;
   };
 
   const filteredTaskBank = bankFilterSubject === "Бүх хичээл" 
@@ -1355,7 +1370,7 @@ export default function HomePage() {
       )}
 
       {/* ========================================================= */}
-      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (TASK BANK MODAL) */}
+      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (ACCORDION & COUNTER) */}
       {/* ========================================================= */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
@@ -1367,7 +1382,9 @@ export default function HomePage() {
                 <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                   📂 Даалгаврын сан (Батлагдсан тестүүд)
                 </h2>
-                <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: {taskBank.length} эх бичвэрийн багц даалгавар</p>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>
+                  Нийт хадгалагдсан: <strong>{taskBank.length}</strong> эх бичвэрийн багц даалгавар
+                </p>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -1388,30 +1405,49 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Хичээлээр шүүх цэс */}
+            {/* Хичээлээр шүүх цэс + Тоолуур */}
             <div style={{ backgroundColor: "#f8fafc", padding: "10px 20px", borderBottom: "1px solid #e2e8f0", display: "flex", gap: "8px", overflowX: "auto" }}>
-              {["Бүх хичээл", ...subjects].map((sub) => (
-                <button
-                  key={sub}
-                  type="button"
-                  onClick={() => setBankFilterSubject(sub)}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: "16px",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    border: "none",
-                    cursor: "pointer",
-                    backgroundColor: bankFilterSubject === sub ? "#0284c7" : "#e2e8f0",
-                    color: bankFilterSubject === sub ? "#ffffff" : "#475569"
-                  }}
-                >
-                  {sub}
-                </button>
-              ))}
+              {["Бүх хичээл", ...subjects].map((sub) => {
+                const count = getSubjectTaskCount(sub);
+                const isSelected = bankFilterSubject === sub;
+
+                return (
+                  <button
+                    key={sub}
+                    type="button"
+                    onClick={() => setBankFilterSubject(sub)}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: "18px",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      border: "none",
+                      cursor: "pointer",
+                      backgroundColor: isSelected ? "#0284c7" : "#e2e8f0",
+                      color: isSelected ? "#ffffff" : "#475569",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    <span>{sub}</span>
+                    <span style={{ 
+                      backgroundColor: isSelected ? "rgba(255,255,255,0.3)" : "#cbd5e1", 
+                      color: isSelected ? "#ffffff" : "#0f172a", 
+                      fontSize: "11px", 
+                      padding: "1px 7px", 
+                      borderRadius: "10px", 
+                      fontWeight: "800" 
+                    }}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Контент хэсэг */}
+            {/* Контент хэсэг (Хураагдсан байдлаар) */}
             <div style={{ padding: "20px", overflowY: "auto", flex: 1, backgroundColor: "#f8fafc" }}>
               {filteredTaskBank.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "60px 20px", color: "#64748b" }}>
@@ -1424,57 +1460,106 @@ export default function HomePage() {
                   </p>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                  {filteredTaskBank.map((item) => (
-                    <div key={item.id} style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1.5px solid #cbd5e1", padding: "18px", boxShadow: "0 2px 4px rgba(0,0,0,0.04)" }}>
-                      
-                      {/* Картны толгой */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "10px", marginBottom: "12px" }}>
-                        <div>
-                          <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold", marginRight: "8px" }}>
-                            {item.subject}
-                          </span>
-                          <span style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a" }}>
-                            {item.title}
-                          </span>
-                        </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {filteredTaskBank.map((item) => {
+                    const isExpanded = expandedTaskIds.includes(item.id);
 
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <span style={{ fontSize: "12px", color: "#64748b" }}>🗓️ {item.createdDate}</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm("Энэ даалгаврыг сангаас устгахдаа итгэлтэй байна уу?")) {
-                                setTaskBank((prev) => prev.filter((i) => i.id !== item.id));
-                              }
-                            }}
-                            style={{ backgroundColor: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "4px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
-                          >
-                            🗑️ Устгах
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Эх бичвэр */}
-                      <div style={{ backgroundColor: "#fffdf0", padding: "10px 14px", borderRadius: "8px", border: "1px solid #fde68a", fontSize: "13px", color: "#334155", lineHeight: "1.5", marginBottom: "14px", maxHeight: "100px", overflowY: "auto" }}>
-                        <strong>Эх бичвэр:</strong> {item.storyText}
-                      </div>
-
-                      {/* 6 Даалгавар */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                        {item.tasks.map((t: any) => (
-                          <div key={t.num} style={{ border: "1px solid #e2e8f0", padding: "10px", borderRadius: "8px", backgroundColor: "#f8fafc", fontSize: "12px" }}>
-                            <p style={{ fontWeight: "bold", color: "#0369a1", margin: "0 0 4px 0" }}>
-                              {t.num}. [{t.form}] {t.question} ({t.points} оноо)
-                            </p>
-                            <p style={{ color: "#059669", margin: "0 0 4px 0" }}>💡 Зөв хариулт: {t.correctAnswer}</p>
-                            <p style={{ color: "#b45309", margin: 0, fontSize: "11px" }}>📊 Рубрик: {t.rubric}</p>
+                    return (
+                      <div 
+                        key={item.id} 
+                        style={{ 
+                          backgroundColor: "#ffffff", 
+                          borderRadius: "12px", 
+                          border: isExpanded ? "2px solid #0284c7" : "1.5px solid #cbd5e1", 
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.03)",
+                          overflow: "hidden",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        {/* ХУРААГДСАН КАРТНЫ ТОЛГОЙ (Товшиход Дэлгэгдэнэ) */}
+                        <div 
+                          onClick={() => toggleExpandTask(item.id)}
+                          style={{ 
+                            padding: "14px 18px", 
+                            backgroundColor: isExpanded ? "#f0f9ff" : "#ffffff", 
+                            cursor: "pointer", 
+                            display: "flex", 
+                            justifyContent: "space-between", 
+                            alignItems: "center",
+                            userSelect: "none"
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                            <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold" }}>
+                              {item.subject}
+                            </span>
+                            <h4 style={{ fontSize: "14.5px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+                              {item.title}
+                            </h4>
+                            <span style={{ fontSize: "11.5px", color: "#0369a1", backgroundColor: "#e0f2fe", padding: "2px 8px", borderRadius: "6px", fontWeight: "600" }}>
+                              6 даалгавар / {item.totalPoints || 12} оноо
+                            </span>
                           </div>
-                        ))}
-                      </div>
 
-                    </div>
-                  ))}
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <span style={{ fontSize: "12px", color: "#64748b" }}>🗓️ {item.createdDate}</span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm("Энэ даалгаврыг сангаас устгахдаа итгэлтэй байна уу?")) {
+                                  setTaskBank((prev) => prev.filter((i) => i.id !== item.id));
+                                }
+                              }}
+                              style={{ backgroundColor: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "4px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                            >
+                              🗑️ Устгах
+                            </button>
+                            <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7", backgroundColor: "#ffffff", border: "1px solid #bae6fd", padding: "4px 10px", borderRadius: "6px" }}>
+                              {isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй харах"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* ДЭЛГЭГДЭХ ДААЛГАВРЫН АГУУЛГА */}
+                        {isExpanded && (
+                          <div style={{ padding: "16px 18px", borderTop: "1px solid #bae6fd", backgroundColor: "#ffffff" }}>
+                            {/* Эх бичвэр */}
+                            <div style={{ backgroundColor: "#fffdf0", padding: "12px 14px", borderRadius: "8px", border: "1px solid #fde68a", fontSize: "13px", color: "#334155", lineHeight: "1.6", marginBottom: "14px" }}>
+                              <strong style={{ color: "#92400e" }}>📖 Эх бичвэр:</strong> {item.storyText}
+                            </div>
+
+                            {/* 6 Даалгавар */}
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                              {item.tasks.map((t: any) => (
+                                <div key={t.num} style={{ border: "1px solid #e2e8f0", padding: "12px", borderRadius: "8px", backgroundColor: "#f8fafc", fontSize: "12.5px" }}>
+                                  <p style={{ fontWeight: "bold", color: "#0369a1", margin: "0 0 6px 0", lineHeight: "1.4" }}>
+                                    {t.num}. [{t.form}] {t.question} ({t.points} оноо)
+                                  </p>
+
+                                  {t.options && (
+                                    <ul style={{ margin: "0 0 6px 0", paddingLeft: "18px", color: "#475569" }}>
+                                      {t.options.map((opt: string, i: number) => (
+                                        <li key={i}>{opt}</li>
+                                      ))}
+                                    </ul>
+                                  )}
+
+                                  <p style={{ color: "#059669", margin: "0 0 4px 0", fontWeight: "bold" }}>
+                                    💡 Зөв хариулт: <span style={{ fontWeight: "normal" }}>{t.correctAnswer}</span>
+                                  </p>
+                                  <p style={{ color: "#b45309", margin: 0, fontSize: "11.5px" }}>
+                                    📊 Рубрик: {t.rubric}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

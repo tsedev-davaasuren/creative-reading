@@ -26,9 +26,10 @@ export default function HomePage() {
   const [teacherNote, setTeacherNote] = useState("");
   const [assignSuccessModal, setAssignSuccessModal] = useState(false);
 
-  // ✏️ ДААЛГАВАР ЗАСАХ STATE-ҮҮД
+  // ✏️ ДААЛГАВАР ЗАСАХ STATE-ҮҮД (ЗУРАГ-2 ЗАГВАР)
   const [editingTaskNum, setEditingTaskNum] = useState<number | null>(null);
   const [editQuestionText, setEditQuestionText] = useState("");
+  const [editOptions, setEditOptions] = useState<string[]>(["", "", "", ""]);
   const [editCorrectAnswerText, setEditCorrectAnswerText] = useState("");
 
   const subjectDefaults: { [key: string]: { title: string; story: string } } = {
@@ -166,23 +167,23 @@ export default function HomePage() {
       {
         num: 1,
         form: "Сонгох тест",
-        level: "Мэдээлэл олох сэргээн санах",
+        level: "Мэдээлэл олох, сэргээн санах",
         taskAction: "ABCD сонголтоос нэг хариулт сонгох",
         points: 1,
         question: `"${cleanTitle}" эх бичвэрийн агуулгатай тохирч буй гол баримтыг сонгоно уу.`,
         options: [
-          `A. ${s1.slice(0, 50)}...`,
+          `A. ${s1.slice(0, 45)}...`,
           `B. Эх бичвэрт дурдагдаагүй өөр сэдэв агуулсан.`,
           `C. Эх бичвэрийн утга санаа эсрэгээрээ илэрхийлэгдсэн.`,
           `D. Дээрх хариултууд бүгд буруу байна.`
         ],
-        correctAnswer: `A. ${s1.slice(0, 50)}...`,
+        correctAnswer: `A. ${s1.slice(0, 45)}...`,
         rubric: "Зөв сонгосон бол 1 оноо, буруу сонгосон бол 0 оноо"
       },
       {
         num: 2,
         form: "Задгай даалгавар",
-        level: "Мэдээлэл олох сэргээн санах",
+        level: "Мэдээлэл олох, сэргээн санах",
         taskAction: "Нэг өгүүлбэр олж бичих",
         points: 1,
         question: `Эх бичвэрээс тухайн сэдвийн гол утга санааг агуулсан НЭГ өгүүлбэрийг олж бичээрэй.`,
@@ -226,7 +227,7 @@ export default function HomePage() {
         taskAction: "2-3 өгүүлбэр бичих",
         points: 3,
         question: `"${cleanTitle}" эхийн сэдэвтэй холбон, амьдралын практик туршлага ба нийгмийн ач холбогдлыг өөрийн бодлоор шинэ санаа гарган 2-3 өгүүлбэрээр эргэцүүлэн дүгнээрэй.`,
-        correctAnswer: `Тухайн сэдвийн ач холбогдол нь нийгэм болон хувь хүний төлөвшилд эерэгээр нөлөөлдөг.`,
+        correctAnswer: `Тухайн сэдвийн ач холбогдол нь нийгэм болон хүний төлөвшилд эерэгээр нөлөөлдөг.`,
         rubric: "2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо"
       }
     ];
@@ -241,14 +242,19 @@ export default function HomePage() {
     }, 1000);
   };
 
-  // ✏️ ДААЛГАВАР ЗАСАЖ ЭХЛЭХ
+  // ✏️ ЗУРАГ-2 ЗАГВАРААР ДААЛГАВАР ЗАСАЖ ЭХЛЭХ
   const handleStartEditTask = (task: any) => {
     setEditingTaskNum(task.num);
     setEditQuestionText(task.question);
+    if (task.options && task.options.length >= 4) {
+      setEditOptions([...task.options]);
+    } else {
+      setEditOptions(["A. ", "B. ", "C. ", "D. "]);
+    }
     setEditCorrectAnswerText(task.correctAnswer);
   };
 
-  // ✏️ ДААЛГАВАР ЗАСАЖ ХАДГАЛАХ
+  // ✏️ ЗУРАГ-2 ЗАГВАРААР ДААЛГАВАР ЗАСАЖ ХАДГАЛАХ
   const handleSaveEditTask = (taskNum: number) => {
     if (!generatedTasks) return;
     const updated = generatedTasks.map((t) => {
@@ -256,6 +262,7 @@ export default function HomePage() {
         return {
           ...t,
           question: editQuestionText,
+          options: t.num === 1 || t.form === "Сонгох тест" ? editOptions : t.options,
           correctAnswer: editCorrectAnswerText
         };
       }
@@ -488,7 +495,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* АСУУЛТ ДААЛГАВАР (✏️ ЗАСАХ БОЛОМЖТОЙ) */}
+        {/* АСУУЛТ ДААЛГАВАР (ЗУРАГ-2 ЗАГВАРААР ЗАСАХ БОЛОМЖТОЙ) */}
         <section style={{ backgroundColor: "#fffdf0", borderRadius: "16px", border: "1.5px solid #fde68a", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "580px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
@@ -506,19 +513,27 @@ export default function HomePage() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {generatedTasks.map((t) => {
                     const isEditing = editingTaskNum === t.num;
+                    const isMultipleChoice = t.num === 1 || t.form === "Сонгох тест";
+
                     return (
-                      <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "10px", padding: "12px", backgroundColor: "#f8fafc" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                          <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7" }}>Даалгавар {t.num} ({t.form})</span>
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "4px" }}>{t.points} оноо</span>
-                            
-                            {/* ✏️ ЗАСАХ ТОВЧ */}
+                      <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "12px", padding: "14px", backgroundColor: "#f8fafc" }}>
+                        
+                        {/* ТӨЛӨВИЙН МӨР (ЗУРАГ-2 ЗАГВАР) */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", borderBottom: "1px dashed #cbd5e1", paddingBottom: "6px" }}>
+                          <div>
+                            <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7" }}>Даалгавар {t.num} ({t.form})</span>
+                            <span style={{ fontSize: "11px", color: "#64748b", marginLeft: "6px", backgroundColor: "#f1f5f9", padding: "2px 6px", borderRadius: "4px" }}>{t.level}</span>
+                          </div>
+
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "6px" }}>{t.points} оноо</span>
+
+                            {/* ✏️ ЗАСАХ / 💾 ХАДГАЛАХ ТОВЧ (ЗУРАГ-2 ЗАГВАР) */}
                             {!isEditing ? (
                               <button
                                 type="button"
                                 onClick={() => handleStartEditTask(t)}
-                                style={{ backgroundColor: "#fbbf24", color: "#78350f", border: "none", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                                style={{ backgroundColor: "#fbbf24", color: "#78350f", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
                               >
                                 ✏️ Засах
                               </button>
@@ -526,7 +541,7 @@ export default function HomePage() {
                               <button
                                 type="button"
                                 onClick={() => handleSaveEditTask(t.num)}
-                                style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                                style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "5px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                               >
                                 💾 Хадгалах
                               </button>
@@ -534,49 +549,80 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        {/* АСУУЛТ БА ЗӨВ ХАРИУЛТЫГ ЗАСАХ РЕДАКТОР */}
+                        {/* ЗУРАГ-2: ЗАСАХ ГОРИМ */}
                         {isEditing ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "8px", margin: "8px 0" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "10px 0" }}>
                             <div>
-                              <label style={{ fontSize: "11px", fontWeight: "bold", color: "#475569" }}>Асуулт засах:</label>
+                              <label style={{ fontSize: "12px", fontWeight: "bold", color: "#0f172a", display: "block", marginBottom: "4px" }}>Асуулт засах:</label>
                               <textarea
                                 value={editQuestionText}
                                 onChange={(e) => setEditQuestionText(e.target.value)}
                                 rows={2}
-                                style={{ width: "100%", padding: "6px", fontSize: "12px", borderRadius: "6px", border: "1px solid #0284c7", boxSizing: "border-box" }}
+                                style={{ width: "100%", padding: "8px", fontSize: "13px", fontWeight: "bold", borderRadius: "8px", border: "1.5px solid #38bdf8", boxSizing: "border-box", fontFamily: "inherit" }}
                               />
                             </div>
-                            <div>
-                              <label style={{ fontSize: "11px", fontWeight: "bold", color: "#475569" }}>Зөв хариулт засах:</label>
-                              <input
-                                type="text"
-                                value={editCorrectAnswerText}
-                                onChange={(e) => setEditCorrectAnswerText(e.target.value)}
-                                style={{ width: "100%", padding: "6px", fontSize: "12px", borderRadius: "6px", border: "1px solid #059669", boxSizing: "border-box" }}
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <p style={{ fontSize: "13px", fontWeight: "bold", margin: "0 0 6px 0" }}>{t.question}</p>
 
-                            {t.options && t.options.length > 0 && (
-                              <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "8px", backgroundColor: "#fff", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1" }}>
-                                {t.options.map((opt: string) => (
-                                  <div key={opt} style={{ fontSize: "12px", color: "#334155", fontWeight: "500" }}>{opt}</div>
+                            {/* ЗУРАГ-2: ABCD СОНГОЛТУУДЫГ ТУС БҮРД НЬ РАДИО ТОВЧТОЙ ЗАХИРАХ */}
+                            {isMultipleChoice && (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                                <label style={{ fontSize: "11.5px", fontWeight: "bold", color: "#475569" }}>ABCD Сонголтууд засах:</label>
+                                {editOptions.map((opt, idx) => (
+                                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <input type="radio" disabled checked={editCorrectAnswerText.startsWith(opt.slice(0, 2))} />
+                                    <input
+                                      type="text"
+                                      value={opt}
+                                      onChange={(e) => {
+                                        const newOpts = [...editOptions];
+                                        newOpts[idx] = e.target.value;
+                                        setEditOptions(newOpts);
+                                      }}
+                                      style={{ flex: 1, padding: "6px 10px", fontSize: "12px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                    />
+                                  </div>
                                 ))}
                               </div>
                             )}
 
-                            <p style={{ fontSize: "11.5px", color: "#059669", margin: "0 0 4px 0", backgroundColor: "#f0fdf4", padding: "4px 8px", borderRadius: "4px" }}>💡 Зөв хариулт: {t.correctAnswer}</p>
+                            <div>
+                              <label style={{ fontSize: "12px", fontWeight: "bold", color: "#059669", display: "block", marginBottom: "4px" }}>Зөв хариулт / Загвар засах:</label>
+                              <textarea
+                                value={editCorrectAnswerText}
+                                onChange={(e) => setEditCorrectAnswerText(e.target.value)}
+                                rows={2}
+                                style={{ width: "100%", padding: "8px", fontSize: "12.5px", borderRadius: "8px", border: "1.5px solid #10b981", backgroundColor: "#f0fdf4", color: "#166534", boxSizing: "border-box", fontFamily: "inherit" }}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          /* ЗУРАГ-2: ХАРАГДАХ ГОРИМ */
+                          <>
+                            <p style={{ fontSize: "13.5px", fontWeight: "bold", color: "#0f172a", margin: "6px 0 10px 0" }}>{t.question}</p>
+
+                            {/* ЗУРАГ-2 ШИГ ДУГУЙ РАДИО ТОВЧТОЙ СҮЛЖЭЭНИЙ ХАРАГДАЦ */}
+                            {isMultipleChoice && t.options && (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px" }}>
+                                {t.options.map((opt: string) => (
+                                  <div key={opt} style={{ display: "flex", alignItems: "center", gap: "10px", backgroundColor: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1" }}>
+                                    <input type="radio" disabled checked={t.correctAnswer.startsWith(opt.slice(0, 2))} />
+                                    <span style={{ fontSize: "12.5px", color: "#334155", fontWeight: "500" }}>{opt}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            <div style={{ backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 10px", borderRadius: "6px", marginBottom: "6px" }}>
+                              <p style={{ fontSize: "12px", color: "#15803d", margin: 0 }}>💡 <strong>Зөв хариулт:</strong> {t.correctAnswer}</p>
+                            </div>
                           </>
                         )}
 
                         {/* 🔒 РУБРИК - ТҮГЖЭЭТЭЙ (ӨӨРЧЛӨХ БОЛОМЖГҮЙ) */}
-                        <p style={{ fontSize: "11px", color: "#b45309", margin: 0, backgroundColor: "#fff7ed", padding: "4px 8px", borderRadius: "4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span>🔒 Стандарт рубрик: {t.rubric}</span>
-                          <span style={{ fontSize: "10px", color: "#9a3412", fontStyle: "italic" }}>(Өөрчлөх боломжгүй)</span>
-                        </p>
+                        <div style={{ backgroundColor: "#fff7ed", border: "1px solid #fed7aa", padding: "6px 10px", borderRadius: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: "11px", color: "#9a3412" }}>📊 <strong>Стандарт рубрик:</strong> {t.rubric}</span>
+                          <span style={{ fontSize: "10px", color: "#c2410c", fontWeight: "bold" }}>(Түгжээтэй)</span>
+                        </div>
+
                       </div>
                     );
                   })}

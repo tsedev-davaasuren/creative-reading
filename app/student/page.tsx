@@ -12,9 +12,33 @@ export default function StudentPage() {
   const [submittedResult, setSubmittedResult] = useState<any | null>(null);
 
   useEffect(() => {
-    const data = localStorage.getItem("creative_reading_assigned_tasks");
-    if (data) {
-      try { setAssignedList(JSON.parse(data)); } catch (e) { console.error(e); }
+    // Багшийн санд байгаа болон сурагчдад илгээсэн даалгавруудыг нэгтгэн шүүх
+    const bankData = localStorage.getItem("creative_reading_task_bank");
+    const assignedData = localStorage.getItem("creative_reading_assigned_tasks");
+
+    let validBankTitles: string[] = [];
+    if (bankData) {
+      try {
+        const bank = JSON.parse(bankData);
+        validBankTitles = bank.map((b: any) => b.title);
+      } catch (e) { console.error(e); }
+    }
+
+    if (assignedData) {
+      try {
+        const rawList = JSON.parse(assignedData);
+        // Зөвхөн Даалгаврын санд одоо байгаа даалгавруудыг харуулна (Зураг-1 ба Зураг-2-ыг ижил болгов)
+        const filtered = rawList.filter((item: any) => 
+          validBankTitles.length === 0 || validBankTitles.includes(item.taskData?.title)
+        );
+        
+        // Давхардсан кодуудыг цэвэрлэх
+        const uniqueList = filtered.filter((v: any, i: number, a: any[]) => 
+          a.findIndex((t: any) => t.assignmentCode === v.assignmentCode) === i
+        );
+
+        setAssignedList(uniqueList);
+      } catch (e) { console.error(e); }
     }
   }, []);
 
@@ -45,7 +69,7 @@ export default function StudentPage() {
         }
       } else {
         if (userAns.trim().length > 5) {
-          totalScore += t.points; // Автомат үнэлгээний жишээ
+          totalScore += t.points;
         }
       }
     });
@@ -58,18 +82,19 @@ export default function StudentPage() {
   };
 
   return (
-    <main style={{ minHeight: "100vh", backgroundColor: "#f0fdf4", padding: "20px", fontFamily: "sans-serif" }}>
+    /* 🎨 ЗУРАГ-3: ДЭВСГЭР ӨНГӨ ЦАЙВАР ШАРГАЛ (#fffdf0) */
+    <main style={{ minHeight: "100vh", backgroundColor: "#fffdf0", padding: "20px", fontFamily: "sans-serif" }}>
       
-      {/* 🔒 БАГШИЙН ХЭСЭГ РҮҮ БУЦАХ ТОВЧИЙГ БҮРМӨСӨН АВСАН СУРАГЧИЙН HEADER */}
-      <header style={{ maxWidth: "1000px", margin: "0 auto 20px auto", backgroundColor: "#059669", borderRadius: "16px", padding: "16px 24px", color: "#ffffff", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}>
+      {/* СУРАГЧИЙН HEADER */}
+      <header style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#059669", borderRadius: "16px", padding: "16px 24px", color: "#ffffff", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}>
         <h1 style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>👨‍🎓 Сурагчийн танхим (9Е анги)</h1>
         <p style={{ fontSize: "13px", margin: "4px 0 0 0", opacity: 0.9 }}>PISA Бүтээлч уншлага-2 төслийн даалгавар гүйцэтгэх талбар</p>
       </header>
 
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
         
         {!activeTask ? (
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "30px", border: "1.5px solid #a7f3d0", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.05)" }}>
+          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "30px", border: "1.5px solid #fde68a", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.05)" }}>
             <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto 24px auto" }}>
               <div style={{ fontSize: "40px", marginBottom: "10px" }}>🔑</div>
               <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 6px 0" }}>Даалгаврын кодоо оруулна уу</h2>
@@ -87,9 +112,10 @@ export default function StudentPage() {
               </div>
             </div>
 
+            {/* ЗУРАГ-1 БА ЗУРАГ-2-ЫГ ЯГ ИЖИЛХЭН 2 ДААЛГАВАРТАЙ БОЛГОЖ ЗАСАВ */}
             {assignedList.length > 0 && (
-              <div style={{ borderTop: "1px dashed #cbd5e1", paddingTop: "20px" }}>
-                <p style={{ fontSize: "13px", fontWeight: "bold", color: "#374151", margin: "0 0 12px 0" }}>🏫 Сүүлд 9Е ангид ирсэн даалгаврууд:</p>
+              <div style={{ borderTop: "1px dashed #fcd34d", paddingTop: "20px" }}>
+                <p style={{ fontSize: "13px", fontWeight: "bold", color: "#374151", margin: "0 0 12px 0" }}>🏫 Сүүлд 9Е ангид ирсэн даалгаврууд ({assignedList.length}):</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {assignedList.map((item) => (
                     <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#f0fdf4", padding: "12px 16px", borderRadius: "10px", border: "1px solid #bbf7d0" }}>
@@ -105,20 +131,20 @@ export default function StudentPage() {
             )}
           </div>
         ) : (
-          /* ДААЛГАВАР АЖИЛЛАХ / ДҮН ХАРАХ ХЭСЭГ */
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+          /* 📏 ЗУРАГ-3: ЭХ БИЧВЭР 8:5 БА АСУУЛТ ДААЛГАВАР 8:3 ХАРЬЦААТАЙ ДЭЛГЭЦ */
+          <div style={{ display: "grid", gridTemplateColumns: "5fr 3fr", gap: "16px" }}>
             
-            {/* ЭХ БИЧВЭР */}
-            <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "16px", border: "1.5px solid #a7f3d0", height: "650px", overflowY: "auto" }}>
+            {/* ЭХ БИЧВЭР (8:5 ХАРЬЦАА) */}
+            <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "16px", border: "1.5px solid #fde68a", minHeight: "580px", maxHeight: "720px", overflowY: "auto" }}>
               <span style={{ backgroundColor: "#dcfce7", color: "#15803d", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>{activeTask.taskData.subject}</span>
               <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "10px 0" }}>{activeTask.taskData.title}</h2>
-              <div style={{ fontSize: "14px", lineHeight: "1.8", color: "#1f2937", whiteSpace: "pre-wrap" }}>{activeTask.taskData.storyText}</div>
+              <div style={{ fontSize: "14.5px", lineHeight: "1.8", color: "#1f2937", whiteSpace: "pre-wrap" }}>{activeTask.taskData.storyText}</div>
             </div>
 
-            {/* АСУУЛТУУД */}
-            <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "16px", border: "1.5px solid #a7f3d0", height: "650px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            {/* АСУУЛТ ДААЛГАВАР (8:3 ХАРЬЦАА) */}
+            <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "16px", border: "1.5px solid #fde68a", minHeight: "580px", maxHeight: "720px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
               <div style={{ overflowY: "auto", paddingRight: "6px" }}>
-                <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#065f46", margin: "0 0 14px 0", borderBottom: "1px solid #e5e7eb", paddingBottom: "8px" }}>📝 Даалгаврууд</h3>
+                <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#065f46", margin: "0 0 14px 0", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>📝 Даалгаврууд</h3>
 
                 {submittedResult ? (
                   /* 📊 ДҮН ОНОО ВЬЮ */
@@ -141,7 +167,7 @@ export default function StudentPage() {
                   /* АСУУЛТАНД ХАРИУЛАХ */
                   <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                     {activeTask.taskData.tasks.map((t: any) => (
-                      <div key={t.num} style={{ border: "1px solid #cbd5e1", padding: "12px", borderRadius: "10px", backgroundColor: "#f9fafb" }}>
+                      <div key={t.num} style={{ border: "1px solid #cbd5e1", padding: "12px", borderRadius: "10px", backgroundColor: "#f8fafc" }}>
                         <p style={{ fontSize: "13.5px", fontWeight: "bold", color: "#111827", margin: "0 0 8px 0" }}>{t.num}. {t.question} ({t.points} оноо)</p>
                         
                         {t.options ? (
@@ -174,7 +200,7 @@ export default function StudentPage() {
               </div>
 
               {!submittedResult && (
-                <div style={{ paddingTop: "12px", borderTop: "1px solid #e5e7eb" }}>
+                <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "10px" }}>
                   <button type="button" onClick={handleSubmitExam} style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
                     ✅ Даалгаврыг дуусгаж, дүн харах
                   </button>

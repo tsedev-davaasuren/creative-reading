@@ -17,13 +17,19 @@ export default function HomePage() {
   // Даалгавар боловсруулах төлөв
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedTasks, setGeneratedTasks] = useState<any[] | null>(null);
+  
+  // 1. Радио сонголтын төлөв (Чеклэх хэсэг)
+  const [selectedRadioOptions, setSelectedRadioOptions] = useState<{ [key: number]: string }>({});
+  
+  // 2. Даалгавар засаж байгаа төлөв
+  const [editingTaskNum, setEditingTaskNum] = useState<number | null>(null);
 
   // Чатын төлөв болон мессежүүд
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: "bagsh",
-      text: "Сайн байна уу! Би 'Бүтээлч уншлага-2' төслийн AI Ментор Цэндао багш байна. Шинэчилсэн блюпринт, рубрикийн дагуу PISA унших чадварын 6 даалгавар (12 оноо) боловсруулахад туслахад бэлэн байна."
+      text: "Сайн байна уу! Би 'Бүтээлч уншлага-2' төслийн AI Ментор Цэндао багш байна. Миний боловсруулсан даалгавар бүрийг та засах, устгах эсвэл шинээр даалгавар нэмж сайжруулан санд батлах боломжтой."
     }
   ]);
   const [inputText, setInputText] = useState("");
@@ -44,10 +50,10 @@ export default function HomePage() {
       let responseText = "";
       const lower = userQuery.toLowerCase();
 
-      if (lower.includes("блюпринт") || lower.includes("рубрик") || lower.includes("оноо")) {
+      if (lower.includes("засах") || lower.includes("өөрчлөх") || lower.includes("устгах")) {
+        responseText = "Арга зүйч багш аа, Цэндао багшийн боловсруулсан даалгавар бүрийн баруун дээд өнцөгт байх '✏️ Засах' болон '🗑️ Устгах' товчлуурыг ашиглан асуулт, хариулт, рубрикийг өөрийнхөөрөө засаж хадгалах боломжтой боллоо.";
+      } else if (lower.includes("блюпринт") || lower.includes("рубрик")) {
         responseText = "Шинэчлэгдсэн блюпринтээр: 1. Сонгох тест (1 оноо), 2. Задгай-Мэдээлэл олох (1 оноо), 3-4. Задгай-Задлан шинжлэх (2 оноо х 2 = 4 оноо), 5-6. Задгай-Эргэцүүлэн дүгнэх (3 оноо х 2 = 6 оноо) буюу Нийт 6 даалгавар, 12 оноотой байна.";
-      } else if (lower.includes("төсөл") || lower.includes("үүрэг") || lower.includes("ойлгох")) {
-        responseText = "Ойлголоо, багш аа. 6 хичээл тус бүр 5 удаа, нийт 30 удаагийн PISA жишиг даалгаврыг заагдсан шинэ блюпринт, рубрикийн дагуу чанартай боловсруулахад би бэлэн байна!";
       } else {
         responseText = `Багш аа, "${userQuery.slice(0, 35)}..." сэдвийн дагуу шинэ блюпринт болон рубрикт 100% нийцүүлэн даалгавар боловсруулахад тусалъя.`;
       }
@@ -137,8 +143,56 @@ export default function HomePage() {
           rubric: "2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо. 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо."
         }
       ]);
+      setSelectedRadioOptions({});
       setIsGenerating(false);
     }, 1200);
+  };
+
+  // Даалгаврын утга засах функц
+  const handleTaskFieldChange = (taskIndex: number, field: string, value: any) => {
+    if (!generatedTasks) return;
+    const updated = [...generatedTasks];
+    updated[taskIndex] = { ...updated[taskIndex], [field]: value };
+    setGeneratedTasks(updated);
+  };
+
+  // Сонгох тестийн сонголт засах функц
+  const handleOptionTextChange = (taskIndex: number, optIndex: number, value: string) => {
+    if (!generatedTasks) return;
+    const updated = [...generatedTasks];
+    const newOpts = [...updated[taskIndex].options];
+    newOpts[optIndex] = value;
+    updated[taskIndex].options = newOpts;
+    setGeneratedTasks(updated);
+  };
+
+  // Даалгавар устгах функц
+  const handleDeleteTask = (taskNum: number) => {
+    if (!generatedTasks) return;
+    if (confirm(`Даалгавар ${taskNum}-ийг устгахдаа итгэлтэй байна уу?`)) {
+      const updated = generatedTasks.filter((t) => t.num !== taskNum);
+      // Устгасны дараа дугаарлалтыг дахин цэгцлэх
+      const renumbered = updated.map((t, idx) => ({ ...t, num: idx + 1 }));
+      setGeneratedTasks(renumbered);
+    }
+  };
+
+  // Шинэ даалгавар нэмэх функц
+  const handleAddTask = () => {
+    if (!generatedTasks) return;
+    const newNum = generatedTasks.length + 1;
+    const newTask = {
+      num: newNum,
+      form: "Задгай даалгавар",
+      level: "Задлан шинжлэх",
+      taskAction: "1-2 өгүүлбэр бичих",
+      points: 2,
+      question: "Арга зүйч багшийн нэмсэн асуултыг энд засна уу...",
+      correctAnswer: "Зөв хариултын загварыг энд засна уу.",
+      rubric: "Зөв бичсэн бол 2 оноо, дутуу бол 1 оноо, огт бичээгүй бол 0 оноо."
+    };
+    setGeneratedTasks([...generatedTasks, newTask]);
+    setEditingTaskNum(newNum);
   };
 
   return (
@@ -595,7 +649,7 @@ export default function HomePage() {
 
         </section>
 
-        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР */}
+        {/* БАРУУН ТАЛ: АСУУЛТ ДААЛГАВАР (ЗАСАХ & ЧЕКЛЭХ БОЛОМЖТОЙ) */}
         <section style={{ 
           backgroundColor: "#fffdf0", 
           borderRadius: "16px", 
@@ -611,7 +665,7 @@ export default function HomePage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
               <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#fbbf24", display: "inline-block" }}></span>
-                Асуулт даалгавар (Шинэ Блюпринт)
+                Асуулт даалгавар
               </h3>
 
               <button type="button" style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
@@ -619,8 +673,8 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* БОЛОВСРУУЛСАН ДААЛГАВАР ХАРАГДАХ ЦОНХ */}
-            <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "16px", height: "420px", overflowY: "auto" }}>
+            {/* БОЛОВСРУУЛСАН ДААЛГАВАР ХАРАГДАХ & ЗАСАХ ЦОНХ */}
+            <div style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #fde68a", padding: "14px", height: "420px", overflowY: "auto" }}>
               
               {isGenerating ? (
                 <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", color: "#0284c7" }}>
@@ -628,51 +682,184 @@ export default function HomePage() {
                   <p style={{ fontWeight: "bold", fontSize: "14px" }}>Шинэ блюпринт & рубрикийн дагуу боловсруулж байна...</p>
                   <p style={{ fontSize: "12px", color: "#64748b" }}>6 даалгавар / 12 оноо</p>
                 </div>
-              ) : generatedTasks ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <div style={{ backgroundColor: "#fef3c7", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", color: "#92400e" }}>
-                    ✅ {selectedSubject}: {title.slice(0, 25)}... (6 Даалгавар / 12 Оноо)
+              ) : generatedTasks && generatedTasks.length > 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  
+                  {/* Толгой мэдээлэл ба Нэмэх товч */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#fef3c7", padding: "8px 12px", borderRadius: "8px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "bold", color: "#92400e" }}>
+                      ✅ {selectedSubject}: {generatedTasks.length} даалгавар (Нийт {generatedTasks.reduce((a, b) => a + (b.points || 0), 0)} оноо)
+                    </span>
+                    <button 
+                      type="button"
+                      onClick={handleAddTask}
+                      style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "4px 8px", cursor: "pointer" }}
+                    >
+                      ➕ Шинэ даалгавар нэмэх
+                    </button>
                   </div>
-                  {generatedTasks.map((t) => (
-                    <div key={t.num} style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "10px", backgroundColor: "#f8fafc" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                        <div>
-                          <span style={{ fontWeight: "bold", fontSize: "12px", color: "#0284c7", marginRight: "6px" }}>
-                            Даалгавар {t.num} ({t.form})
-                          </span>
-                          <span style={{ fontSize: "11px", color: "#475569", backgroundColor: "#f1f5f9", padding: "1px 6px", borderRadius: "4px" }}>
-                            {t.level}
-                          </span>
+
+                  {/* Даалгавруудын жагсаалт */}
+                  {generatedTasks.map((t, idx) => {
+                    const isEditing = editingTaskNum === t.num;
+
+                    return (
+                      <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "10px", padding: "12px", backgroundColor: "#f8fafc", boxShadow: "0 1px 3px rgba(0,0,0,0.03)" }}>
+                        
+                        {/* Даалгаврын толгой хэсэг ба Засах/Устгах товчлуур */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px", borderBottom: "1px dashed #cbd5e1", paddingBottom: "6px" }}>
+                          <div>
+                            <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7", marginRight: "6px" }}>
+                              Даалгавар {t.num} ({t.form})
+                            </span>
+                            <span style={{ fontSize: "11px", color: "#475569", backgroundColor: "#f1f5f9", padding: "2px 6px", borderRadius: "4px" }}>
+                              {t.level}
+                            </span>
+                          </div>
+                          
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "4px", marginRight: "4px" }}>
+                              {t.points} оноо
+                            </span>
+
+                            {/* 2. Арга зүйч багш нарт зориулсан ЗАСАХ болон УСТГАХ товчлуур */}
+                            <button 
+                              type="button"
+                              onClick={() => setEditingTaskNum(isEditing ? null : t.num)}
+                              style={{ 
+                                fontSize: "11px", 
+                                fontWeight: "bold", 
+                                backgroundColor: isEditing ? "#059669" : "#fbbf24", 
+                                color: isEditing ? "#ffffff" : "#0f172a", 
+                                border: "none", 
+                                borderRadius: "6px", 
+                                padding: "3px 8px", 
+                                cursor: "pointer" 
+                              }}
+                            >
+                              {isEditing ? "💾 Хадгалах" : "✏️ Засах"}
+                            </button>
+
+                            <button 
+                              type="button"
+                              onClick={() => handleDeleteTask(t.num)}
+                              style={{ 
+                                fontSize: "11px", 
+                                fontWeight: "bold", 
+                                backgroundColor: "#ef4444", 
+                                color: "#ffffff", 
+                                border: "none", 
+                                borderRadius: "6px", 
+                                padding: "3px 8px", 
+                                cursor: "pointer" 
+                              }}
+                            >
+                              🗑️ Устгах
+                            </button>
+                          </div>
                         </div>
-                        <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "4px" }}>
-                          {t.points} оноо
-                        </span>
+
+                        {/* АСУУЛТ (ЗАШИХ ЭСВЭЛ ХАРУУЛАХ) */}
+                        {isEditing ? (
+                          <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontSize: "11px", fontWeight: "bold", color: "#475569", display: "block", marginBottom: "2px" }}>Асуулт засах:</label>
+                            <textarea 
+                              value={t.question}
+                              onChange={(e) => handleTaskFieldChange(idx, "question", e.target.value)}
+                              rows={2}
+                              style={{ width: "100%", padding: "6px 8px", fontSize: "12.5px", borderRadius: "6px", border: "1px solid #38bdf8", outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
+                            />
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: "13px", fontWeight: "bold", color: "#0f172a", margin: "0 0 8px 0", lineHeight: "1.4" }}>
+                            {t.question}
+                          </p>
+                        )}
+
+                        {/* 1. СОНГОХ ТЕСТ БОЛ: РАДИО ТОВЧЛУУРТАЙ (ЧЕКЛЭХ) БОЛОН ЗАСАХ БОЛОМЖТОЙ */}
+                        {t.options && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px", paddingLeft: "2px" }}>
+                            {t.options.map((opt: string, optIdx: number) => {
+                              const optKey = `${t.num}-${optIdx}`;
+                              const isChecked = selectedRadioOptions[t.num] === opt;
+
+                              return (
+                                <div key={optIdx} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                  {/* Чеклэх Радио товчлуур */}
+                                  <input 
+                                    type="radio" 
+                                    id={`radio-${optKey}`}
+                                    name={`task-options-${t.num}`}
+                                    checked={isChecked}
+                                    onChange={() => setSelectedRadioOptions((prev) => ({ ...prev, [t.num]: opt }))}
+                                    style={{ cursor: "pointer", width: "16px", height: "16px", accentColor: "#0284c7" }}
+                                  />
+                                  
+                                  {isEditing ? (
+                                    <input 
+                                      type="text" 
+                                      value={opt}
+                                      onChange={(e) => handleOptionTextChange(idx, optIdx, e.target.value)}
+                                      style={{ flex: 1, padding: "4px 8px", fontSize: "12px", borderRadius: "4px", border: "1px solid #cbd5e1" }}
+                                    />
+                                  ) : (
+                                    <label 
+                                      htmlFor={`radio-${optKey}`} 
+                                      style={{ 
+                                        fontSize: "12.5px", 
+                                        color: isChecked ? "#0284c7" : "#334155", 
+                                        fontWeight: isChecked ? "bold" : "normal",
+                                        cursor: "pointer",
+                                        flex: 1
+                                      }}
+                                    >
+                                      {opt}
+                                    </label>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* ЗӨВ ХАРИУЛТ (ЗАСАХ ЭСВЭЛ ХАРУУЛАХ) */}
+                        {isEditing ? (
+                          <div style={{ marginBottom: "8px" }}>
+                            <label style={{ fontSize: "11px", fontWeight: "bold", color: "#059669", display: "block", marginBottom: "2px" }}>Зөв хариулт / Загвар засах:</label>
+                            <textarea 
+                              value={t.correctAnswer}
+                              onChange={(e) => handleTaskFieldChange(idx, "correctAnswer", e.target.value)}
+                              rows={2}
+                              style={{ width: "100%", padding: "6px 8px", fontSize: "12px", borderRadius: "6px", border: "1px solid #10b981", outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
+                            />
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: "11.5px", color: "#059669", margin: "0 0 6px 0", backgroundColor: "#f0fdf4", padding: "6px 8px", borderRadius: "6px", border: "1px solid #bbf7d0" }}>
+                            💡 <strong>Зөв хариулт:</strong> {t.correctAnswer}
+                          </p>
+                        )}
+
+                        {/* РУБРИК (ЗАСАХ ЭСВЭЛ ХАРУУЛАХ) */}
+                        {isEditing ? (
+                          <div>
+                            <label style={{ fontSize: "11px", fontWeight: "bold", color: "#b45309", display: "block", marginBottom: "2px" }}>Рубрик (Онооны задаргаа) засах:</label>
+                            <textarea 
+                              value={t.rubric}
+                              onChange={(e) => handleTaskFieldChange(idx, "rubric", e.target.value)}
+                              rows={2}
+                              style={{ width: "100%", padding: "6px 8px", fontSize: "12px", borderRadius: "6px", border: "1px solid #f59e0b", outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
+                            />
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: "11px", color: "#7c2d12", margin: 0, backgroundColor: "#fff7ed", padding: "6px 8px", borderRadius: "6px", border: "1px solid #fed7aa" }}>
+                            📊 <strong>Рубрик:</strong> {t.rubric}
+                          </p>
+                        )}
+
                       </div>
-                      
-                      <p style={{ fontSize: "12.5px", fontWeight: "600", color: "#1e293b", margin: "4px 0 6px 0", lineHeight: "1.4" }}>
-                        {t.question}
-                      </p>
+                    );
+                  })}
 
-                      {/* Сонгох тест бол олон сонголт харуулах */}
-                      {t.options && (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "3px", marginBottom: "6px", paddingLeft: "6px" }}>
-                          {t.options.map((opt: string, idx: number) => (
-                            <div key={idx} style={{ fontSize: "12px", color: "#334155" }}>
-                              {opt}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      <p style={{ fontSize: "11.5px", color: "#059669", margin: "0 0 4px 0", backgroundColor: "#f0fdf4", padding: "6px", borderRadius: "4px" }}>
-                        💡 <strong>Зөв хариулт:</strong> {t.correctAnswer}
-                      </p>
-
-                      <p style={{ fontSize: "11px", color: "#7c2d12", margin: 0, backgroundColor: "#fff7ed", padding: "5px", borderRadius: "4px" }}>
-                        📊 <strong>Рубрик:</strong> {t.rubric}
-                      </p>
-                    </div>
-                  ))}
                 </div>
               ) : (
                 <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
@@ -683,7 +870,7 @@ export default function HomePage() {
                     Шинэ Блюпринт: 6 Даалгавар (12 Оноо)
                   </p>
                   <p style={{ fontSize: "12px", color: "#64748b", maxWidth: "240px", margin: 0, lineHeight: "1.5" }}>
-                    Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар шинэ блюпринтээр асуултууд үүснэ.
+                    Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд үүснэ.
                   </p>
                 </div>
               )}
@@ -695,10 +882,10 @@ export default function HomePage() {
             <button 
               type="button" 
               onClick={() => {
-                if (!generatedTasks) {
+                if (!generatedTasks || generatedTasks.length === 0) {
                   alert("Эхлээд даалгавар боловсруулна уу!");
                 } else {
-                  alert("Шинэ блюпринтийн дагуу боловсруулсан даалгавар санд хадгалагдлаа!");
+                  alert("Арга зүйч багшийн зассан шинэчилсэн даалгаврууд санд амжилттай хадгалагдлаа!");
                 }
               }}
               style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}

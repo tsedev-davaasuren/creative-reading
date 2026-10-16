@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -13,10 +13,31 @@ export default function HomePage() {
 
   // Даалгаврын санд хадгалагдсан даалгаврууд
   const [taskBank, setTaskBank] = useState<any[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [saveSuccessModal, setSaveSuccessModal] = useState<boolean>(false);
 
   // Даалгаврын санд дэлгэгдсэн картны ID-ууд (Accordion төлөв)
   const [expandedTaskIds, setExpandedTaskIds] = useState<number[]>([]);
+
+  // 1. Хуудас ачаалагдахад localStorage-аас хадгалсан датаг сэргээн унших
+  useEffect(() => {
+    const savedBank = localStorage.getItem("creative_reading_task_bank");
+    if (savedBank) {
+      try {
+        setTaskBank(JSON.parse(savedBank));
+      } catch (e) {
+        console.error("Local storage-аас дата уншихад алдаа гарлаа:", e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // 2. Даалгаврын сан өөрчлөгдөх бүрд localStorage руу автоматаар хадгалах
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("creative_reading_task_bank", JSON.stringify(taskBank));
+    }
+  }, [taskBank, isLoaded]);
 
   const toggleExpandTask = (id: number) => {
     setExpandedTaskIds((prev) =>
@@ -29,7 +50,7 @@ export default function HomePage() {
     "Уран зохиол": {
       title: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
       story: `Манайх Цээлд, Бөөдэйн Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
-Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа үлдээнэ гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлсүүлж явахаар барих морио тэгэхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатаах морины нарийн хоншоороор уургалан эргүүлээд үргэн давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргэ Бөөдэйг хүлээж зогсоно.
+Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа үлдээнэ гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлсүүлж явахаар барих морио тэгэхээс тэгж адууनाас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатаах морины нарийн хоншоороор уургалан эргүүлээд үргэн давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргэ Бөөдэйг хүлээж зогсоно.
 Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхуу нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.
 Энэ бол миний арван долоон насанд хамгийн жаргалтай мөч байлаа. Гэвч энэ маань өглөөдөө үзэгдэх хөвчийн манан шиг байжээ.`
     },
@@ -1222,7 +1243,7 @@ export default function HomePage() {
                           </p>
                         )}
 
-                        {/* СӨНГОЛТУУД (Сонгох тест бол) */}
+                        {/* СОНГОЛТУУД (Сонгох тест бол) */}
                         {t.options && (
                           <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px", paddingLeft: "2px" }}>
                             {t.options.map((opt: string, optIdx: number) => {
@@ -1284,7 +1305,7 @@ export default function HomePage() {
                           </p>
                         )}
 
-                        {/* РУБРИК (ОНООНЫ ЗАДАРГАА) - ЗАСАГДДАГГҮЙ ТОГТМОЛ СТАНДАРТ БЛОК */}
+                        {/* РУБРИК - ЗАСАГДДАГГҮЙ ТОГТМОЛ СТАНДАРТ БЛОК */}
                         <div>
                           <label style={{ fontSize: "11px", fontWeight: "bold", color: "#b45309", display: "block", marginBottom: "2px" }}>
                             📊 Стандарт рубрик (Өөрчлөх боломжгүй):

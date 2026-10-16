@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isBlueprintOpen, setIsBlueprintOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
   const [imgError, setImgError] = useState(false);
 
@@ -22,14 +23,14 @@ export default function HomePage() {
     {
       id: 1,
       sender: "bagsh",
-      text: "Сайн байна уу! Би 'Бүтээлч уншлага-2' төслийн AI Ментор Цэндао багш байна. PISA унших чадварын даалгавар боловсруулах эсвэл хичээлийн арга зүйн талаар хамтран ажиллахад бэлэн байна."
+      text: "Сайн байна уу! Би 'Бүтээлч уншлага-2' төслийн AI Ментор Цэндао багш байна. Шинэчилсэн блюпринт, рубрикийн дагуу PISA унших чадварын 6 даалгавар (12 оноо) боловсруулахад туслахад бэлэн байна."
     }
   ]);
   const [inputText, setInputText] = useState("");
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
-  // 1. Асуултыг ухаалаг ойлгох чатын функц
+  // Чатын функц
   const handleSendMessage = () => {
     if (!inputText.trim()) return;
 
@@ -39,17 +40,16 @@ export default function HomePage() {
     setMessages((prev) => [...prev, newMsg]);
     setInputText("");
 
-    // Ухаалаг Ментор AI хариулт
     setTimeout(() => {
       let responseText = "";
       const lower = userQuery.toLowerCase();
 
-      if (lower.includes("төсөл") || lower.includes("үүрэг") || lower.includes("ойлгох")) {
-        responseText = "Ойлголоо, багш аа. Би 'Бүтээлч уншлага-2' төслийн хүрээнд сурагчдын PISA унших чадварыг хөгжүүлэх жишиг даалгавар боловсруулах болон багш танд дидактик арга зүйн дэмжлэг үзүүлэх AI Менторын үүргээ бүрэн ухамсарлаж байна. Хоёулаа хамтраад чанартай даалгаврын сан бүрдүүлцгээе!";
-      } else if (lower.includes("pisa") || lower.includes("даалгавар")) {
-        responseText = "PISA стандартын даалгавар нь сурагчдын эх бичвэрийг задлан шинжлэх, мэдээллийг олох, эргэцүүлэн дүгнэх 3 үндсэн чадварыг сорьдог. Зүүн талын цонхонд эх бичвэрээ оруулаад '⚡ Даалгавар боловсруулах' товчийг дараарай.";
+      if (lower.includes("блюпринт") || lower.includes("рубрик") || lower.includes("оноо")) {
+        responseText = "Шинэчлэгдсэн блюпринтээр: 1. Сонгох тест (1 оноо), 2. Задгай-Мэдээлэл олох (1 оноо), 3-4. Задгай-Задлан шинжлэх (2 оноо х 2 = 4 оноо), 5-6. Задгай-Эргэцүүлэн дүгнэх (3 оноо х 2 = 6 оноо) буюу Нийт 6 даалгавар, 12 оноотой байна.";
+      } else if (lower.includes("төсөл") || lower.includes("үүрэг") || lower.includes("ойлгох")) {
+        responseText = "Ойлголоо, багш аа. 6 хичээл тус бүр 5 удаа, нийт 30 удаагийн PISA жишиг даалгаврыг заагдсан шинэ блюпринт, рубрикийн дагуу чанартай боловсруулахад би бэлэн байна!";
       } else {
-        responseText = `Багш аа, таны дурдсан "${userQuery.slice(0, 35)}..." асуудлын дагуу арга зүйн зөвлөмж болон даалгаврын бүтцийг оновчтой болгоход би туслахад бэлэн байна.`;
+        responseText = `Багш аа, "${userQuery.slice(0, 35)}..." сэдвийн дагуу шинэ блюпринт болон рубрикт 100% нийцүүлэн даалгавар боловсруулахад тусалъя.`;
       }
 
       setMessages((prev) => [
@@ -59,7 +59,7 @@ export default function HomePage() {
     }, 600);
   };
 
-  // 2. Даалгавар боловсруулах функц
+  // Шинэ Блюпринт-ийн дагуу Даалгавар боловсруулах функц
   const handleGenerateTasks = () => {
     if (!storyText.trim()) {
       alert("Эх бичвэрээ оруулна уу!");
@@ -68,50 +68,73 @@ export default function HomePage() {
 
     setIsGenerating(true);
 
-    // AI даалгавар боловсруулж буй үйл явц (1.5 сек)
     setTimeout(() => {
       setGeneratedTasks([
         {
           num: 1,
-          type: "Мэдээлэл олох",
+          form: "Сонгох тест",
+          level: "Мэдээлэл олох, сэргээн санах",
+          taskAction: "ABCD сонголтоос нэг хариулт сонгох",
           points: 1,
-          question: "Эх бичвэрт гарч буй Бөөдэй болон зохиогч хоёр уулзах болсон гол шалтаг юу байсан бэ?",
-          answer: "Цээлийн тойром нуурлаж, тэдний адуу тэмээ усны үнэрээр цуван ирэх болсон явдал."
+          question: "Эх бичвэрт гарч буй Бөөдэй болон зохиогч хоёр уулзах болсон гол шалтаг юу вэ?",
+          options: [
+            "A. Цээлийн тойром нуурлаж, адуу тэмээ усны үнэрээр цуван ирсэн явдал",
+            "B. Бөөдэй зохиолчид уургын хээр морио бэлэглэхээр ирсэн явдал",
+            "C. Зохиолчийн ээж Бөөдэйн ээжид туслахаар очсон явдал",
+            "D. Хөвчийн манан арилж Цээлийн тойром ширгэсэн явдал"
+          ],
+          correctAnswer: "A. Цээлийн тойром нуурлаж, адуу тэмээ усны үнэрээр цуван ирсэн явдал",
+          rubric: "Зөв сонгосон бол 1 оноо, буруу сонгосон бол 0 оноо."
         },
         {
           num: 2,
-          type: "Задлан шинжлэх",
-          points: 2,
-          question: "'Өглөөдөө үзэгдэх хөвчийн манан шиг байжээ' гэсэн адилтгалаар зохиолч юуг илэрхийлэхийг хүссэн бэ?",
-          answer: "Арван долоон насанд тохиосон жаргалтай мөч нь хурдан өнгөрч, дурсамж болон үлдсэнийг батлан харуулж байна."
+          form: "Задгай даалгавар",
+          level: "Мэдээлэл олох, сэргээн санах",
+          taskAction: "Нэг өгүүлбэр олж бичих",
+          points: 1,
+          question: "Эх бичвэрээс Бөөдэй ээжтэйгээ хэдүүлээ суудаг тухай мэдээлэл агуулсан НЭГ өгүүлбэрийг олж бичээрэй.",
+          correctAnswer: "'Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна.'",
+          rubric: "Зөв олсон бол 1 оноо, огт бичээгүй бол 0 оноо."
         },
         {
           num: 3,
-          type: "Дүгнэн эргэцүүлэх",
+          form: "Задгай даалгавар",
+          level: "Задлан шинжлэх",
+          taskAction: "1-2 өгүүлбэр бичих",
           points: 2,
-          question: "Бөөдэйн морио арчлах үйлдэл болон зан чанарыг эх бичвэрээс эш татан тайлбарлана уу.",
-          answer: "'Олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж сүүдэрлэн зогссон' нь малд хайртай, ажилч занг харуулна."
+          question: "Бөөдэйн морио арчлах үйлдэл болон зан чанарыг эх бичвэрт хэрхэн дүрсэлснийг 1-2 өгүүлбэрт багтаан тайлбарлаарай.",
+          correctAnswer: "Бөөдэй үсрэн бууж олмоо тавиад, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж сүүдэрлэн зогсдог нь түүний малдаа халамжтай, ажилч хичээнгүй зан чанарыг харуулж байна.",
+          rubric: "Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу юмуу 1 өгүүлбэр бичсэн бол 1 оноо, Огт бичээгүй бол 0 оноо."
         },
         {
           num: 4,
-          type: "PISA Стандарт баримтлах",
+          form: "Задгай даалгавар",
+          level: "Задлан шинжлэх",
+          taskAction: "1-2 өгүүлбэр бичих",
           points: 2,
-          question: "Зохиогчийн Бөөдэйг хүлээж зогсохдоо мэдэрч байсан сэтгэлийн догдлолыг илтгэх 2 өгүүлбэрийг олно уу.",
-          answer: "1. 'Дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж...'\n2. 'Энэ бол миний арван долоон насанд хамгийн жаргалтай мөч байлаа.'"
+          question: "Зохиогч Бөөдэйг хүлээж зогсохдоо мэдэрч байсан сэтгэлийн догдлол, уургалах чадвараа хэрхэн задлан дүрсэлснийг 1-2 өгүүлбэрээр тайлбарлаарай.",
+          correctAnswer: "Адуугаа хураан хөндөлсүүлж, уургалан эргүүлэх чадвараа сайшаан, Бөөдэйг цухалзуураар нь эргэж ирэхийг догдлон хүлээж байгаагаар залуу насны сэтгэлийн хөдөлгөөнийг задлан харуулжээ.",
+          rubric: "Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу юмуу 1 өгүүлбэр бичсэн бол 1 оноо, Огт бичээгүй бол 0 оноо."
         },
         {
           num: 5,
-          type: "Нэгтгэн дүгнэх",
-          points: 2,
-          question: "Эх бичвэрийн орчин болон баатруудын сэтгэл зүйн холбоог PISA-ийн түвшинд дүгнэн бичнэ үү.",
-          answer: "Хөдөөгийн байгаль, адуу тэмээний бэлчээр нь залуусын цагаан сэтгэл, догдлолыг тодотгож байна."
+          form: "Задгай даалгавар",
+          level: "Эргэцүүлэн дүгнэх",
+          taskAction: "2-3 өгүүлбэр бичих",
+          points: 3,
+          question: "'Энэ бол миний арван долоон насанд хамгийн жаргалтай мөч байлаа. Гэвч энэ маань өглөөдөө үзэгдэх хөвчийн манан шиг байжээ' гэсэн санааг өөрийн бодлоор шинэ санаа гарган 2-3 өгүүлбэрээр эргэцүүлэн дүгнээрэй.",
+          correctAnswer: "Залуу насны гэгээн нөхөрлөл, жаргалтай дурсамж нь хөвчийн манан мэт хурдан замхран өнгөрдөг ч насан туршид сэтгэлд гэгээн хэвээр үлддэг. Амьдралын нандин мөч бүрийг цаг тухайд нь нандигнан хайрлах нь чухал юм.",
+          rubric: "2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо. 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо."
         },
         {
           num: 6,
-          type: "Бүтээлч эргэцүүлэл",
+          form: "Задгай даалгавар",
+          level: "Эргэцүүлэн дүгнэх",
+          taskAction: "2-3 өгүүлбэр бичих",
           points: 3,
-          question: "Та өөрийн насанд тохиосон хамгийн дурсгалт мөчөө зохиолын баатрын мэдрэмжтэй харьцуулан 3 өгүүлбэрт багтаан бичээрэй.",
-          answer: "Сурагчийн хувийн үзэл бодол, эргэцүүлэн бичих чадварыг үнэлнэ."
+          question: "Байгаль дэлхий, мал ахуйтай ойр байх нь хүүхдийн зан суртахуун, сэтгэлгээний төлөвшилд хэрхэн нөлөөлдгийг эх бичвэрийн агуулгатай холбон өөрийн бодлоор шинэ санаа гарган 2-3 өгүүлбэрээр эргэцүүлэн дүгнээрэй.",
+          correctAnswer: "Малаа хайрлах, байгальтайгаа зохицон амьдрах нь хүүхдийг хөдөлмөрч, бусдыг халамжлах нинжин сэтгэлтэй болгодог. Орчин үеийн сурагчид ч гэсэн байгаль дэлхийтэйгээ хүрэлцэн амьдарснаар сэтгэлийн амар амгалан, нандин чанаруудыг олж авдаг.",
+          rubric: "2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо. 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо."
         }
       ]);
       setIsGenerating(false);
@@ -182,17 +205,25 @@ export default function HomePage() {
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center" }}>
-            <button type="button" style={{
-              backgroundColor: "#fde68a",
-              border: "1px solid #fcd34d",
-              padding: "5px 12px",
-              borderRadius: "8px",
-              fontSize: "12px",
-              fontWeight: "bold",
-              color: "#0f172a",
-              cursor: "pointer"
-            }}>
-              PISA шалгалтын жишиг даалгавар боловсруулах
+            <button 
+              type="button" 
+              onClick={() => setIsBlueprintOpen(!isBlueprintOpen)}
+              style={{
+                backgroundColor: "#fde68a",
+                border: "1px solid #fcd34d",
+                padding: "5px 12px",
+                borderRadius: "8px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#0f172a",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px"
+              }}
+            >
+              <span>📋 Шинэ блюпринт, рубрик харах</span>
+              <span style={{ fontSize: "10px" }}>{isBlueprintOpen ? "▲" : "▼"}</span>
             </button>
             <button 
               type="button"
@@ -254,6 +285,100 @@ export default function HomePage() {
         </div>
 
       </header>
+
+      {/* ШИНЭ БЛЮПРИНТ, РУБРИК ХАРУУЛАХ ЦОНХ */}
+      {isBlueprintOpen && (
+        <section style={{
+          maxWidth: "1280px",
+          margin: "0 auto 16px auto",
+          backgroundColor: "#fffdf0",
+          border: "1.5px solid #fcd34d",
+          borderRadius: "14px",
+          padding: "14px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.04)"
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "6px", marginBottom: "10px" }}>
+            <h3 style={{ fontSize: "14px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+              📋 Шинэ блюпринт ба рубрик (6 Даалгавар / 12 Оноо)
+            </h3>
+            <button 
+              type="button"
+              onClick={() => setIsBlueprintOpen(false)}
+              style={{ fontSize: "11px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "2px 8px", cursor: "pointer", fontWeight: "600" }}
+            >
+              Хаах ✕
+            </button>
+          </div>
+
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
+              <thead>
+                <tr style={{ backgroundColor: "#fbbf24", color: "#0f172a" }}>
+                  <th style={{ padding: "6px 8px", border: "1px solid #fcd34d" }}>№</th>
+                  <th style={{ padding: "6px 8px", border: "1px solid #fcd34d" }}>Хэлбэр</th>
+                  <th style={{ padding: "6px 8px", border: "1px solid #fcd34d" }}>Танин мэдэхүйн түвшин</th>
+                  <th style={{ padding: "6px 8px", border: "1px solid #fcd34d" }}>Гүйцэтгэх ажил</th>
+                  <th style={{ padding: "6px 8px", border: "1px solid #fcd34d" }}>Оноо</th>
+                  <th style={{ padding: "6px 8px", border: "1px solid #fcd34d" }}>Онооны задаргаа (Рубрик)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ backgroundColor: "#ffffff" }}>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>1</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Сонгох тест</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Мэдээлэл олох сэргээн санах</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>ABCD сонголтоос нэг хариулт сонгох</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-1</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Зөв сонгосон бол 1 оноо, буруу сонгосон бол 0 оноо</td>
+                </tr>
+                <tr style={{ backgroundColor: "#fffdf0" }}>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>2</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задгай даалгавар</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Мэдээлэл олох сэргээн санах</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Нэг өгүүлбэр олж бичих</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-1</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Зөв олсон бол 1 оноо, огт бичээгүй бол 0 оноо</td>
+                </tr>
+                <tr style={{ backgroundColor: "#ffffff" }}>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>3</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задгай даалгавар</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задлан шинжлэх</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>1-2 өгүүлбэр бичих</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-2</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу юмуу 1 өгүүлбэр бичсэн бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
+                </tr>
+                <tr style={{ backgroundColor: "#fffdf0" }}>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>4</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задгай даалгавар</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задлан шинжлэх</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>1-2 өгүүлбэр бичих</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-2</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу юмуу 1 өгүүлбэр бичсэн бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
+                </tr>
+                <tr style={{ backgroundColor: "#ffffff" }}>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>5</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задгай даалгавар</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Эргэцүүлэн дүгнэх</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэр бичих</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-3</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
+                </tr>
+                <tr style={{ backgroundColor: "#fffdf0" }}>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>6</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Задгай даалгавар</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Эргэцүүлэн дүгнэх</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэр бичих</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-3</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style={{ fontSize: "11.5px", color: "#475569", margin: "8px 0 0 0", lineHeight: "1.4" }}>
+            💡 <strong>Тэмдэглэл:</strong> Уран зохиолын 5 эх нь дан эх бичвэр байх ба бусад 5 хичээлийн 1-2-р даалгавар дан бичвэр, 3-6-р даалгавар нь хүснэгт, диаграмм, схем, зурагтай байна. 6 хичээл тус бүр 5, нийт 30 удаагийн даалгавар боловсруулна.
+          </p>
+        </section>
+      )}
 
       {/* ЧАТ ХЭСЭГ */}
       {isChatOpen && (
@@ -464,7 +589,7 @@ export default function HomePage() {
                 transition: "all 0.2s"
               }}
             >
-              {isGenerating ? "⏳ Даалгавар боловсруулж байна..." : "⚡ Даалгавар боловсруулах"}
+              {isGenerating ? "⏳ Шинэ блюпринтийн дагуу боловсруулж байна..." : "⚡ Даалгавар боловсруулах"}
             </button>
           </div>
 
@@ -486,7 +611,7 @@ export default function HomePage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #fde68a", paddingBottom: "8px" }}>
               <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: "#fbbf24", display: "inline-block" }}></span>
-                Асуулт даалгавар
+                Асуулт даалгавар (Шинэ Блюпринт)
               </h3>
 
               <button type="button" style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
@@ -500,29 +625,51 @@ export default function HomePage() {
               {isGenerating ? (
                 <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", color: "#0284c7" }}>
                   <div style={{ fontSize: "32px", marginBottom: "10px" }}>⚡</div>
-                  <p style={{ fontWeight: "bold", fontSize: "14px" }}>PISA Стандарт даалгавар боловсруулж байна...</p>
-                  <p style={{ fontSize: "12px", color: "#64748b" }}>Түр хүлээнэ үү.</p>
+                  <p style={{ fontWeight: "bold", fontSize: "14px" }}>Шинэ блюпринт & рубрикийн дагуу боловсруулж байна...</p>
+                  <p style={{ fontSize: "12px", color: "#64748b" }}>6 даалгавар / 12 оноо</p>
                 </div>
               ) : generatedTasks ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   <div style={{ backgroundColor: "#fef3c7", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", color: "#92400e" }}>
-                    ✅ {selectedSubject}: {title.slice(0, 30)}... (6 Даалгавар / 12 Оноо)
+                    ✅ {selectedSubject}: {title.slice(0, 25)}... (6 Даалгавар / 12 Оноо)
                   </div>
                   {generatedTasks.map((t) => (
                     <div key={t.num} style={{ border: "1px solid #e2e8f0", borderRadius: "8px", padding: "10px", backgroundColor: "#f8fafc" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                        <span style={{ fontWeight: "bold", fontSize: "12px", color: "#0284c7" }}>
-                          Даалгавар {t.num} ({t.type})
-                        </span>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                        <div>
+                          <span style={{ fontWeight: "bold", fontSize: "12px", color: "#0284c7", marginRight: "6px" }}>
+                            Даалгавар {t.num} ({t.form})
+                          </span>
+                          <span style={{ fontSize: "11px", color: "#475569", backgroundColor: "#f1f5f9", padding: "1px 6px", borderRadius: "4px" }}>
+                            {t.level}
+                          </span>
+                        </div>
                         <span style={{ fontSize: "11px", fontWeight: "bold", backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "4px" }}>
                           {t.points} оноо
                         </span>
                       </div>
-                      <p style={{ fontSize: "12.5px", fontWeight: "600", color: "#1e293b", margin: "0 0 6px 0", lineHeight: "1.4" }}>
+                      
+                      <p style={{ fontSize: "12.5px", fontWeight: "600", color: "#1e293b", margin: "4px 0 6px 0", lineHeight: "1.4" }}>
                         {t.question}
                       </p>
-                      <p style={{ fontSize: "11.5px", color: "#059669", margin: 0, backgroundColor: "#f0fdf4", padding: "6px", borderRadius: "4px" }}>
-                        💡 <strong>Загвар хариулт:</strong> {t.answer}
+
+                      {/* Сонгох тест бол олон сонголт харуулах */}
+                      {t.options && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "3px", marginBottom: "6px", paddingLeft: "6px" }}>
+                          {t.options.map((opt: string, idx: number) => (
+                            <div key={idx} style={{ fontSize: "12px", color: "#334155" }}>
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <p style={{ fontSize: "11.5px", color: "#059669", margin: "0 0 4px 0", backgroundColor: "#f0fdf4", padding: "6px", borderRadius: "4px" }}>
+                        💡 <strong>Зөв хариулт:</strong> {t.correctAnswer}
+                      </p>
+
+                      <p style={{ fontSize: "11px", color: "#7c2d12", margin: 0, backgroundColor: "#fff7ed", padding: "5px", borderRadius: "4px" }}>
+                        📊 <strong>Рубрик:</strong> {t.rubric}
                       </p>
                     </div>
                   ))}
@@ -533,10 +680,10 @@ export default function HomePage() {
                     📝
                   </div>
                   <p style={{ fontSize: "14px", fontWeight: "bold", color: "#334155", margin: "0 0 6px 0" }}>
-                    PISA Стандарт 6 Даалгавар (12 Оноо)
+                    Шинэ Блюпринт: 6 Даалгавар (12 Оноо)
                   </p>
                   <p style={{ fontSize: "12px", color: "#64748b", maxWidth: "240px", margin: 0, lineHeight: "1.5" }}>
-                    Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар асуултууд энд бэлэн болно.
+                    Зүүн талд хичээлээ сонгон, эх бичвэрээ оруулж "Даалгавар боловсруулах" товчийг дарснаар шинэ блюпринтээр асуултууд үүснэ.
                   </p>
                 </div>
               )}
@@ -551,7 +698,7 @@ export default function HomePage() {
                 if (!generatedTasks) {
                   alert("Эхлээд даалгавар боловсруулна уу!");
                 } else {
-                  alert("Даалгавар амжилттай баталгаажиж, санд хадгалагдлаа!");
+                  alert("Шинэ блюпринтийн дагуу боловсруулсан даалгавар санд хадгалагдлаа!");
                 }
               }}
               style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}

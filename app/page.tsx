@@ -44,7 +44,7 @@ export default function HomePage() {
     },
     "Физик": {
       title: 'Физик: "Механик хөдөлгөөн ба кинетик энерги"',
-      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно. Биеийн хурд 2 дахин нэмэгдэхэд кинетик энерги 4 дахин өсдөг.`
+      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно.`
     },
     "Хими": {
       title: 'Хими: "Усны бүтэц ба химийн холбоос"',
@@ -113,9 +113,25 @@ export default function HomePage() {
     setGeneratedTasks(null);
   };
 
+  // 🛠️ ЗАСВАР 2: САНГААС УСТГАХАД СУРАГЧИЙН ХЭСГЭЭС НЭГТГЭН УСТГАХ
   const handleDeleteTaskFromBank = (taskId: number) => {
-    if (confirm("Та энэ даалгаврыг сангаас устгахдаа итгэлтэй байна уу?")) {
+    if (confirm("Та энэ даалгаврыг сангаас болон сурагчдаас устгахдаа итгэлтэй байна уу?")) {
+      const taskToDelete = taskBank.find((t) => t.id === taskId);
+      
+      // 1. Багшийн сангаас устгах
       setTaskBank((prev) => prev.filter((item) => item.id !== taskId));
+
+      // 2. Сурагчийн илгээсэн даалгавраас цуцлан устгах
+      if (taskToDelete) {
+        const assignedData = localStorage.getItem("creative_reading_assigned_tasks");
+        if (assignedData) {
+          try {
+            const list = JSON.parse(assignedData);
+            const filtered = list.filter((a: any) => a.taskData?.id !== taskId && a.taskData?.title !== taskToDelete.title);
+            localStorage.setItem("creative_reading_assigned_tasks", JSON.stringify(filtered));
+          } catch (e) { console.error(e); }
+        }
+      }
     }
   };
 
@@ -278,7 +294,7 @@ export default function HomePage() {
   const handleOpenAssignModal = (taskItem: any) => {
     setTaskToAssign(taskItem);
     setTargetClass("9Е");
-    const autoCode = `9E-${(taskItem.subject \vert{}\vert{} "TASK").slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const autoCode = `9E-${(taskItem.subject || "TASK").slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
     setAssignmentCode(autoCode);
     const tmr = new Date();
     tmr.setDate(tmr.getDate() + 1);
@@ -592,7 +608,7 @@ export default function HomePage() {
 
       </div>
 
-      {/* 📂 ДААЛГАВРЫН САН (Багшийн зогсох цэг) */}
+      {/* 📂 ДААЛГАВРЫН САН (ЗУРАГ-1 ДЭЭРХ БУЦАХ ТОВЧИЙГ ЦЭВЭРЛЭСЭН) */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1200px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
@@ -603,8 +619,8 @@ export default function HomePage() {
                 <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: <strong>{taskBank.length}</strong> багц даалгавар</p>
               </div>
               <div>
-                {/* 🔒 СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧИЙГ ЭНДЭЭС БҮРЭН АВЧ ХАЯСАН */}
-                <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
+                {/* 🔒 ЗУРАГ 1 ДЭЭРХ СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧИЙГ АВСАН */}
+                <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "8px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
               </div>
             </div>
 
@@ -652,6 +668,7 @@ export default function HomePage() {
 
                             <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedSubject(item.subject); setTitle(item.title); setStoryText(item.storyText); setGeneratedTasks(item.tasks); setIsTaskBankOpen(false); }} style={{ backgroundColor: "#e0f2fe", color: "#0369a1", border: "1px solid #bae6fd", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📥 Үндсэн ажилд ачаалах</button>
                             
+                            {/* 🛠️ ЗАСВАР 2: УСТГАХДАА СУРАГЧИЙН ХЭСГЭЭС НЭГТГЭН УСТГАНА */}
                             <button type="button" onClick={(e) => { e.stopPropagation(); handleDeleteTaskFromBank(item.id); }} style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>🗑️ Устгах</button>
 
                             <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7" }}>{isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй"}</span>
@@ -734,14 +751,16 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ИЛГЭЭСНИЙ ДАРААХ МОДАЛ */}
+      {/* ИЛГЭЭСНИЙ ДАРААХ МОДАЛ (ЗУРАГ 2 ДЭЭРХ БУЦАХ ТОВЧИЙГ АВСАН) */}
       {assignSuccessModal && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1200 }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #10b981" }}>
             <div style={{ fontSize: "42px", marginBottom: "10px" }}>📨</div>
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>9Е ангид амжилттай илгээгдлээ!</h3>
-            <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор сурагчийн цонхоор орж ажиллана.</p>
-            <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ width: "100%", backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Ойлголоо, Баярлалаа</button>
+            <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор сурагчийн танхим руу орж даалгавраа ажиллах боломжтой.</p>
+            
+            {/* 🔒 ЗУРАГ 2 ДЭЭРХ СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧИЙГ АВААД ГАНЦ ЦЭВЭРХЭН ХААХ ТОВЧТОЙ БОЛГОВ */}
+            <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ width: "100%", backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>Хаах</button>
           </div>
         </div>
       )}

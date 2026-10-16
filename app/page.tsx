@@ -5,8 +5,15 @@ import { useState } from "react";
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isBlueprintOpen, setIsBlueprintOpen] = useState(false);
+  const [isTaskBankOpen, setIsTaskBankOpen] = useState(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("Уран зохиол");
+  const [bankFilterSubject, setBankFilterSubject] = useState("Бүх хичээл");
   const [imgError, setImgError] = useState(false);
+
+  // Даалгаврын санд хадгалагдсан даалгавруудын төлөв
+  const [taskBank, setTaskBank] = useState<any[]>([]);
+  const [saveSuccessModal, setSaveSuccessModal] = useState<boolean>(false);
 
   // Хичээл тус бүрийн жишээ эх бичвэрүүд
   const subjectDefaults: { [key: string]: { title: string; story: string } } = {
@@ -39,11 +46,9 @@ export default function HomePage() {
     }
   };
 
-  // Эх бичвэрийн төлөвүүд
   const [title, setTitle] = useState(subjectDefaults["Уран зохиол"].title);
   const [storyText, setStoryText] = useState(subjectDefaults["Уран зохиол"].story);
 
-  // Хичээл сонгоход тохирох эх бичвэрийг автоматаар ачаалах
   const handleSelectSubject = (sub: string) => {
     setSelectedSubject(sub);
     if (subjectDefaults[sub]) {
@@ -53,13 +58,11 @@ export default function HomePage() {
     setGeneratedTasks(null);
   };
 
-  // Даалгавар боловсруулах төлөв
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedTasks, setGeneratedTasks] = useState<any[] | null>(null);
   const [selectedRadioOptions, setSelectedRadioOptions] = useState<{ [key: number]: string }>({});
   const [editingTaskNum, setEditingTaskNum] = useState<number | null>(null);
 
-  // Чатын төлөв
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -100,7 +103,7 @@ export default function HomePage() {
     }, 600);
   };
 
-  // Өгөгдсөн ЭХ БИЧВЭРЭЭС нь ДИНАМИКААР 6 даалгавар боловсруулах функц
+  // Эх бичвэрээс динамикаар даалгавар боловсруулах
   const generateDynamicTasksFromText = (sub: string, customTitle: string, customText: string) => {
     const rawSentences = customText
       .split(/[.!?\n]/)
@@ -184,7 +187,6 @@ export default function HomePage() {
     ];
   };
 
-  // Сонгосон хичээл ба эх бичвэрт боловсруулах функц
   const handleGenerateTasks = () => {
     if (!storyText.trim()) {
       alert("Эх бичвэрээ оруулна уу!");
@@ -194,7 +196,6 @@ export default function HomePage() {
     setIsGenerating(true);
 
     setTimeout(() => {
-      // Багш шинэ эх бичвэр оруулсан эсвэл зассан эсэхийг шалгах
       const isDefaultText = subjectDefaults[selectedSubject] && 
         storyText.trim() === subjectDefaults[selectedSubject].story.trim() && 
         title.trim() === subjectDefaults[selectedSubject].title.trim();
@@ -202,10 +203,8 @@ export default function HomePage() {
       let tasksForSubject: any[] = [];
 
       if (!isDefaultText) {
-        // Багш шинэ эх бичвэр оруулсан бол ТУХАЙН ЭХ БИЧВЭРТ НЬ ТОХИРУУЛАН ДИНАМИКААР боловсруулна
         tasksForSubject = generateDynamicTasksFromText(selectedSubject, title, storyText);
       } else {
-        // Анхдагч загвар эх бичвэр байвал бэлтгэсэн тусгай даалгавруудыг харуулна
         if (selectedSubject === "Физик") {
           tasksForSubject = [
             {
@@ -215,12 +214,7 @@ export default function HomePage() {
               taskAction: "ABCD сонголтоос нэг хариулт сонгох",
               points: 1,
               question: "Биеийн хурд 2 дахин нэмэгдэхэд түүний кинетик энерги хэд дахин өсөх бэ?",
-              options: [
-                "A. 2 дахин өснө",
-                "B. 4 дахин өснө",
-                "C. Өөрчлөгдөхгүй",
-                "D. 8 дахин өснө"
-              ],
+              options: ["A. 2 дахин өснө", "B. 4 дахин өснө", "C. Өөрчлөгдөхгүй", "D. 8 дахин өснө"],
               correctAnswer: "B. 4 дахин өснө",
               rubric: "Зөв сонгосон бол 1 оноо, буруу сонгосон бол 0 оноо."
             },
@@ -284,12 +278,7 @@ export default function HomePage() {
               taskAction: "ABCD сонголтоос нэг хариулт сонгох",
               points: 1,
               question: "Усны молекулуудын хооронд ямар төрлийн химийн холбоо үүсдэг вэ?",
-              options: [
-                "A. Ионы холбоо",
-                "B. Водородон холбоо",
-                "C. Металлын холбоо",
-                "D. Ван-дер-Ваальсын хүч"
-              ],
+              options: ["A. Ионы холбоо", "B. Водородон холбоо", "C. Металлын холбоо", "D. Ван-дер-Ваальсын хүч"],
               correctAnswer: "B. Водородон холбоо",
               rubric: "Зөв сонгосон бол 1 оноо, буруу бол 0 оноо."
             },
@@ -353,12 +342,7 @@ export default function HomePage() {
               taskAction: "ABCD сонголтоос нэг хариулт сонгох",
               points: 1,
               question: "Фотосинтезийн үйл явц ургамлын эсийн ямар эрхтэнцэрт явагддаг вэ?",
-              options: [
-                "A. Митохондри",
-                "B. Хлоропласт",
-                "C. Рибосом",
-                "D. Ядро"
-              ],
+              options: ["A. Митохондри", "B. Хлоропласт", "C. Рибосом", "D. Ядро"],
               correctAnswer: "B. Хлоропласт",
               rubric: "Зөв сонгосон бол 1 оноо, буруу бол 0 оноо."
             },
@@ -422,12 +406,7 @@ export default function HomePage() {
               taskAction: "ABCD сонголтоос нэг хариулт сонгох",
               points: 1,
               question: "Их Монгол Улсад Морин өртөөний сүлжээг орон даяар засаж тохижуулсан хаан хэн бэ?",
-              options: [
-                "A. Чингис хаан",
-                "B. Өгэдэй хаан",
-                "C. Хубилай хаан",
-                "D. Мөнх хаан"
-              ],
+              options: ["A. Чингис хаан", "B. Өгэдэй хаан", "C. Хубилай хаан", "D. Мөнх хаан"],
               correctAnswer: "B. Өгэдэй хаан",
               rubric: "Зөв сонгосон бол 1 оноо, буруу бол 0 оноо."
             },
@@ -491,12 +470,7 @@ export default function HomePage() {
               taskAction: "ABCD сонголтоос нэг хариулт сонгох",
               points: 1,
               question: "Монгол орон Евразийн эх газрын төвд оршдог тул ямар уур амьсгалтай вэ?",
-              options: [
-                "A. Далайн зөөлөн уур амьсгалтай",
-                "B. Эх газрын эрс тэс уур амьсгалтай",
-                "C. Тропикийн чийглэг уур амьсгалтай",
-                "D. Арктикийн хүйтэн уур амьсгалтай"
-              ],
+              options: ["A. Далайн зөөлөн уур амьсгалтай", "B. Эх газрын эрс тэс уур амьсгалтай", "C. Тропикийн чийглэг уур амьсгалтай", "D. Арктикийн хүйтэн уур амьсгалтай"],
               correctAnswer: "B. Эх газрын эрс тэс уур амьсгалтай",
               rubric: "Зөв сонгосон бол 1 оноо, буруу бол 0 оноо."
             },
@@ -552,7 +526,6 @@ export default function HomePage() {
             }
           ];
         } else {
-          // Уран зохиол (Default)
           tasksForSubject = [
             {
               num: 1,
@@ -630,7 +603,31 @@ export default function HomePage() {
     }, 1200);
   };
 
-  // Даалгаврын утга засах функц
+  // ДААЛГАВРЫГ БАТАЛЖ САНД ИЛГЭЭХ/ХАДГАЛАХ ФУНКЦ
+  const handleSaveToTaskBank = () => {
+    if (!generatedTasks || generatedTasks.length === 0) {
+      alert("Эхлээд даалгавар боловсруулна уу!");
+      return;
+    }
+
+    const newBankItem = {
+      id: Date.now(),
+      subject: selectedSubject,
+      title: title || `${selectedSubject} эх бичвэр`,
+      storyText: storyText,
+      tasks: generatedTasks,
+      totalPoints: generatedTasks.reduce((acc, t) => acc + (t.points || 0), 0),
+      createdDate: new Date().toLocaleDateString("mn-MN") + " " + new Date().toLocaleTimeString("mn-MN", { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setTaskBank((prev) => [
+      newBankItem,
+      ...prev.filter((item) => !(item.subject === selectedSubject && item.title === newBankItem.title))
+    ]);
+
+    setSaveSuccessModal(true);
+  };
+
   const handleTaskFieldChange = (taskIndex: number, field: string, value: any) => {
     if (!generatedTasks) return;
     const updated = [...generatedTasks];
@@ -638,7 +635,6 @@ export default function HomePage() {
     setGeneratedTasks(updated);
   };
 
-  // Сонгох тестийн сонголт засах функц
   const handleOptionTextChange = (taskIndex: number, optIndex: number, value: string) => {
     if (!generatedTasks) return;
     const updated = [...generatedTasks];
@@ -647,6 +643,10 @@ export default function HomePage() {
     updated[taskIndex].options = newOpts;
     setGeneratedTasks(updated);
   };
+
+  const filteredTaskBank = bankFilterSubject === "Бүх хичээл" 
+    ? taskBank 
+    : taskBank.filter(t => t.subject === bankFilterSubject);
 
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f8fafc", padding: "20px", fontFamily: "sans-serif" }}>
@@ -868,7 +868,7 @@ export default function HomePage() {
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Эргэцүүлэн дүгнэх</td>
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэр бичих</td>
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-3</td>
-                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт дутуу бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
                 </tr>
                 <tr style={{ backgroundColor: "#fffdf0" }}>
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>6</td>
@@ -876,14 +876,11 @@ export default function HomePage() {
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>Эргэцүүлэн дүгнэх</td>
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэр бичих</td>
                   <td style={{ padding: "6px 8px", border: "1px solid #fde68a", fontWeight: "bold" }}>0-3</td>
-                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт, ойлголт дутуу шинэ санаагүй бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
+                  <td style={{ padding: "6px 8px", border: "1px solid #fde68a" }}>2-3 өгүүлбэрээр өөрийн бодлоор шинэ санаа гарган эргэцүүлэн дүгнэсэн бол 3 оноо, 2-3 өгүүлбэр бичсэн ч шинэ санаа гаргаагүй бол 2 оноо, 1-2 өгүүлбэрээр дүгнэлт дутуу бол 1 оноо, Огт бичээгүй бол 0 оноо</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p style={{ fontSize: "11.5px", color: "#475569", margin: "8px 0 0 0", lineHeight: "1.4" }}>
-            💡 <strong>Тэмдэглэл:</strong> Уран зохиолын 5 эх нь дан эх бичвэр байх ба бусад 5 хичээлийн 1-2-р даалгавар дан бичвэр, 3-6-р даалгавар нь хүснэгт, диаграмм, схем, зурагтай байна. 6 хичээл тус бүр 5, нийт 30 удаагийн даалгавар боловсруулна.
-          </p>
         </section>
       )}
 
@@ -943,7 +940,7 @@ export default function HomePage() {
                   handleSendMessage();
                 }
               }}
-              placeholder="Багш та асуултаа энд бичээд бүрэн нягтлан хараарай... (Shift + Enter-ээр шинэ мөр авна)"
+              placeholder="Багш та асуултаа энд бичээрэй... (Shift + Enter-ээр шинэ мөр авна)"
               rows={2}
               style={{
                 flex: 1,
@@ -1007,8 +1004,12 @@ export default function HomePage() {
                 Эх бичвэр
               </h3>
 
-              <button type="button" style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
-                Даалгаврын сан ➔
+              <button 
+                type="button" 
+                onClick={() => setIsTaskBankOpen(true)}
+                style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
+              >
+                📂 Даалгаврын сан ({taskBank.length}) ➔
               </button>
             </div>
 
@@ -1122,8 +1123,12 @@ export default function HomePage() {
                 Асуулт даалгавар
               </h3>
 
-              <button type="button" style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
-                Хяналт шинжилгээ ➔
+              <button 
+                type="button" 
+                onClick={() => setIsAnalyticsOpen(true)}
+                style={{ backgroundColor: "#0284c7", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+              >
+                📊 Хяналт шинжилгээ ➔
               </button>
             </div>
 
@@ -1139,21 +1144,18 @@ export default function HomePage() {
               ) : generatedTasks && generatedTasks.length > 0 ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                   
-                  {/* Хичээлийн нэр & Толгой мэдээлэл */}
                   <div style={{ backgroundColor: "#fef3c7", padding: "10px 14px", borderRadius: "8px" }}>
                     <span style={{ fontSize: "13px", fontWeight: "bold", color: "#92400e" }}>
                       ✅ {selectedSubject}: {generatedTasks.length} даалгавар (Нийт {generatedTasks.reduce((a, b) => a + (b.points || 0), 0)} оноо)
                     </span>
                   </div>
 
-                  {/* Даалгавруудын жагсаалт */}
                   {generatedTasks.map((t, idx) => {
                     const isEditing = editingTaskNum === t.num;
 
                     return (
                       <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "10px", padding: "12px", backgroundColor: "#f8fafc", boxShadow: "0 1px 3px rgba(0,0,0,0.03)" }}>
                         
-                        {/* Даалгаврын толгой хэсэг ба Засах товчлуур */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px", borderBottom: "1px dashed #cbd5e1", paddingBottom: "6px" }}>
                           <div>
                             <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7", marginRight: "6px" }}>
@@ -1188,7 +1190,6 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        {/* АСУУЛТ (ЗАСАХ ЭСВЭЛ ХАРУУЛАХ) */}
                         {isEditing ? (
                           <div style={{ marginBottom: "10px" }}>
                             <label style={{ fontSize: "11px", fontWeight: "bold", color: "#475569", display: "block", marginBottom: "2px" }}>Асуулт засах:</label>
@@ -1205,7 +1206,6 @@ export default function HomePage() {
                           </p>
                         )}
 
-                        {/* СОНГОХ ТЕСТ БОЛ: РАДИО ТОВЧЛУУРТАЙ (ЧЕКЛЭХ) */}
                         {t.options && (
                           <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px", paddingLeft: "2px" }}>
                             {t.options.map((opt: string, optIdx: number) => {
@@ -1250,7 +1250,6 @@ export default function HomePage() {
                           </div>
                         )}
 
-                        {/* ЗӨВ ХАРИУЛТ (ЗАСАХ ЭСВЭЛ ХАРУУЛАХ) */}
                         {isEditing ? (
                           <div style={{ marginBottom: "8px" }}>
                             <label style={{ fontSize: "11px", fontWeight: "bold", color: "#059669", display: "block", marginBottom: "2px" }}>Зөв хариулт / Загвар засах:</label>
@@ -1267,7 +1266,6 @@ export default function HomePage() {
                           </p>
                         )}
 
-                        {/* РУБРИК (ЗАСАХ ЭСВЭЛ ХАРУУЛАХ) */}
                         {isEditing ? (
                           <div>
                             <label style={{ fontSize: "11px", fontWeight: "bold", color: "#b45309", display: "block", marginBottom: "2px" }}>Рубрик (Онооны задаргаа) засах:</label>
@@ -1309,22 +1307,255 @@ export default function HomePage() {
           <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "14px" }}>
             <button 
               type="button" 
-              onClick={() => {
-                if (!generatedTasks || generatedTasks.length === 0) {
-                  alert("Эхлээд даалгавар боловсруулна уу!");
-                } else {
-                  alert(`${selectedSubject} хичээлийн зассан даалгаврууд санд амжилттай хадгалагдлаа!`);
-                }
-              }}
-              style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}
+              onClick={handleSaveToTaskBank}
+              style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
             >
-              💾 Даалгаврыг баталж, санд илгээх
+              <span>💾</span> Даалгаврыг баталж, санд илгээх
             </button>
           </div>
 
         </section>
 
       </div>
+
+      {/* ========================================================= */}
+      {/* 1. БАТАЛЖ САНД ИЛГЭЭСНИЙ ДАРААХ БАТАЛГААЖУУЛАХ MODAL */}
+      {/* ========================================================= */}
+      {saveSuccessModal && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
+          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "440px", width: "90%", textAlign: "center", border: "2px solid #10b981", boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)" }}>
+            <div style={{ fontSize: "42px", marginBottom: "10px" }}>🎉</div>
+            <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>
+              Амжилттай баталгаажлаа!
+            </h3>
+            <p style={{ fontSize: "13.5px", color: "#334155", lineHeight: "1.5", margin: "0 0 20px 0" }}>
+              <strong>"{selectedSubject}"</strong> хичээлийн 6 даалгавар (12 оноо) Даалгаврын санд амжилттай хадгалагдлаа.
+            </p>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setSaveSuccessModal(false);
+                  setIsTaskBankOpen(true);
+                }}
+                style={{ flex: 1, backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}
+              >
+                📂 Даалгаврын сан руу очих
+              </button>
+              <button
+                type="button"
+                onClick={() => setSaveSuccessModal(false)}
+                style={{ flex: 1, backgroundColor: "#f1f5f9", color: "#334155", border: "1px solid #cbd5e1", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}
+              >
+                ✏️ Үргэлжлүүлэн засах
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (TASK BANK MODAL) */}
+      {/* ========================================================= */}
+      {isTaskBankOpen && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
+          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1000px", height: "85vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
+            
+            {/* Толгой хэсэг */}
+            <div style={{ backgroundColor: "#fffdf0", padding: "16px 20px", borderBottom: "1.5px solid #fde68a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                  📂 Даалгаврын сан (Батлагдсан тестүүд)
+                </h2>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: {taskBank.length} эх бичвэрийн багц даалгавар</p>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <button 
+                  type="button" 
+                  onClick={() => window.print()} 
+                  style={{ backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+                >
+                  🖨️ Хэвлэх / PDF
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => setIsTaskBankOpen(false)}
+                  style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+                >
+                  Хаах ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Хичээлээр шүүх цэс */}
+            <div style={{ backgroundColor: "#f8fafc", padding: "10px 20px", borderBottom: "1px solid #e2e8f0", display: "flex", gap: "8px", overflowX: "auto" }}>
+              {["Бүх хичээл", ...subjects].map((sub) => (
+                <button
+                  key={sub}
+                  type="button"
+                  onClick={() => setBankFilterSubject(sub)}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: "16px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    border: "none",
+                    cursor: "pointer",
+                    backgroundColor: bankFilterSubject === sub ? "#0284c7" : "#e2e8f0",
+                    color: bankFilterSubject === sub ? "#ffffff" : "#475569"
+                  }}
+                >
+                  {sub}
+                </button>
+              ))}
+            </div>
+
+            {/* Контент хэсэг */}
+            <div style={{ padding: "20px", overflowY: "auto", flex: 1, backgroundColor: "#f8fafc" }}>
+              {filteredTaskBank.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px 20px", color: "#64748b" }}>
+                  <div style={{ fontSize: "48px", marginBottom: "12px" }}>📭</div>
+                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#334155", margin: "0 0 6px 0" }}>
+                    Даалгаврын санд {bankFilterSubject !== "Бүх хичээл" && `"${bankFilterSubject}" хичээлийн `} дата одоогоор байхгүй байна.
+                  </h4>
+                  <p style={{ fontSize: "13px", margin: 0 }}>
+                    Үндсэн хуудсаас даалгавараа боловсруулж, засаад "💾 Даалгаврыг баталж, санд илгээх" товчийг дараарай.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  {filteredTaskBank.map((item) => (
+                    <div key={item.id} style={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1.5px solid #cbd5e1", padding: "18px", boxShadow: "0 2px 4px rgba(0,0,0,0.04)" }}>
+                      
+                      {/* Картны толгой */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "10px", marginBottom: "12px" }}>
+                        <div>
+                          <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold", marginRight: "8px" }}>
+                            {item.subject}
+                          </span>
+                          <span style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a" }}>
+                            {item.title}
+                          </span>
+                        </div>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <span style={{ fontSize: "12px", color: "#64748b" }}>🗓️ {item.createdDate}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm("Энэ даалгаврыг сангаас устгахдаа итгэлтэй байна уу?")) {
+                                setTaskBank((prev) => prev.filter((i) => i.id !== item.id));
+                              }
+                            }}
+                            style={{ backgroundColor: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "4px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                          >
+                            🗑️ Устгах
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Эх бичвэр */}
+                      <div style={{ backgroundColor: "#fffdf0", padding: "10px 14px", borderRadius: "8px", border: "1px solid #fde68a", fontSize: "13px", color: "#334155", lineHeight: "1.5", marginBottom: "14px", maxHeight: "100px", overflowY: "auto" }}>
+                        <strong>Эх бичвэр:</strong> {item.storyText}
+                      </div>
+
+                      {/* 6 Даалгавар */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                        {item.tasks.map((t: any) => (
+                          <div key={t.num} style={{ border: "1px solid #e2e8f0", padding: "10px", borderRadius: "8px", backgroundColor: "#f8fafc", fontSize: "12px" }}>
+                            <p style={{ fontWeight: "bold", color: "#0369a1", margin: "0 0 4px 0" }}>
+                              {t.num}. [{t.form}] {t.question} ({t.points} оноо)
+                            </p>
+                            <p style={{ color: "#059669", margin: "0 0 4px 0" }}>💡 Зөв хариулт: {t.correctAnswer}</p>
+                            <p style={{ color: "#b45309", margin: 0, fontSize: "11px" }}>📊 Рубрик: {t.rubric}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* 3. ХЯНАЛТ ШИНЖИЛГЭЭНИЙ ЦОНХ (ANALYTICS MODAL) */}
+      {/* ========================================================= */}
+      {isAnalyticsOpen && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
+          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "800px", padding: "24px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}>
+            
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "12px", marginBottom: "16px" }}>
+              <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                📊 Хяналт шинжилгээ ба Статистик
+              </h3>
+              <button 
+                type="button" 
+                onClick={() => setIsAnalyticsOpen(false)}
+                style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+              >
+                Хаах ✕
+              </button>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "20px" }}>
+              <div style={{ backgroundColor: "#e0f2fe", border: "1px solid #bae6fd", padding: "14px", borderRadius: "10px", textAlign: "center" }}>
+                <p style={{ fontSize: "12px", color: "#0369a1", fontWeight: "bold", margin: "0 0 4px 0" }}>Нийт батлагдсан даалгавар</p>
+                <h2 style={{ fontSize: "28px", fontWeight: "900", color: "#0284c7", margin: 0 }}>{taskBank.length} / 30</h2>
+              </div>
+              <div style={{ backgroundColor: "#dcfce7", border: "1px solid #86efac", padding: "14px", borderRadius: "10px", textAlign: "center" }}>
+                <p style={{ fontSize: "12px", color: "#15803d", fontWeight: "bold", margin: "0 0 4px 0" }}>PISA Блюпринт биелэлт</p>
+                <h2 style={{ fontSize: "28px", fontWeight: "900", color: "#16a34a", margin: 0 }}>100%</h2>
+              </div>
+              <div style={{ backgroundColor: "#fef3c7", border: "1px solid #fde047", padding: "14px", borderRadius: "10px", textAlign: "center" }}>
+                <p style={{ fontSize: "12px", color: "#a16207", fontWeight: "bold", margin: "0 0 4px 0" }}>Хамрагдсан хичээл</p>
+                <h2 style={{ fontSize: "28px", fontWeight: "900", color: "#d97706", margin: 0 }}>
+                  {Array.from(new Set(taskBank.map(t => t.subject))).length} / 6
+                </h2>
+              </div>
+            </div>
+
+            <h4 style={{ fontSize: "14px", fontWeight: "bold", color: "#1e293b", marginBottom: "10px" }}>Танин мэдэхүйн 3 түвшний хуваарилалт:</h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>
+                  <span>1. Мэдээлэл олох, сэргээн санах (1-2-р даалгавар)</span>
+                  <span>2 Оноо (16.7%)</span>
+                </div>
+                <div style={{ height: "10px", backgroundColor: "#e2e8f0", borderRadius: "5px", overflow: "hidden" }}>
+                  <div style={{ width: "16.7%", height: "100%", backgroundColor: "#38bdf8" }}></div>
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>
+                  <span>2. Задлан шинжлэх (3-4-р даалгавар)</span>
+                  <span>4 Оноо (33.3%)</span>
+                </div>
+                <div style={{ height: "10px", backgroundColor: "#e2e8f0", borderRadius: "5px", overflow: "hidden" }}>
+                  <div style={{ width: "33.3%", height: "100%", backgroundColor: "#fbbf24" }}></div>
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>
+                  <span>3. Эргэцүүлэн дүгнэх (5-6-р даалгавар)</span>
+                  <span>6 Оноо (50.0%)</span>
+                </div>
+                <div style={{ height: "10px", backgroundColor: "#e2e8f0", borderRadius: "5px", overflow: "hidden" }}>
+                  <div style={{ width: "50%", height: "100%", backgroundColor: "#10b981" }}></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </main>
   );

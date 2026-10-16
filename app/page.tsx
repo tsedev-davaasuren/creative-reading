@@ -11,6 +11,12 @@ export default function HomePage() {
   const [bankFilterSubject, setBankFilterSubject] = useState("Бүх хичээл");
   const [imgError, setImgError] = useState(false);
 
+  // Даалгаврын санд Сурагчийн харагдац (Default) эсвэл Багшийн харагдац
+  const [isTeacherViewInBank, setIsTeacherViewInBank] = useState(false);
+
+  // Сурагчийн хариулт хадгалах төлөв
+  const [studentAnswers, setStudentAnswers] = useState<{ [key: string]: string }>({});
+
   // Даалгаврын санд хадгалагдсан даалгаврууд
   const [taskBank, setTaskBank] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,20 +25,91 @@ export default function HomePage() {
   // Даалгаврын санд дэлгэгдсэн картны ID-ууд (Accordion төлөв)
   const [expandedTaskIds, setExpandedTaskIds] = useState<number[]>([]);
 
-  // 1. Хуудас ачаалагдахад localStorage-аас хадгалсан датаг сэргээн унших
+  // Хичээл тус бүрийн жишээ иж бүрэн эх бичвэрүүд
+  const subjectDefaults: { [key: string]: { title: string; story: string } } = {
+    "Уран зохиол": {
+      title: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
+      story: `Манайх Цээлд, Бөөдэйн Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
+
+Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа үлдээнэ гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлсүүлж явахаар барих морио тэгэхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатаах морины нарийн хоншоороор уургалан эргүүлээд үргэн давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
+
+Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.
+
+Энэ бол миний арван долоон насанд хамгийн жаргалтай мөч байлаа. Гэвч энэ маань өглөөдөө үзэгдэх хөвчийн манан шиг байжээ.`
+    },
+    "Физик": {
+      title: 'Физик: "Механик хөдөлгөөн ба кинетик энерги"',
+      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно. Биеийн хурд 2 дахин нэмэгдэхэд кинетик энерги 4 дахин өсдөг.
+
+Автомашины тоормосны замын урт нь хурдны квадратаас шууд хамаардаг тул замын хөдөлгөөний аюулгүй байдалд хурдыг хэтрүүлэхгүй байх нь ач холбогдолтой юм. Хурд нэмэгдэхэд автомашины зогсох замын урт асар ихээр уртсаж, мөргөлдөх үеийн цохилтын энерги нэмэгддэг тул замын хөдөлгөөний дүрмийг баримтлах нь хүний амь насыг аврах физикийн үндэслэл болно.`
+    },
+    "Хими": {
+      title: 'Хими: "Усны бүтэц ба химийн холбоос"',
+      story: `Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно. Ковалент туйлшралтай холбоотой тул усны молекулуудын хооронд водородон холбоо үүсдэг. Үүний дүнд ус нь өндөр буцлах температуртай, гадаргуугийн шахалт өндөртэй байдаг.
+
+Ус нь 4°C температурт хамгийн их нягттай байдаг тул нуур, цөөрмийн доод үе өвөлдөө хөлдөхгүй, усны амьтад амьдрах боломж бүрддэг. Мөн ус нь нийтлэг уусгагч болохын хувьд шим бодисыг уусган амьд биеийн эс хооронд тээвэрлэх химийн чухал үүрэгтэй.`
+    },
+    "Биологи": {
+      title: 'Биологи: "Эсийн бүтээц ба фотосинтез"',
+      story: `Ургамлын эс нь хлоропласт хэмээх эрхтэнцэртэй бөгөөд нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий (CO2) болон уснаас (H2O) глюкоз (C6H12O6) ба хүчилтөрөгч (O2) нийлэгжүүлдэг. Энэ үйл явцыг фотосинтез гэнэ.
+
+Фотосинтезийн дүнд дэлхийн шим мандлын хүчилтөрөгчийн тэнцвэрт байдал хангагдаж, бүх амьд биетийн идэш тэжээлийн суваг бүрэлддэг. Ногоон ургамал нь агаар дахь хүлэмжийн хийг шингээн авч амьд байгалийг тэтгэдэг тул ой модыг хамгаалах нь уур амьсгалын дулаарлыг сааруулах үндэс юм.`
+    },
+    "Түүх": {
+      title: 'Түүх: "Их Монгол Улсын гадаад харилцаа ба өртөөний систем"',
+      story: `Чингис хаан 1206 онд Их Монгол Улсыг байгуулсны дараа Өгэдэй хаан орон даяар Морин өртөөний сүлжээг засаж тохижуулжээ. Өртөөний систем нь мэдээ мэдээллийг түргэн шуурхай дамжуулах, худалдаа иргэншлийн аюулгүй байдлыг хангахад шийдвэрлэх үүрэг гүйцэтгэсэн.
+
+Энэхүү систем нь Ази, Европыг холбосон Торгоны замыг аюулгүй болгож, Дорно ба Өрнийн соёлын солилцоо ("Pax Mongolica") идэвхжих нөхцөлийг бүрдүүлсэн юм. Өртөөний харуул ба гэрэгэ бүхий элч нар мэдээллийг хурдан дамжуулж байсан нь тухайн үеийнхээ хамгийн том мэдээллийн хурдны сүлжээ байв.`
+    },
+    "Газар зүй": {
+      title: 'Газар зүй: "Монгол орны уур амьсгал ба усан сүлжээ"',
+      story: `Монгол орон нь Евразийн эх газрын төвд оршдог тул эх газрын эрс тэс уур амьсгалтай. Жилийн ба хоногийн температурын свеч ихтэй, тунадасны хэмжээ бага. Хангай, Хэнтий, Алтайн нуруунаас эх авсан Сэлэнгэ, Орхон, Туул зэрэг томоохон голууд нь Хойд мөсөн далайн болон Төв Азийн гадагш урсгалгүй айрагт хамаардаг.
+
+Сүүлийн жилүүдэд уур амьсгалын дулаарлаас шалтгаалан цөлжилт, гол нуурын ширгэлт нэмэгдэж байна. Иймд усан сүлжээ, гол мөрний эх сурвалжийг хамгаалах, усыг гамнах нь газар зүйн орчны тэнцвэрийг хадгалахад нэн чухал тулгамдсан асуудал болоод байна.`
+    }
+  };
+
+  const [title, setTitle] = useState(subjectDefaults["Уран зохиол"].title);
+  const [storyText, setStoryText] = useState(subjectDefaults["Уран зохиол"].story);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedTasks, setGeneratedTasks] = useState<any[] | null>(null);
+
+  // 1. Хуудас ачаалагдахад localStorage-аас датаг сэргээн унших
   useEffect(() => {
     const savedBank = localStorage.getItem("creative_reading_task_bank");
     if (savedBank) {
       try {
         setTaskBank(JSON.parse(savedBank));
       } catch (e) {
-        console.error("Local storage-аас дата уншихад алдаа гарлаа:", e);
+        console.error("Task bank load error:", e);
       }
     }
+
+    const savedSession = localStorage.getItem("creative_reading_active_session");
+    if (savedSession) {
+      try {
+        const session = JSON.parse(savedSession);
+        if (session.selectedSubject) setSelectedSubject(session.selectedSubject);
+        if (session.title !== undefined) setTitle(session.title);
+        if (session.storyText !== undefined) setStoryText(session.storyText);
+        if (session.generatedTasks !== undefined) setGeneratedTasks(session.generatedTasks);
+      } catch (e) {
+        console.error("Session load error:", e);
+      }
+    }
+
     setIsLoaded(true);
   }, []);
 
-  // 2. Даалгаврын сан өөрчлөгдөх бүрд localStorage руу автоматаар хадгалах
+  // 2. Идэвхитэй ажлын талбар өөрчлөгдөх бүрд localStorage руу автоматаар хадгалах
+  useEffect(() => {
+    if (isLoaded) {
+      const session = { selectedSubject, title, storyText, generatedTasks };
+      localStorage.setItem("creative_reading_active_session", JSON.stringify(session));
+    }
+  }, [selectedSubject, title, storyText, generatedTasks, isLoaded]);
+
+  // 3. Даалгаврын сан өөрчлөгдөх бүрд localStorage руу автоматаар хадгалах
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem("creative_reading_task_bank", JSON.stringify(taskBank));
@@ -45,40 +122,6 @@ export default function HomePage() {
     );
   };
 
-  // Хичээл тус бүрийн жишээ эх бичвэрүүд
-  const subjectDefaults: { [key: string]: { title: string; story: string } } = {
-    "Уран зохиол": {
-      title: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
-      story: `Манайх Цээлд, Бөөдэйн Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
-Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа үлдээнэ гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлсүүлж явахаар барих морио тэгэхээс тэгж адууनाас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатаах морины нарийн хоншоороор уургалан эргүүлээд үргэн давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргэ Бөөдэйг хүлээж зогсоно.
-Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхуу нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.
-Энэ бол миний арван долоон насанд хамгийн жаргалтай мөч байлаа. Гэвч энэ маань өглөөдөө үзэгдэх хөвчийн манан шиг байжээ.`
-    },
-    "Физик": {
-      title: 'Физик: "Механик хөдөлгөөн ба кинетик энерги"',
-      story: `Биеийн хөдөлгөөн ба түүний хурд, массын хамаарлыг механик энергиэр тодорхойлдог. Биеийн масс m, хурд v байх үед кинетик энерги нь Ek = (1/2)*m*v^2 томьёогоор бодогдоно. Биеийн хурд 2 дахин нэмэгдэхэд кинетик энерги 4 дахин өсдөг. Автомашины тоормосны замын урт нь хурдны квадратаас шууд хамаардаг тул замын хөдөлгөөний аюулгүй байдалд хурдыг хэтрүүлэхгүй байх нь ач холбогдолтой юм.`
-    },
-    "Хими": {
-      title: 'Хими: "Усны бүтэц ба химийн холбоос"',
-      story: `Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно. Ковалент туйлшралтай холбоотой тул усны молекулуудын хооронд водородон холбоо үүсдэг. Үүний дүнд ус нь өндөр буцлах температуртай, гадаргуугийн шахалт өндөртэй байдаг. Ус нь 4°C температурт хамгийн их нягттай байдаг тул нуур, цөөрмийн доод үе өвөлдөө хөлдөхгүй, усны амьтад амьдрах боломж бүрддэг.`
-    },
-    "Биологи": {
-      title: 'Биологи: "Эсийн бүтээц ба фотосинтез"',
-      story: `Ургамлын эс нь хлоропласт хэмээх эрхтэнцэртэй бөгөөд нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий (CO2) болон уснаас (H2O) глюкоз (C6H12O6) ба хүчилтөрөгч (O2) нийлэгжүүлдэг. Энэ үйл явцыг фотосинтез гэнэ. Фотосинтезийн дүнд дэлхийн шим мандлын хүчилтөрөгчийн тэнцвэрт байдал хангагдаж, бүх амьд биетийн идэш тэжээлийн суваг бүрэлддэг.`
-    },
-    "Түүх": {
-      title: 'Түүх: "Их Монгол Улсын гадаад харилцаа ба өртөөний систем"',
-      story: `Чингис хаан 1206 онд Их Монгол Улсыг байгуулсны дараа Өгэдэй хаан орон даяар Морин өртөөний сүлжээг засаж тохижуулжээ. Өртөөний систем нь мэдээ мэдээллийг түргэн шуурхай дамжуулах, худалдаа иргэншлийн аюулгүй байдлыг хангахад шийдвэрлэх үүрэг гүйцэтгэсэн. Энэхүү систем нь Ази, Европыг холбосон Торгоны замыг аюулгүй болгож, Дорно ба Өрнийн соёлын солилцоо ("Pax Mongolica") идэвхжих нөхцөлийг бүрдүүлсэн юм.`
-    },
-    "Газар зүй": {
-      title: 'Газар зүй: "Монгол орны уур амьсгал ба усан сүлжээ"',
-      story: `Монгол орон нь Евразийн эх газрын төвд оршдог тул эх газрын эрс тэс уур амьсгалтай. Жилийн ба хоногийн температурын свеч ихтэй, тунадасны хэмжээ бага. Хангай, Хэнтий, Алтайн нуруунаас эх авсан Сэлэнгэ, Орхон, Туул зэрэг томоохон голууд нь Хойд мөсөн далайн болон Төв Азийн гадагш урсгалгүй айрагт хамаардаг. Сүүлийн жилүүдэд уур амьсгалын дулаарлаас шалтгаалан цөлжилт, гол нуурын ширгэлт нэмэгдэж байна.`
-    }
-  };
-
-  const [title, setTitle] = useState(subjectDefaults["Уран зохиол"].title);
-  const [storyText, setStoryText] = useState(subjectDefaults["Уран зохиол"].story);
-
   const handleSelectSubject = (sub: string) => {
     setSelectedSubject(sub);
     if (subjectDefaults[sub]) {
@@ -88,8 +131,6 @@ export default function HomePage() {
     setGeneratedTasks(null);
   };
 
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedTasks, setGeneratedTasks] = useState<any[] | null>(null);
   const [selectedRadioOptions, setSelectedRadioOptions] = useState<{ [key: number]: string }>({});
   const [editingTaskNum, setEditingTaskNum] = useState<number | null>(null);
 
@@ -104,7 +145,6 @@ export default function HomePage() {
 
   const subjects = ["Уран зохиол", "Хими", "Биологи", "Түүх", "Физик", "Газар зүй"];
 
-  // Чатын функц
   const handleSendMessage = () => {
     if (!inputText.trim()) return;
 
@@ -133,7 +173,6 @@ export default function HomePage() {
     }, 600);
   };
 
-  // Эх бичвэрээс динамикаар даалгавар боловсруулах
   const generateDynamicTasksFromText = (sub: string, customTitle: string, customText: string) => {
     const rawSentences = customText
       .split(/[.!?\n]/)
@@ -633,7 +672,6 @@ export default function HomePage() {
     }, 1200);
   };
 
-  // ДААЛГАВРЫГ БАТАЛЖ САНД ИЛГЭЭХ/ХАДГАЛАХ ФУНКЦ
   const handleSaveToTaskBank = () => {
     if (!generatedTasks || generatedTasks.length === 0) {
       alert("Эхлээд даалгавар боловсруулна уу!");
@@ -674,7 +712,6 @@ export default function HomePage() {
     setGeneratedTasks(updated);
   };
 
-  // Хичээл тус бүрд байгаа даалгаврын тоог авах функц
   const getSubjectTaskCount = (subName: string) => {
     if (subName === "Бүх хичээл") return taskBank.length;
     return taskBank.filter((t) => t.subject === subName).length;
@@ -1110,7 +1147,8 @@ export default function HomePage() {
                   lineHeight: "1.6",
                   resize: "vertical", 
                   boxSizing: "border-box",
-                  fontFamily: "inherit"
+                  fontFamily: "inherit",
+                  whiteSpace: "pre-wrap"
                 }}
               />
             </div>
@@ -1385,16 +1423,16 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (ACCORDION & COUNTER) */}
+      {/* 2. ДААЛГАВРЫН САНГИЙН ИЖ БҮРЭН ЦОНХ (СУРАГЧИД ХАРАГДАХ ШУУД ХЭЛБЭРТЭЙ) */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
-          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1000px", height: "85vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
+          <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1000px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
             
             {/* Толгой хэсэг */}
             <div style={{ backgroundColor: "#fffdf0", padding: "16px 20px", borderBottom: "1.5px solid #fde68a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                  📂 Даалгаврын сан (Батлагдсан тестүүд)
+                  📂 Даалгаврын сан
                 </h2>
                 <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>
                   Нийт хадгалагдсан: <strong>{taskBank.length}</strong> эх бичвэрийн багц даалгавар
@@ -1402,13 +1440,27 @@ export default function HomePage() {
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <button 
-                  type="button" 
-                  onClick={() => window.print()} 
-                  style={{ backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+                {/* ХАРАГДАЦ СОЛИХ ТОВЧ (Сурагчийн харагдац / Багшийн харагдац) */}
+                <button
+                  type="button"
+                  onClick={() => setIsTeacherViewInBank(!isTeacherViewInBank)}
+                  style={{
+                    backgroundColor: isTeacherViewInBank ? "#fef3c7" : "#e0f2fe",
+                    color: isTeacherViewInBank ? "#92400e" : "#0369a1",
+                    border: `1.5px solid ${isTeacherViewInBank ? "#fcd34d" : "#bae6fd"}`,
+                    padding: "6px 14px",
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px"
+                  }}
                 >
-                  🖨️ Хэвлэх / PDF
+                  <span>{isTeacherViewInBank ? "👨‍🏫 Багшийн харагдац (Хариулттай)" : "👁️ Сурагчийн харагдац (Сорил)"}</span>
                 </button>
+
                 <button 
                   type="button" 
                   onClick={() => setIsTaskBankOpen(false)}
@@ -1474,7 +1526,7 @@ export default function HomePage() {
                   </p>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                   {filteredTaskBank.map((item) => {
                     const isExpanded = expandedTaskIds.includes(item.id);
 
@@ -1507,7 +1559,7 @@ export default function HomePage() {
                             <span style={{ backgroundColor: "#0284c7", color: "#ffffff", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "bold" }}>
                               {item.subject}
                             </span>
-                            <h4 style={{ fontSize: "14.5px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+                            <h4 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
                               {item.title}
                             </h4>
                             <span style={{ fontSize: "11.5px", color: "#0369a1", backgroundColor: "#e0f2fe", padding: "2px 8px", borderRadius: "6px", fontWeight: "600" }}>
@@ -1515,8 +1567,24 @@ export default function HomePage() {
                             </span>
                           </div>
 
-                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             <span style={{ fontSize: "12px", color: "#64748b" }}>🗓️ {item.createdDate}</span>
+                            
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedSubject(item.subject);
+                                setTitle(item.title);
+                                setStoryText(item.storyText);
+                                setGeneratedTasks(item.tasks);
+                                setIsTaskBankOpen(false);
+                              }}
+                              style={{ backgroundColor: "#e0f2fe", color: "#0369a1", border: "1px solid #bae6fd", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                            >
+                              📥 Үндсэн ажилд ачаалах
+                            </button>
+
                             <button
                               type="button"
                               onClick={(e) => {
@@ -1530,42 +1598,145 @@ export default function HomePage() {
                               🗑️ Устгах
                             </button>
                             <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7", backgroundColor: "#ffffff", border: "1px solid #bae6fd", padding: "4px 10px", borderRadius: "6px" }}>
-                              {isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй харах"}
+                              {isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй нээх"}
                             </span>
                           </div>
                         </div>
 
-                        {/* ДЭЛГЭГДЭХ ДААЛГАВРЫН АГУУЛГА */}
+                        {/* СУРАГЧИД ХАРАГДАХ ШУУД ХЭЛБЭР (СУРАГЧИЙН ОНЛАЙН СОРИЛ) */}
                         {isExpanded && (
-                          <div style={{ padding: "16px 18px", borderTop: "1px solid #bae6fd", backgroundColor: "#ffffff" }}>
-                            <div style={{ backgroundColor: "#fffdf0", padding: "12px 14px", borderRadius: "8px", border: "1px solid #fde68a", fontSize: "13px", color: "#334155", lineHeight: "1.6", marginBottom: "14px" }}>
-                              <strong style={{ color: "#92400e" }}>📖 Эх бичвэр:</strong> {item.storyText}
+                          <div style={{ padding: "18px", borderTop: "1px solid #bae6fd", backgroundColor: "#ffffff" }}>
+                            
+                            {/* 1. ЭХ БИЧВЭР */}
+                            <div style={{ 
+                              backgroundColor: "#fffdf0", 
+                              padding: "16px 18px", 
+                              borderRadius: "12px", 
+                              border: "1.5px solid #fde68a", 
+                              fontSize: "14px", 
+                              color: "#1e293b", 
+                              lineHeight: "1.7", 
+                              marginBottom: "20px",
+                              whiteSpace: "pre-wrap",
+                              maxHeight: "300px",
+                              overflowY: "auto"
+                            }}>
+                              <h5 style={{ color: "#92400e", margin: "0 0 8px 0", fontSize: "15px", fontWeight: "bold" }}>
+                                📖 Унших эх бичвэр: {item.title}
+                              </h5> 
+                              {item.storyText}
                             </div>
 
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                              {item.tasks.map((t: any) => (
-                                <div key={t.num} style={{ border: "1px solid #e2e8f0", padding: "12px", borderRadius: "8px", backgroundColor: "#f8fafc", fontSize: "12.5px" }}>
-                                  <p style={{ fontWeight: "bold", color: "#0369a1", margin: "0 0 6px 0", lineHeight: "1.4" }}>
-                                    {t.num}. [{t.form}] {t.question} ({t.points} оноо)
-                                  </p>
+                            {/* 2. ДААЛГАВРУУД (СУРАГЧИЙН ШУУД ХАРАГДАЦ) */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <h5 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>
+                                  📝 Даалгаврууд ({item.tasks.length} асуулт / {item.totalPoints || 12} оноо)
+                                </h5>
+                                <span style={{ fontSize: "12px", color: isTeacherViewInBank ? "#b45309" : "#0284c7", fontWeight: "bold" }}>
+                                  {isTeacherViewInBank ? "👨‍🏫 Багшийн харагдац (Хариулт + Рубриктэй)" : "👁️ Сурагчийн харагдац (Хариултыг нуусан)"}
+                                </span>
+                              </div>
 
-                                  {t.options && (
-                                    <ul style={{ margin: "0 0 6px 0", paddingLeft: "18px", color: "#475569" }}>
-                                      {t.options.map((opt: string, i: number) => (
-                                        <li key={i}>{opt}</li>
-                                      ))}
-                                    </ul>
-                                  )}
+                              {item.tasks.map((t: any) => {
+                                const answerKey = `bank-${item.id}-${t.num}`;
+                                const currentAnswer = studentAnswers[answerKey] || "";
 
-                                  <p style={{ color: "#059669", margin: "0 0 4px 0", fontWeight: "bold" }}>
-                                    💡 Зөв хариулт: <span style={{ fontWeight: "normal" }}>{t.correctAnswer}</span>
-                                  </p>
-                                  <p style={{ color: "#b45309", margin: 0, fontSize: "11.5px" }}>
-                                    📊 Рубрик: {t.rubric}
-                                  </p>
-                                </div>
-                              ))}
+                                return (
+                                  <div 
+                                    key={t.num} 
+                                    style={{ 
+                                      border: "1.5px solid #e2e8f0", 
+                                      padding: "16px", 
+                                      borderRadius: "10px", 
+                                      backgroundColor: "#ffffff", 
+                                      boxShadow: "0 1px 3px rgba(0,0,0,0.02)" 
+                                    }}
+                                  >
+                                    {/* Асуултын толгой */}
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                                      <p style={{ fontWeight: "bold", fontSize: "14px", color: "#0f172a", margin: 0, lineHeight: "1.5" }}>
+                                        {t.num}. {t.question} <span style={{ color: "#0284c7", fontWeight: "bold" }}>({t.points} оноо)</span>
+                                      </p>
+                                    </div>
+
+                                    {/* Сонгох тест бол: Сурагчийн радио сонголтууд */}
+                                    {t.options && (
+                                      <div style={{ display: "flex", flexDirection: "column", gap: "8px", margin: "10px 0 12px 0" }}>
+                                        {t.options.map((opt: string, optIdx: number) => {
+                                          const isSelected = currentAnswer === opt;
+                                          return (
+                                            <label 
+                                              key={optIdx} 
+                                              style={{ 
+                                                display: "flex", 
+                                                alignItems: "center", 
+                                                gap: "10px", 
+                                                padding: "8px 12px", 
+                                                borderRadius: "8px", 
+                                                border: isSelected ? "1.5px solid #0284c7" : "1px solid #cbd5e1", 
+                                                backgroundColor: isSelected ? "#f0f9ff" : "#f8fafc", 
+                                                cursor: "pointer", 
+                                                fontSize: "13.5px",
+                                                fontWeight: isSelected ? "bold" : "normal",
+                                                color: isSelected ? "#0369a1" : "#334155"
+                                              }}
+                                            >
+                                              <input 
+                                                type="radio" 
+                                                name={`student-radio-${answerKey}`}
+                                                checked={isSelected}
+                                                onChange={() => setStudentAnswers((prev) => ({ ...prev, [answerKey]: opt }))}
+                                                style={{ width: "16px", height: "16px", accentColor: "#0284c7", cursor: "pointer" }}
+                                              />
+                                              <span>{opt}</span>
+                                            </label>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+
+                                    {/* Задгай даалгавар бол: Сурагчийн хариулт бичих текстийн цонх */}
+                                    {!t.options && (
+                                      <div style={{ margin: "10px 0 12px 0" }}>
+                                        <textarea
+                                          value={currentAnswer}
+                                          onChange={(e) => setStudentAnswers((prev) => ({ ...prev, [answerKey]: e.target.value }))}
+                                          placeholder="✍️ Хариултаа энд бичнэ үү..."
+                                          rows={3}
+                                          style={{
+                                            width: "100%",
+                                            padding: "10px",
+                                            borderRadius: "8px",
+                                            border: "1.5px solid #cbd5e1",
+                                            fontSize: "13.5px",
+                                            lineHeight: "1.5",
+                                            outline: "none",
+                                            fontFamily: "inherit",
+                                            boxSizing: "border-box",
+                                            backgroundColor: "#f8fafc"
+                                          }}
+                                        />
+                                      </div>
+                                    )}
+
+                                    {/* Багшийн харагдац сонгогдсон үед л Зөв хариулт ба Рубрик харагдана */}
+                                    {isTeacherViewInBank && (
+                                      <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px dashed #cbd5e1", display: "flex", flexDirection: "column", gap: "6px" }}>
+                                        <p style={{ fontSize: "12px", color: "#059669", margin: 0, backgroundColor: "#f0fdf4", padding: "6px 10px", borderRadius: "6px", border: "1px solid #bbf7d0" }}>
+                                          💡 <strong>Зөв хариулт / Загвар:</strong> {t.correctAnswer}
+                                        </p>
+                                        <p style={{ fontSize: "11.5px", color: "#b45309", margin: 0, backgroundColor: "#fff7ed", padding: "6px 10px", borderRadius: "6px", border: "1px solid #fed7aa" }}>
+                                          📊 <strong>Рубрик:</strong> {t.rubric}
+                                        </p>
+                                      </div>
+                                    )}
+
+                                  </div>
+                                );
+                              })}
                             </div>
+
                           </div>
                         )}
 

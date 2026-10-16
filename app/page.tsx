@@ -26,7 +26,7 @@ export default function HomePage() {
   const [teacherNote, setTeacherNote] = useState("");
   const [assignSuccessModal, setAssignSuccessModal] = useState(false);
 
-  // Хичээл тус бүрийн жишээ иж бүрэн эх бичвэрүүд
+  // Хичээл тус бүрийн жишээ эх бичвэрүүд
   const subjectDefaults: { [key: string]: { title: string; story: string } } = {
     "Уран зохиол": {
       title: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
@@ -75,7 +75,6 @@ export default function HomePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedTasks, setGeneratedTasks] = useState<any[] | null>(null);
 
-  // LocalStorage-оос датаг ачаалах
   useEffect(() => {
     const savedBank = localStorage.getItem("creative_reading_task_bank");
     if (savedBank) {
@@ -92,7 +91,6 @@ export default function HomePage() {
         if (session.generatedTasks !== undefined) setGeneratedTasks(session.generatedTasks);
       } catch (e) { console.error(e); }
     }
-
     setIsLoaded(true);
   }, []);
 
@@ -120,6 +118,13 @@ export default function HomePage() {
       setStoryText(subjectDefaults[sub].story);
     }
     setGeneratedTasks(null);
+  };
+
+  // 🗑️ ДААЛГАВАР УСТГАХ ФУНКЦ
+  const handleDeleteTaskFromBank = (taskId: number) => {
+    if (confirm("Та энэ даалгаврыг сангаас устгахдаа итгэлтэй байна уу?")) {
+      setTaskBank((prev) => prev.filter((item) => item.id !== taskId));
+    }
   };
 
   const [messages, setMessages] = useState([
@@ -210,7 +215,6 @@ export default function HomePage() {
     setSaveSuccessModal(true);
   };
 
-  // 🚀 9Е ANGI-Д ИЛГЭЭХ CLICK HANDLER
   const handleOpenAssignModal = (taskItem: any) => {
     setTaskToAssign(taskItem);
     setTargetClass("9Е");
@@ -251,7 +255,7 @@ export default function HomePage() {
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f8fafc", padding: "20px", fontFamily: "sans-serif" }}>
       
-      {/* HEADER */}
+      {/* HEADER (ЗУРАГ-3: СУРАГЧИЙН ТАНХИМ ТОВЧИЙГ ХАССАН) */}
       <header style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", borderRadius: "16px", border: "1px solid #fde68a", padding: "12px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ width: "64px", height: "64px", borderRadius: "14px", border: "2px solid #fcd34d", overflow: "hidden", padding: "2px", backgroundColor: "#fff" }}>
@@ -270,7 +274,6 @@ export default function HomePage() {
           <div style={{ display: "flex", gap: "8px" }}>
             <button type="button" onClick={() => setIsBlueprintOpen(!isBlueprintOpen)} style={{ backgroundColor: "#fde68a", border: "1px solid #fcd34d", padding: "5px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>📋 Блюпринт харах</button>
             <button type="button" onClick={() => setIsChatOpen(!isChatOpen)} style={{ backgroundColor: "#fde68a", border: "1px solid #fcd34d", padding: "5px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>💬 Цэндао багштай ярилцах</button>
-            <a href="/student" style={{ backgroundColor: "#059669", color: "#ffffff", padding: "5px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", textDecoration: "none" }}>👨‍🎓 Сурагчийн танхим ➔</a>
           </div>
         </div>
 
@@ -325,7 +328,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ҮНДСЭН АЖЛЫН ТАЛБАР (8:5 БА 8:3) */}
+      {/* ҮНДСЭН АЖЛЫН ТАЛБАР */}
       <div style={{ maxWidth: "1280px", margin: "0 auto", display: "grid", gridTemplateColumns: "5fr 3fr", gap: "16px" }}>
         
         {/* ЭХ БИЧВЭР */}
@@ -409,23 +412,75 @@ export default function HomePage() {
 
       </div>
 
-      {/* ДААЛГАВРЫН САН (🚀 9Е АНГИД ИЛГЭЭХ ТОВЧТОЙ) */}
+      {/* 📂 ДААЛГАВРЫН САН (ЗУРАГ-4: ХИЧЭЭЛҮҮДИЙН КАРТАРХИ АНГИЛАЛ БА ЗУРАГ-5: УСТГАХ ТОВЧТАЙ) */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1200px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
+            
             <div style={{ backgroundColor: "#fffdf0", padding: "16px 20px", borderBottom: "1.5px solid #fde68a", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>📂 Даалгаврын сан</h2>
                 <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: <strong>{taskBank.length}</strong> багц даалгавар</p>
               </div>
-              <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
+              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                {/* ДААЛГАВРЫН САНТАЙ ХОЛБООТОЙ СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧ */}
+                <a href="/student" style={{ backgroundColor: "#059669", color: "#ffffff", padding: "6px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "bold" }}>
+                  👨‍🎓 Сурагчийн танхим руу орох ➔
+                </a>
+                <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
+              </div>
+            </div>
+
+            {/* ЗУРАГ-4: ХИЧЭЭЛҮҮДИН КАРТААР АНГИЛСАН ДЭЭД ХЭСЭГ */}
+            <div style={{ padding: "16px 20px", borderBottom: "1px solid #e2e8f0", backgroundColor: "#fffdf0" }}>
+              <p style={{ fontSize: "12px", fontWeight: "bold", color: "#475569", margin: "0 0 8px 0" }}>Хичээлээр ангилах (Тоо ширхэгтэй):</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px" }}>
+                <button
+                  type="button"
+                  onClick={() => setBankFilterSubject("Бүх хичээл")}
+                  style={{
+                    padding: "8px",
+                    borderRadius: "10px",
+                    border: bankFilterSubject === "Бүх хичээл" ? "2px solid #0284c7" : "1px solid #cbd5e1",
+                    backgroundColor: bankFilterSubject === "Бүх хичээл" ? "#e0f2fe" : "#ffffff",
+                    cursor: "pointer",
+                    textAlign: "center"
+                  }}
+                >
+                  <p style={{ fontSize: "11px", fontWeight: "bold", margin: 0, color: "#334155" }}>Бүх хичээл</p>
+                  <span style={{ fontSize: "14px", fontWeight: "900", color: "#0284c7" }}>{taskBank.length}</span>
+                </button>
+
+                {subjects.map((sub) => {
+                  const count = taskBank.filter((t) => t.subject === sub).length;
+                  const isSelected = bankFilterSubject === sub;
+                  return (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() => setBankFilterSubject(sub)}
+                      style={{
+                        padding: "8px",
+                        borderRadius: "10px",
+                        border: isSelected ? "2px solid #0284c7" : "1px solid #cbd5e1",
+                        backgroundColor: isSelected ? "#e0f2fe" : "#ffffff",
+                        cursor: "pointer",
+                        textAlign: "center"
+                      }}
+                    >
+                      <p style={{ fontSize: "11px", fontWeight: "bold", margin: 0, color: "#334155" }}>{sub}</p>
+                      <span style={{ fontSize: "14px", fontWeight: "900", color: count > 0 ? "#059669" : "#94a3b8" }}>{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div style={{ padding: "20px", overflowY: "auto", flex: 1, backgroundColor: "#f8fafc" }}>
-              {taskBank.length === 0 ? (
+              {filteredTaskBank.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "60px 20px", color: "#64748b" }}>
                   <div style={{ fontSize: "48px", marginBottom: "12px" }}>📭</div>
-                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#334155" }}>Даалгаврын санд дата одоогоор байхгүй байна.</h4>
+                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#334155" }}>"{bankFilterSubject}" хичээлд даалгавар одоогоор хадгалагдаагүй байна.</h4>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -448,7 +503,18 @@ export default function HomePage() {
                             >
                               🚀 9Е ангид илгээх
                             </button>
+
                             <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedSubject(item.subject); setTitle(item.title); setStoryText(item.storyText); setGeneratedTasks(item.tasks); setIsTaskBankOpen(false); }} style={{ backgroundColor: "#e0f2fe", color: "#0369a1", border: "1px solid #bae6fd", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📥 Үндсэн ажилд ачаалах</button>
+                            
+                            {/* 🗑️ ЗУРАГ-5: УСТГАХ ТОВЧ */}
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); handleDeleteTaskFromBank(item.id); }}
+                              style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}
+                            >
+                              🗑️ Устгах
+                            </button>
+
                             <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7" }}>{isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй"}</span>
                           </div>
                         </div>
@@ -480,7 +546,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 🚀 9Е ANGI-Д ИЛГЭЭХ ЦОНХ (ASSIGNMENT MODAL) */}
+      {/* 🚀 9Е ANGI-Д ИЛГЭЭХ ЦОНХ */}
       {isAssignModalOpen && taskToAssign && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.75)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1100, padding: "20px" }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "18px", width: "100%", maxWidth: "520px", padding: "24px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.3)" }}>
@@ -531,7 +597,10 @@ export default function HomePage() {
             <div style={{ fontSize: "42px", marginBottom: "10px" }}>📨</div>
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>9Е ангид амжилттай илгээгдлээ!</h3>
             <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор сурагчийн танхим руу орж даалгавраа ажиллах боломжтой.</p>
-            <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ width: "100%", backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Ойлголоо</button>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <a href="/student" style={{ flex: 1, backgroundColor: "#059669", color: "#ffffff", padding: "10px", borderRadius: "8px", textDecoration: "none", fontWeight: "bold", fontSize: "13px" }}>👨‍🎓 Сурагчийн танхим руу орох</a>
+              <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ flex: 1, backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "10px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", cursor: "pointer" }}>Хаах</button>
+            </div>
           </div>
         </div>
       )}

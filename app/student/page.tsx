@@ -389,4 +389,57 @@ export default function StudentPage() {
           /* АСУУЛТАНД ХАРИУЛАХ ХЭСЭГ (8:5 БА 8:3) */
           <div style={{ display: "grid", gridTemplateColumns: "5fr 3fr", gap: "16px" }}>
             <div style={{ backgroundColor: "#fffdf0", padding: "20px", borderRadius: "16px", border: "1.5px solid #fde68a", minHeight: "580px", maxHeight: "760px", overflowY: "auto" }}>
-              <span style={{ backgroundColor: "#fef3c7", color: "#92400e", padding: "4px 10px", borderRadius: "6px
+              <span style={{ backgroundColor: "#fef3c7", color: "#92400e", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>{activeTask.taskData.subject}</span>
+              <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#0f172a", margin: "10px 0" }}>{activeTask.taskData.title}</h2>
+              <div style={{ fontSize: "14.5px", lineHeight: "1.8", color: "#1e293b", whiteSpace: "pre-wrap" }}>{activeTask.taskData.storyText}</div>
+            </div>
+
+            <div style={{ backgroundColor: "#fffdf0", padding: "20px", borderRadius: "16px", border: "1.5px solid #fde68a", minHeight: "580px", maxHeight: "760px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div style={{ overflowY: "auto", paddingRight: "6px" }}>
+                <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: "0 0 14px 0", borderBottom: "1.5px solid #fde68a", paddingBottom: "8px" }}>📝 Даалгаврууд</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  {activeTask.taskData.tasks.map((t: any) => (
+                    <div key={t.num} style={{ border: "1px solid #fde68a", padding: "12px", borderRadius: "10px", backgroundColor: "#ffffff" }}>
+                      <p style={{ fontSize: "13.5px", fontWeight: "bold", color: "#111827", margin: "0 0 8px 0" }}>{t.num}. {t.question} ({t.points} оноо)</p>
+                      
+                      {t.options ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                          {t.options.map((opt: string) => (
+                            <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12.5px", cursor: "pointer", backgroundColor: "#fffdf0", padding: "6px 10px", borderRadius: "6px", border: "1px solid #fde68a" }}>
+                              <input
+                                type="radio"
+                                name={`task-${t.num}`}
+                                value={opt}
+                                onChange={(e) => setAnswers({ ...answers, [t.num]: e.target.value })}
+                              />
+                              {opt}
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <textarea
+                          rows={3}
+                          placeholder="Хариултаа энд бичээрэй..."
+                          value={answers[t.num] || ""}
+                          onChange={(e) => setAnswers({ ...answers, [t.num]: e.target.value })}
+                          style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12.5px", boxSizing: "border-box", fontFamily: "inherit" }}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ paddingTop: "12px", borderTop: "1px solid #fde68a", marginTop: "10px" }}>
+                <button type="button" onClick={handleSubmitExam} style={{ width: "100%", backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
+                  ✅ Даалгаврыг дуусгаж, дүн харах
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </main>
+  );
+}

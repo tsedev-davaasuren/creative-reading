@@ -553,16 +553,6 @@ export default function HomePage() {
     setGeneratedTasks(updated);
   };
 
-  // Даалгавар арилгах / устгах
-  const handleDeleteTask = (taskNum: number) => {
-    if (!generatedTasks) return;
-    if (confirm(`Даалгавар ${taskNum}-ийг арилгахдаа итгэлтэй байна уу?`)) {
-      const updated = generatedTasks.filter((t) => t.num !== taskNum);
-      const renumbered = updated.map((t, idx) => ({ ...t, num: idx + 1 }));
-      setGeneratedTasks(renumbered);
-    }
-  };
-
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#f8fafc", padding: "20px", fontFamily: "sans-serif" }}>
       
@@ -1068,7 +1058,7 @@ export default function HomePage() {
                     return (
                       <div key={t.num} style={{ border: "1.5px solid #e2e8f0", borderRadius: "10px", padding: "12px", backgroundColor: "#f8fafc", boxShadow: "0 1px 3px rgba(0,0,0,0.03)" }}>
                         
-                        {/* Даалгаврын толгой хэсэг ба Засах/Арилгах товчлуур */}
+                        {/* Даалгаврын толгой хэсэг ба Засах товчлуур */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px", borderBottom: "1px dashed #cbd5e1", paddingBottom: "6px" }}>
                           <div>
                             <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0284c7", marginRight: "6px" }}>
@@ -1099,23 +1089,6 @@ export default function HomePage() {
                               }}
                             >
                               {isEditing ? "💾 Хадгалах" : "✏️ Засах"}
-                            </button>
-
-                            <button 
-                              type="button"
-                              onClick={() => handleDeleteTask(t.num)}
-                              style={{ 
-                                fontSize: "11px", 
-                                fontWeight: "bold", 
-                                backgroundColor: "#ef4444", 
-                                color: "#ffffff", 
-                                border: "none", 
-                                borderRadius: "6px", 
-                                padding: "3px 8px", 
-                                cursor: "pointer" 
-                              }}
-                            >
-                              🗑️ Арилгах
                             </button>
                           </div>
                         </div>

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 export default function StudentPage() {
-  // Цэндао өвөөгийн чатбот харилцах хэсгийн төлөв
+  // Өдрийн лимит болон түгжээг бүрмөсөн арилгасан туршилтын төлөв
   const [messages, setMessages] = useState([
     {
       sender: "tsendao",
@@ -12,7 +12,7 @@ export default function StudentPage() {
   ]);
   const [inputQuestion, setInputQuestion] = useState("");
 
-  // ЗУРАГ-2 ЗАСВАР: Сурагчийн асуултад ЯГ тухайн даалгаврын агуулгаар тодорхой тайлбарлах логик
+  // Сурагчийн асуултад ЯГ тухайн даалгаврын агуулгаар тодорхой тайлбарлах логик
   const handleSendMessage = () => {
     if (!inputQuestion.trim()) return;
 
@@ -54,7 +54,7 @@ export default function StudentPage() {
           }}
         >
           <h1 style={{ fontSize: "16px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-            🎓 Сурагчийн танхим (9Е анги)
+            🎓 Сурагчийн танхим (9Е анги) - [Туршилтын горим: Лимитгүй]
           </h1>
           <p style={{ fontSize: "11px", color: "#e3fcef", margin: "2px 0 0 0" }}>
             PISA Бүтээлч уншлага-2 төслийн даалгавар гүйцэтгэх талбар

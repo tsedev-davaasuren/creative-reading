@@ -5,9 +5,9 @@ import React, { useState } from "react";
 export default function StudentPage() {
   const [isExamActive, setIsExamActive] = useState(false);
   const [examCode, setExamCode] = useState("");
-  const [activeCode, setActiveCode] = useState("");
+  const [activeExam, setActiveExam] = useState<any>(null);
 
-  // Чатбот харилцах төлөв
+  // Чатботын төлөв
   const [messages, setMessages] = useState([
     {
       sender: "tsendao",
@@ -16,18 +16,66 @@ export default function StudentPage() {
   ]);
   const [inputQuestion, setInputQuestion] = useState("");
 
-  // ШИНЭ ДААЛГАВРЫН КОД НЭЭХ УХААЛАГ ЛОГИК (Хашилт эсвэл ямар ч код байсан нээнэ)
+  // ЗУРАГ-1 ДЭЭРХ ТҮҮХИЙН ДААЛГАВРЫН БҮРЭН ӨГӨГДӨЛ (9E-TYY-6087)
+  const historyExamData = {
+    code: "9E-TYY-6087",
+    subject: "Түүх",
+    title: "1921 оны Ардын хувьсгал ба Монгол Улсын тусгаар тогтнол",
+    text: `ХХ зууны эхэн үе бол Монголын түүхэнд хамгийн ээдрээтэй, шийдвэрлэх үе байлаа. Олон зууны турш Манж Чин уglassын эрхшээлд байж, дараа нь гадаад хүчний түрэмгийлэл, эдийн засгийн хүндрэлтэй тулгарсан Монголын ард түмэн үндэсний тусгаар тогтнолоо сэргээж, шинэ нийгэм байгуулах тэмцлийг эхлүүлсэн юм. Энэхүү тэмцлийн оргил үе нь 1921 оны Ардын хувьсгал байв.
+
+1911 оны Үндэсний эрх чөлөөний хувьсгалаар Монгол Улс тусгаар тогтнолоо зарласан хэдий ч олон улсад хүлээн зөвшөөрөгдөх байдал хүнд байсан бөгөөд 1919 онд гадаад түрэмгийлчид Нийслэл Хүрээг эзэлж, автономит эрхийг устгажээ. Ийм хүнд хэцүү цаг үед эх орноо харийн дарлалаас чөлөөлөхөөр тэмцэх нууц бүлгүүд үүсч эхэлсэн байна. Дажин, Конскийн болон Сухбаатар, Чойбалсан нарын удирдсан нууц бүлгүүд нэгдэж, 1920 онд Монгол Ардын Намыг байгуулжээ. Намын гол зорилго нь гадаад эзлэн түрэмгийлэгчдийг хөөж, ард түмний эрх чөлөөг хангах байв.`,
+    questions: [
+      {
+        id: 1,
+        type: "select",
+        title: '1. "1921 оны Ардын хувьсгал ба Монгол Улсын тусгаар тогтнол" эх бичвэрийн агуулгатай тохирч буй гол баримтыг сонгоно уу.',
+        options: [
+          "А. ХХ зууны эхэн үе бол Монголын түүхэнд хамгийн ээдрээтэй, шийдвэрлэх үе байлаа.",
+          "В. Эх бичвэрт дурдагдаагүй өөр сэдэв агуулсан.",
+          "С. Эх бичвэрийн утга санаа эсрэгээрээ илэрхийлэгдсэн.",
+          "D. Дээрх хариултууд бүгд буруу байна."
+        ]
+      },
+      {
+        id: 2,
+        type: "text",
+        title: "2. Эх бичвэрээс тухайн сэдвийн гол утга санааг агуулсан НЭГ өгүүлбэрийг олж бичээрэй."
+      },
+      {
+        id: 3,
+        type: "text",
+        title: '3. "1921 оны Ардын хувьсгал ба Монгол Улсын тусгаар тогтнол" эх бичвэрт гарч буй үйл явдал, онцлогийг 1-2 өгүүлбэрт багтаан задлан тайлбарлана уу.'
+      },
+      {
+        id: 4,
+        type: "text",
+        title: "4. Эх бичвэрийн агуулга болон гол дүр/хууль/үзэгдлийн харилцан хамаарлыг 1-2 өгүүлбэрээр задлан тайлбарлаарай."
+      },
+      {
+        id: 5,
+        type: "text",
+        title: "5. Тухайн түүхэн үйл явдлын ач холбогдлыг өөрийн бодолтой холбон 2-3 өгүүлбэрт эргэцүүлэн дүгнэж бичнэ үү."
+      },
+      {
+        id: 6,
+        type: "text",
+        title: "6. Зохиогчийн дэвшүүлсэн санаа болон түүхэн баримтын үнэ цэнийг дүгнэн бичнэ үү."
+      }
+    ]
+  };
+
+  // ДААЛГАВРЫН КОД НЭЭХ УХААЛАГ ЛОГИК
   const handleOpenExam = () => {
-    // 1. Кодон доторх хашилт (" эсвэл ') болон илүүдэл зайг арилгах
-    const cleanCode = examCode.replace(/['"]/g, "").trim();
+    let cleanCode = examCode.replace(/['"]/g, "").trim().toUpperCase();
 
     if (!cleanCode) {
-      alert("Даалгаврын кодоо оруулна уу.");
-      return;
+      cleanCode = "9E-TYY-6087";
+    } else if (cleanCode.startsWith("E-")) {
+      cleanCode = "9" + cleanCode;
     }
 
-    // 2. Код оруулахад шууд даалгавар руу нэвтрэх
-    setActiveCode(cleanCode);
+    // Түүхийн код оруулахад ЗУРАГ-1-ийн Түүхийн даалгаврыг бүтнээр нь ачаална
+    setActiveExam(historyExamData);
     setIsExamActive(true);
   };
 
@@ -38,9 +86,9 @@ export default function StudentPage() {
     let replyText = "";
 
     if (q.includes("1") || q.includes("буруу")) {
-      replyText = 'Цэндао өвөө: Даалгавар 1 дээр та буруу сонголт хийсэн байна. Эх бичвэрийг анхааралтай уншаарай.';
+      replyText = 'Цэндао өвөө: Даалгавар 1 дээр "А. ХХ зууны эхэн үе бол Монголын түүхэнд хамгийн ээдрээтэй, шийдвэрлэх үе байлаа" гэсэн сонголт зөв байсан юм, хүү минь.';
     } else {
-      replyText = `Цэндао өвөө: "${inputQuestion}" гэсэн асуултын тухайд, даалгавраа өөрийн үгээр эргэцүүлэн бичих нь чухал шүү.`;
+      replyText = `Цэндао өвөө: "${inputQuestion}" гэсэн асуултын тухайд, 1921 оны Ардын хувьсгалын баримтыг өөрийн үгээр эргэцүүлэн бичих нь чухал шүү.`;
     }
 
     setMessages((prev) => [...prev, userMsg, { sender: "tsendao", text: replyText }]);
@@ -49,7 +97,7 @@ export default function StudentPage() {
 
   return (
     <div style={{ backgroundColor: "#fefaf0", minHeight: "100vh", padding: "16px", fontFamily: "sans-serif" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div style={{ maxWidth: "1300px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "16px" }}>
         
         {/* HEADER */}
         <header style={{ backgroundColor: "#00875a", color: "#ffffff", borderRadius: "12px", padding: "12px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -60,16 +108,16 @@ export default function StudentPage() {
           {isExamActive && (
             <button
               onClick={() => setIsExamActive(false)}
-              style={{ backgroundColor: "#dc2626", color: "#ffffff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+              style={{ backgroundColor: "#dc2626", color: "#ffffff", border: "none", borderRadius: "6px", padding: "8px 14px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
             >
-              ← Буцах
+              ← Код оруулах хэсэг рүү буцах
             </button>
           )}
         </header>
 
         {/* ТОХИОЛДОЛ 1: КОД ОРУУЛАХ ДЭЛГЭЦ */}
         {!isExamActive ? (
-          <section style={{ backgroundColor: "#ffffff", border: "1px solid #d3f5e5", borderRadius: "12px", padding: "32px 20px", textAlign: "center" }}>
+          <section style={{ backgroundColor: "#ffffff", border: "1px solid #d3f5e5", borderRadius: "12px", padding: "40px 20px", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
             <div style={{ fontSize: "40px", marginBottom: "12px" }}>🔑</div>
             <h2 style={{ fontSize: "20px", fontWeight: "bold", color: "#006644", marginTop: 0, marginBottom: "8px" }}>
               Даалгаврын кодоо оруулна уу
@@ -114,55 +162,109 @@ export default function StudentPage() {
             </div>
           </section>
         ) : (
-          /* ТОХИОЛДОЛ 2: ДААЛГАВАР АЖИЛЛАХ / ХАРАХ ДЭЛГЭЦ (7:3 Layout) */
+          /* ТОХИОЛДОЛ 2: ЗУРАГ-1 ДЭЭРХ ТҮҮХИЙН ДААЛГАВАР НЭЭГДСЭН ДЭЛГЭЦ (7:3 Layout) */
           <div style={{ display: "grid", gridTemplateColumns: "7fr 3fr", gap: "16px", alignItems: "start" }}>
-            <main style={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "20px" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#006644", marginTop: 0, marginBottom: "16px" }}>
-                📝 Идэвхтэй даалгавар: {activeCode}
-              </h3>
-
-              <form onSubmit={(e) => { e.preventDefault(); alert("Даалгавар амжилттай илгээгдлээ!"); setIsExamActive(false); }}>
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "6px" }}>
-                    Даалгавар 1: Эх бичвэрийн агуулгатай тохирч буй гол баримтыг сонгоно уу.
-                  </label>
-                  <select style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
-                    <option>А. Өгүүлэгчийн залуу насны тухай баримт</option>
-                    <option>В. Эх бичвэрт дурдагдаагүй баримт</option>
-                  </select>
+            
+            <main style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {/* ЭХ БИЧВЭР БА ТҮҮХИЙН СЭДЭВ */}
+              <div style={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                  <span style={{ backgroundColor: "#0284c7", color: "#fff", padding: "4px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "bold" }}>
+                    {activeExam.subject}
+                  </span>
+                  <span style={{ fontSize: "13px", fontWeight: "bold", color: "#64748b" }}>Код: {activeExam.code}</span>
                 </div>
 
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "6px" }}>
-                    Даалгавар 2: Эх бичвэрийн онцлогийг өөрийн үгээр задлан тайлбарлана уу.
-                  </label>
-                  <textarea rows={3} placeholder="Хариултаа өөрийн үгээр бичнэ үү..." style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
-                </div>
+                <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#1e293b", marginTop: 0, marginBottom: "12px" }}>
+                  📖 {activeExam.title}
+                </h2>
 
-                <button type="submit" style={{ backgroundColor: "#00875a", color: "#ffffff", border: "none", borderRadius: "8px", padding: "10px 20px", fontSize: "13px", fontWeight: "bold", cursor: "pointer" }}>
-                  🚀 Даалгавар илгээх ба Үнэлүүлэх
-                </button>
-              </form>
+                <div style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "8px", padding: "16px", fontSize: "13px", lineHeight: "1.6", color: "#334155", whitespace: "pre-line" }}>
+                  {activeExam.text}
+                </div>
+              </div>
+
+              {/* ЗУРАГ-1 ДЭЭРХ 6 ДААЛГАВАР БҮТНЭЭРЭЭ */}
+              <div style={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "20px" }}>
+                <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#006644", marginTop: 0, marginBottom: "16px" }}>
+                  ✍️ Даалгаврууд (6)
+                </h3>
+
+                <form onSubmit={(e) => { e.preventDefault(); alert("Даалгавар амжилттай илгээгдлээ!"); setIsExamActive(false); }}>
+                  {activeExam.questions.map((q: any) => (
+                    <div key={q.id} style={{ marginBottom: "20px", backgroundColor: "#f8fafc", padding: "14px", borderRadius: "8px", border: "1px solid #cbd5e1" }}>
+                      <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", color: "#0f172a", marginBottom: "8px" }}>
+                        {q.title}
+                      </label>
+
+                      {q.type === "select" ? (
+                        <select style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #94a3b8", fontSize: "12px" }}>
+                          {q.options.map((opt: string, idx: number) => (
+                            <option key={idx}>{opt}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <textarea
+                          rows={3}
+                          placeholder="Хариултаа өөрийн үгээр задлан тайлбарлаж бичнэ үү..."
+                          style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #94a3b8", fontSize: "12px" }}
+                        />
+                      )}
+                    </div>
+                  ))}
+
+                  <button
+                    type="submit"
+                    style={{
+                      backgroundColor: "#00875a",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "8px",
+                      padding: "12px 28px",
+                      fontSize: "14px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      width: "100%",
+                    }}
+                  >
+                    🚀 Даалгавар илгээх ба Үнэлүүлэх
+                  </button>
+                </form>
+              </div>
             </main>
 
-            {/* SIDEBAR CHAT */}
-            <aside style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "12px", padding: "16px" }}>
+            {/* SIDEBAR CHAT (Цэндао өвөө-багш) */}
+            <aside style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "12px", padding: "16px", position: "sticky", top: "16px" }}>
               <div style={{ textAlign: "center", paddingBottom: "10px", borderBottom: "1px solid #fef08a" }}>
-                <img src="/tsendao.jpg" alt="Цэндао өвөө" style={{ width: "50px", height: "50px", borderRadius: "50%", objectFit: "cover" }} />
-                <h4 style={{ fontSize: "13px", fontWeight: "bold", margin: "4px 0 0 0" }}>Цэндао өвөө-багш</h4>
+                <img src="/tsendao.jpg" alt="Цэндао өвөө" style={{ width: "56px", height: "56px", borderRadius: "50%", objectFit: "cover", border: "2px solid #f59e0b" }} />
+                <h4 style={{ fontSize: "14px", fontWeight: "bold", margin: "6px 0 0 0", color: "#1e293b" }}>Цэндао өвөө-багш</h4>
+                <p style={{ fontSize: "11px", color: "#b45309", fontWeight: "bold", margin: "2px 0 0 0" }}>⏱️ Үлдсэн цаг: 18:38</p>
               </div>
-              <div style={{ margin: "12px 0", maxHeight: "250px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
+
+              <div style={{ margin: "12px 0", maxHeight: "300px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {messages.map((m, i) => (
-                  <div key={i} style={{ fontSize: "12px", padding: "6px 8px", borderRadius: "6px", backgroundColor: m.sender === "student" ? "#dcfce7" : "#ffffff", border: "1px solid #e2e8f0" }}>
+                  <div key={i} style={{ fontSize: "12px", padding: "8px 10px", borderRadius: "8px", backgroundColor: m.sender === "student" ? "#dcfce7" : "#ffffff", border: "1px solid #e2e8f0" }}>
+                    {m.sender === "tsendao" && <strong>👨‍🏫 Цэндао өвөө: </strong>}
                     {m.text}
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", gap: "4px" }}>
-                <input type="text" placeholder="Асуулт..." value={inputQuestion} onChange={(e) => setInputQuestion(e.target.value)} style={{ flex: 1, padding: "6px", fontSize: "12px", border: "1px solid #cbd5e1", borderRadius: "4px" }} />
-                <button onClick={handleSendMessage} style={{ backgroundColor: "#00875a", color: "#fff", border: "none", borderRadius: "4px", padding: "6px 10px", fontSize: "12px", fontWeight: "bold" }}>Илгээх</button>
+
+              <div style={{ display: "flex", gap: "6px" }}>
+                <input
+                  type="text"
+                  placeholder="Асуулт асуух..."
+                  value={inputQuestion}
+                  onChange={(e) => setInputQuestion(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                  style={{ flex: 1, padding: "8px", fontSize: "12px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
+                />
+                <button onClick={handleSendMessage} style={{ backgroundColor: "#00875a", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
+                  Илгээх
+                </button>
               </div>
             </aside>
+
           </div>
         )}
 

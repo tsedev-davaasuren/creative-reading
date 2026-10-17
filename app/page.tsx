@@ -113,12 +113,15 @@ export default function HomePage() {
     setGeneratedTasks(null);
   };
 
+  // 🛠️ ЗАСВАР 2: САНГААС УСТГАХАД СУРАГЧИЙН ХЭСГЭЭС НЭГТГЭН УСТГАХ
   const handleDeleteTaskFromBank = (taskId: number) => {
     if (confirm("Та энэ даалгаврыг сангаас болон сурагчдаас устгахдаа итгэлтэй байна уу?")) {
       const taskToDelete = taskBank.find((t) => t.id === taskId);
       
+      // 1. Багшийн сангаас устгах
       setTaskBank((prev) => prev.filter((item) => item.id !== taskId));
 
+      // 2. Сурагчийн илгээсэн даалгавраас цуцлан устгах
       if (taskToDelete) {
         const assignedData = localStorage.getItem("creative_reading_assigned_tasks");
         if (assignedData) {
@@ -336,8 +339,7 @@ export default function HomePage() {
           </div>
           <div>
             <h1 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
-            {/* 🎯 ЗУРАГ ДЭЭРХ ТОДРУУЛСАН ХЭСГИЙГ ЗАСАЖ "Creative reading-2 project" БОЛГОВ */}
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Creative reading-2 project PISA даалгавар боловсруулах орчин</p>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>9Е ангид зориулсан PISA даалгавар боловсруулах орчин</p>
           </div>
         </div>
 
@@ -436,68 +438,23 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* 💬 ЦЭНДАО БАГШТАЙ ЯРИЛЦАХ ЧАТ */}
+      {/* ЧАТ */}
       {isChatOpen && (
-        <section style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", border: "1.5px solid #fcd34d", borderRadius: "14px", padding: "14px 18px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1.5px solid #fde68a", paddingBottom: "8px", marginBottom: "12px" }}>
-            <h3 style={{ fontSize: "15px", fontWeight: "bold", margin: 0, color: "#0f172a" }}>💬 Цэндао багштай ярилцах</h3>
-            <button type="button" onClick={() => setIsChatOpen(false)} style={{ fontSize: "11px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "2px 8px", cursor: "pointer", fontWeight: "bold" }}>Хаах ✕</button>
+        <section style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", border: "1.5px solid #fcd34d", borderRadius: "14px", padding: "10px 14px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #fde68a", paddingBottom: "6px", marginBottom: "8px" }}>
+            <h3 style={{ fontSize: "13px", fontWeight: "bold", margin: 0 }}>💬 Цэндао багштай ярилцах</h3>
+            <button type="button" onClick={() => setIsChatOpen(false)} style={{ fontSize: "11px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "2px 8px", cursor: "pointer" }}>Хаах ✕</button>
           </div>
-          
-          <div style={{ height: "180px", backgroundColor: "#ffffff", borderRadius: "10px", border: "1px solid #fde68a", padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px", marginBottom: "12px" }}>
+          <div style={{ height: "120px", backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #fde68a", padding: "8px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "6px" }}>
             {messages.map((msg) => (
-              <div key={msg.id} style={{ alignSelf: msg.sender === "user" ? "flex-end" : "flex-start", backgroundColor: msg.sender === "user" ? "#dcfce7" : "#fef3c7", padding: "8px 12px", borderRadius: "10px", fontSize: "13px", maxWidth: "85%", lineHeight: "1.5" }}>
-                {msg.sender === "bagsh" && <strong style={{ color: "#92400e" }}>👨‍🏫 Цэндао багш: </strong>} {msg.text}
+              <div key={msg.id} style={{ alignSelf: msg.sender === "user" ? "flex-end" : "flex-start", backgroundColor: msg.sender === "user" ? "#dcfce7" : "#fef3c7", padding: "6px 10px", borderRadius: "8px", fontSize: "12.5px" }}>
+                {msg.sender === "bagsh" && <strong>👨‍🏫 Цэндао багш: </strong>} {msg.text}
               </div>
             ))}
           </div>
-
-          <div style={{ display: "flex", gap: "10px", alignItems: "stretch" }}>
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              rows={4}
-              placeholder="Асуулт, эх бичвэр болон саналаа энд бичээрэй... (Enter дарж илгээнэ, Shift+Enter-ээр шинэ мөр авна)"
-              style={{
-                flex: 1,
-                padding: "12px",
-                border: "2px solid #38bdf8",
-                borderRadius: "10px",
-                fontSize: "14px",
-                lineHeight: "1.6",
-                fontFamily: "inherit",
-                boxSizing: "border-box",
-                resize: "vertical",
-                minHeight: "90px",
-                backgroundColor: "#ffffff",
-                color: "#0f172a"
-              }}
-            />
-            <button
-              type="button"
-              onClick={handleSendMessage}
-              style={{
-                backgroundColor: "#fbbf24",
-                color: "#78350f",
-                border: "none",
-                padding: "0 24px",
-                borderRadius: "10px",
-                fontWeight: "bold",
-                fontSize: "14px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              Илгээх
-            </button>
+          <div style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+            <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} placeholder="Асуултаа бичээрэй..." style={{ flex: 1, padding: "6px 10px", border: "1px solid #fcd34d", borderRadius: "6px", fontSize: "12.5px" }} />
+            <button type="button" onClick={handleSendMessage} style={{ backgroundColor: "#fbbf24", border: "none", padding: "6px 14px", borderRadius: "6px", fontWeight: "bold", fontSize: "12.5px", cursor: "pointer" }}>Илгээх</button>
           </div>
         </section>
       )}
@@ -651,7 +608,7 @@ export default function HomePage() {
 
       </div>
 
-      {/* 📂 ДААЛГАВРЫН САН */}
+      {/* 📂 ДААЛГАВРЫН САН (ЗУРАГ-1 ДЭЭРХ БУЦАХ ТОВЧИЙГ ЦЭВЭРЛЭСЭН) */}
       {isTaskBankOpen && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", width: "100%", maxWidth: "1200px", height: "88vh", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", overflow: "hidden" }}>
@@ -662,6 +619,7 @@ export default function HomePage() {
                 <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Нийт хадгалагдсан: <strong>{taskBank.length}</strong> багц даалгавар</p>
               </div>
               <div>
+                {/* 🔒 ЗУРАГ 1 ДЭЭРХ СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧИЙГ АВСАН */}
                 <button type="button" onClick={() => setIsTaskBankOpen(false)} style={{ backgroundColor: "#e2e8f0", color: "#334155", border: "none", padding: "8px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Хаах ✕</button>
               </div>
             </div>
@@ -710,6 +668,7 @@ export default function HomePage() {
 
                             <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedSubject(item.subject); setTitle(item.title); setStoryText(item.storyText); setGeneratedTasks(item.tasks); setIsTaskBankOpen(false); }} style={{ backgroundColor: "#e0f2fe", color: "#0369a1", border: "1px solid #bae6fd", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>📥 Үндсэн ажилд ачаалах</button>
                             
+                            {/* 🛠️ ЗАСВАР 2: УСТГАХДАА СУРАГЧИЙН ХЭСГЭЭС НЭГТГЭН УСТГАНА */}
                             <button type="button" onClick={(e) => { e.stopPropagation(); handleDeleteTaskFromBank(item.id); }} style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer" }}>🗑️ Устгах</button>
 
                             <span style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7" }}>{isExpanded ? "▲ Хураах" : "▼ Дэлгэрэнгүй"}</span>
@@ -792,13 +751,15 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ИЛГЭЭСНИЙ ДАРААХ МОДАЛ */}
+      {/* ИЛГЭЭСНИЙ ДАРААХ МОДАЛ (ЗУРАГ 2 ДЭЭРХ БУЦАХ ТОВЧИЙГ АВСАН) */}
       {assignSuccessModal && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1200 }}>
           <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "24px", maxWidth: "420px", width: "90%", textAlign: "center", border: "2px solid #10b981" }}>
             <div style={{ fontSize: "42px", marginBottom: "10px" }}>📨</div>
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 8px 0" }}>9Е ангид амжилттай илгээгдлээ!</h3>
             <p style={{ fontSize: "13px", color: "#334155", lineHeight: "1.5", margin: "0 0 16px 0" }}>9Е ангийн сурагчид <strong>"{assignmentCode}"</strong> кодоор сурагчийн танхим руу орж даалгавраа ажиллах боломжтой.</p>
+            
+            {/* 🔒 ЗУРАГ 2 ДЭЭРХ СУРАГЧИЙН ТАНХИМ РУУ ОРОХ ТОВЧИЙГ АВААД ГАНЦ ЦЭВЭРХЭН ХААХ ТОВЧТОЙ БОЛГОВ */}
             <button type="button" onClick={() => { setAssignSuccessModal(false); setIsTaskBankOpen(false); }} style={{ width: "100%", backgroundColor: "#0284c7", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>Хаах</button>
           </div>
         </div>

@@ -336,7 +336,8 @@ export default function HomePage() {
           </div>
           <div>
             <h1 style={{ fontSize: "17px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>9Е ангид зориулсан PISA даалгавар боловсруулах орчин</p>
+            {/* 🎯 ЗУРАГ ДЭЭРХ ТОДРУУЛСАН ХЭСГИЙГ ЗАСАЖ "Creative reading-2 project" БОЛГОВ */}
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Creative reading-2 project PISA даалгавар боловсруулах орчин</p>
           </div>
         </div>
 
@@ -435,7 +436,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* 💬 ЦЭНДАО БАГШТАЙ ЯРИЛЦАХ ЧАТ (ОЛОН МӨРТЭЙ TEXTAREA БОЛГОЖ ЗАСАВ) */}
+      {/* 💬 ЦЭНДАО БАГШТАЙ ЯРИЛЦАХ ЧАТ */}
       {isChatOpen && (
         <section style={{ maxWidth: "1280px", margin: "0 auto 16px auto", backgroundColor: "#fffdf0", border: "1.5px solid #fcd34d", borderRadius: "14px", padding: "14px 18px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1.5px solid #fde68a", paddingBottom: "8px", marginBottom: "12px" }}>
@@ -451,7 +452,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* 🎯 ЗУРАГ ДЭЭРХ АСУУДЛЫГ ЗАСАЖ, УРТ ТЕКСТ БҮТНЭЭР НЬ ХАРДАГ БОЛГОСОН НЬ */}
           <div style={{ display: "flex", gap: "10px", alignItems: "stretch" }}>
             <textarea
               value={inputText}

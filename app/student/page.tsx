@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function StudentPage() {
-  // 1. ӨДРИЙН ЛИМИТИЙГ БҮРЭН ЦУЦЛАХ (Туршилтын горим)
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("hasCompletedToday");
-      localStorage.removeItem("dailyExamLimit");
-    }
-  }, []);
+  // Шалгалт ажиллаж буй төлөв: false = Дүн харах, true = Шинэ даалгавар ажиллах
+  const [isExamActive, setIsExamActive] = useState(false);
+  const [examCode, setExamCode] = useState("");
+  const [activeCode, setActiveCode] = useState("9Е-ХИМ-6356");
 
+  // Чатботтой харилцах төлөв
   const [messages, setMessages] = useState([
     {
       sender: "tsendao",
@@ -41,7 +39,17 @@ export default function StudentPage() {
     setInputQuestion("");
   };
 
-  // 2. БҮХ 6 ДААЛГАВРЫН ИЖ БҮРЭН ӨГӨГДӨЛ (Жагсаалтад 6-уулаа харагдана)
+  // Шинэ даалгаврын кодоор нэвтрэх
+  const handleStartExam = () => {
+    if (examCode.trim()) {
+      setActiveCode(examCode);
+      setIsExamActive(true);
+    } else {
+      setIsExamActive(true);
+    }
+  };
+
+  // Даалгаврын дүнгүүд (6 даалгавар)
   const examResults = [
     {
       id: 1,
@@ -81,7 +89,7 @@ export default function StudentPage() {
     },
     {
       id: 5,
-      title: "Даалгавар 5: Эх бичвэрийн гол санааг ө өрийн амьдралын туршлагатай холбон 2-3 өгүүлбэрт эргэцүүлэн дүгнэж бичнэ үү.",
+      title: "Даалгавар 5: Эх бичвэрийн гол санааг өөрийн амьдралын туршлагатай холбон 2-3 өгүүлбэрт эргэцүүлэн дүгнэж бичнэ үү.",
       score: "3 / 3",
       userAnswer: "Хүн залуу насандаа мөрөөдөлтэй байж, түүнийхээ төлөө хичээх нь амьдралын хамгийн нандин үе байдаг гэж бодож байна.",
       correctAnswer: "Өөрийн бодол ба амьдралын туршлагатай холбон эргэцүүлсэн байдал.",
@@ -112,95 +120,208 @@ export default function StudentPage() {
             padding: "10px 20px",
             height: "65px",
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <h1 style={{ fontSize: "16px", fontWeight: "bold", margin: 0 }}>🎓 Сурагчийн танхим (9Е анги)</h1>
-          <p style={{ fontSize: "11px", color: "#e3fcef", margin: "2px 0 0 0" }}>PISA Бүтээлч уншлага-2 төслийн даалгавар гүйцэтгэх талбар</p>
+          <div>
+            <h1 style={{ fontSize: "16px", fontWeight: "bold", margin: 0 }}>🎓 Сурагчийн танхим (9Е анги)</h1>
+            <p style={{ fontSize: "11px", color: "#e3fcef", margin: "2px 0 0 0" }}>PISA Бүтээлч уншлага-2 төслийн даалгавар гүйцэтгэх талбар</p>
+          </div>
+
+          {/* ДҮН ЭСВЭЛ ШИНЭ ДААЛГАВАР ЭХЛҮҮЛЭХ ТОВЧ */}
+          <button
+            onClick={() => setIsExamActive(!isExamActive)}
+            style={{
+              backgroundColor: isExamActive ? "#dc2626" : "#f59e0b",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "8px 16px",
+              fontSize: "12px",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            {isExamActive ? "📊 Дүнгийн дэлгэц рүү буцах" : "🔑 Шинэ даалгавар эхлүүлэх (Код оруулах)"}
+          </button>
         </header>
 
-        {/* ОНООНЫ МЭДЭЭЛЭЛ */}
-        <section style={{ backgroundColor: "#ffffff", border: "1px solid #d3f5e5", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-            <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#006644", margin: 0 }}>Нийт нийтлэг дүн: 7 / 12 оноо (Гүйцэтгэл: 58%)</h2>
-            <span style={{ backgroundColor: "#fef2f2", color: "#991b1b", padding: "6px 14px", borderRadius: "20px", fontSize: "12px", fontWeight: "bold" }}>
-              ⚠️ Даалгаврыг сайжруулах шаардлагатай
-            </span>
-          </div>
+        {/* ==========================================
+            ТОХИОЛДОЛ А: ШИНЭ ДААЛГАВАР АЖИЛЛАХ ГӨРИМ
+           ========================================== */}
+        {isExamActive ? (
+          <div style={{ backgroundColor: "#ffffff", border: "1px solid #fde68a", borderRadius: "12px", padding: "20px" }}>
+            <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#006644", marginTop: 0 }}>
+              📝 Шинэ даалгавар ажиллаж турших
+            </h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-            <div style={{ backgroundColor: "#e0f2fe", border: "1px solid #bae6fd", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
-              <p style={{ fontSize: "11px", color: "#0369a1", fontWeight: "bold", margin: 0 }}>1. Мэдээлэл олох</p>
-              <p style={{ fontSize: "18px", fontWeight: "900", color: "#0c4a6e", margin: "4px 0 0 0" }}>1 / 2 оноо</p>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+              <input
+                type="text"
+                placeholder="Даалгаврын кодоо оруулна уу (жишээ: 9Е-ХИМ-6356)..."
+                value={examCode}
+                onChange={(e) => setExamCode(e.target.value)}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1",
+                  fontSize: "13px",
+                  outline: "none",
+                }}
+              />
+              <button
+                onClick={handleStartExam}
+                style={{
+                  backgroundColor: "#00875a",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "10px 20px",
+                  fontSize: "13px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Нээх
+              </button>
             </div>
-            <div style={{ backgroundColor: "#fef3c7", border: "1px solid #fde68a", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
-              <p style={{ fontSize: "11px", color: "#b45309", fontWeight: "bold", margin: 0 }}>2. Задлан шинжлэх</p>
-              <p style={{ fontSize: "18px", fontWeight: "900", color: "#78350f", margin: "4px 0 0 0" }}>0 / 4 оноо</p>
-            </div>
-            <div style={{ backgroundColor: "#dcfce7", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
-              <p style={{ fontSize: "11px", color: "#15803d", fontWeight: "bold", margin: 0 }}>3. Эргэцүүлэн дүгнэх</p>
-              <p style={{ fontSize: "18px", fontWeight: "900", color: "#14532d", margin: "4px 0 0 0" }}>6 / 6 оноо</p>
-            </div>
-          </div>
-        </section>
 
-        {/* MAIN LAYOUT - 7:3 Ratio */}
-        <div style={{ display: "grid", gridTemplateColumns: "7fr 3fr", gap: "16px", alignItems: "start" }}>
-          
-          {/* ДААЛГАВРУУД БҮТНЭЭРЭЭ (Бүх 6 даалгавар) */}
-          <main style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "12px", padding: "16px" }}>
-              <h3 style={{ fontSize: "15px", fontWeight: "bold", color: "#1e293b", marginTop: 0, marginBottom: "12px" }}>
-                📋 Шалгалтын дэлгэрэнгүй хариулт ба Зөвлөмж (Нийт 6 даалгавар)
+            <div style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "8px", padding: "16px" }}>
+              <h3 style={{ fontSize: "14px", fontWeight: "bold", color: "#b45309", marginTop: 0 }}>
+                📌 Идэвхтэй даалгавар: {activeCode}
               </h3>
 
-              {examResults.map((item) => (
-                <div key={item.id} style={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px", marginBottom: "12px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                    <p style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7", margin: 0 }}>{item.title}</p>
-                    <span style={{ fontSize: "13px", fontWeight: "bold", color: item.isCorrect ? "#166534" : "#dc2626", marginLeft: "12px", whiteSpace: "nowrap" }}>
-                      {item.score} оноо
-                    </span>
-                  </div>
-                  <div style={{ backgroundColor: "#f8fafc", padding: "8px 10px", borderRadius: "6px", fontSize: "12px", color: "#334155", marginBottom: "6px" }}>
-                    ✍️ <strong>Таны хариулт:</strong> {item.userAnswer}
-                  </div>
-                  <div style={{ backgroundColor: "#f0fdf4", padding: "8px 10px", borderRadius: "6px", fontSize: "12px", color: "#166534", marginBottom: "6px" }}>
-                    💡 <strong>Жишиг зөв хариулт:</strong> {item.correctAnswer}
-                  </div>
-                  <div style={{ backgroundColor: item.isCorrect ? "#dcfce7" : "#fee2e2", padding: "8px 10px", borderRadius: "6px", fontSize: "12px", color: item.isCorrect ? "#14532d" : "#991b1b" }}>
-                    👨‍🏫 <strong>Цэндао өвөө:</strong> {item.feedback}
-                  </div>
+              <form onSubmit={(e) => { e.preventDefault(); alert("Даалгавар амжилттай илгээгдлээ!"); setIsExamActive(false); }}>
+                <div style={{ marginBottom: "16px" }}>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "6px" }}>
+                    Даалгавар 1: Эх бичвэрийн агуулгатай тохирч буй гол баримтыг сонгоно уу.
+                  </label>
+                  <select style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+                    <option>А. Лхагва "Арван долоотой байхад" өгүүлэг...</option>
+                    <option>В. Эх бичвэрт дурдагдаагүй өөр сэдэв агуулсан.</option>
+                  </select>
                 </div>
-              ))}
-            </div>
-          </main>
 
-          {/* ЧАТБОТ SIDEBAR */}
-          <aside style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "12px", padding: "16px", position: "sticky", top: "16px" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlignment: "center", borderBottom: "1px solid #fef08a", paddingBottom: "12px" }}>
-              <img src="/tsendao.jpg" alt="Цэндао өвөө" style={{ width: "64px", height: "64px", borderRadius: "50%", border: "2px solid #f59e0b", objectFit: "cover", marginBottom: "8px" }} />
-              <h4 style={{ fontSize: "14px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Цэндао өвөө-багштайгаа ярилцаарай</h4>
-              <p style={{ fontSize: "12px", color: "#b45309", fontWeight: "bold", margin: "4px 0 0 0" }}>⏱️ Үлдсэн цаг: 18:38</p>
-            </div>
-
-            <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "350px", overflowY: "auto" }}>
-              {messages.map((msg, index) => (
-                <div key={index} style={{ backgroundColor: msg.sender === "student" ? "#dcfce7" : "#ffffff", color: msg.sender === "student" ? "#14532d" : "#1e293b", border: msg.sender === "student" ? "none" : "1px solid #e2e8f0", borderRadius: "8px", padding: "8px 10px", fontSize: "12px", alignSelf: msg.sender === "student" ? "flex-end" : "flex-start", maxWidth: "90%" }}>
-                  {msg.sender === "tsendao" && <strong>👨‍🏫 Цэндао өвөө: </strong>}
-                  {msg.text}
+                <div style={{ marginBottom: "16px" }}>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "bold", marginBottom: "6px" }}>
+                    Даалгавар 3: Эх бичвэрт гарч буй үйл явдал, онцлогийг 1-2 өгүүлбэрт багтаан өөрийн үгээр задлан тайлбарлана уу.
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Өөрийн үгээр задлан тайлбарлаж бичих..."
+                    style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px" }}
+                  />
                 </div>
-              ))}
-            </div>
 
-            <div style={{ marginTop: "12px", display: "flex", gap: "6px" }}>
-              <input type="text" placeholder="Асуултаа энд бичнэ үү..." value={inputQuestion} onChange={(e) => setInputQuestion(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }} />
-              <button onClick={handleSendMessage} style={{ backgroundColor: "#00875a", color: "#ffffff", border: "none", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Илгээх</button>
+                <button
+                  type="submit"
+                  style={{
+                    backgroundColor: "#00875a",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "6px",
+                    padding: "10px 24px",
+                    fontSize: "13px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  🚀 Даалгавар илгээх ба Үнэлүүлэх
+                </button>
+              </form>
             </div>
-          </aside>
+          </div>
+        ) : (
+          /* ==========================================
+              ТОХИОЛДОЛ Б: ДҮН БОЛОН ЧАТБОТ ДЭЛГЭЦ (7:3 Layout)
+             ========================================== */
+          <>
+            {/* ОНООНЫ МЭДЭЭЛЭЛ */}
+            <section style={{ backgroundColor: "#ffffff", border: "1px solid #d3f5e5", borderRadius: "12px", padding: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#006644", margin: 0 }}>Нийт нийтлэг дүн: 7 / 12 оноо (Гүйцэтгэл: 58%)</h2>
+                <span style={{ backgroundColor: "#fef2f2", color: "#991b1b", padding: "6px 14px", borderRadius: "20px", fontSize: "12px", fontWeight: "bold" }}>
+                  ⚠️ Даалгаврыг сайжруулах шаардлагатай
+                </span>
+              </div>
 
-        </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                <div style={{ backgroundColor: "#e0f2fe", border: "1px solid #bae6fd", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                  <p style={{ fontSize: "11px", color: "#0369a1", fontWeight: "bold", margin: 0 }}>1. Мэдээлэл олох</p>
+                  <p style={{ fontSize: "18px", fontWeight: "900", color: "#0c4a6e", margin: "4px 0 0 0" }}>1 / 2 оноо</p>
+                </div>
+                <div style={{ backgroundColor: "#fef3c7", border: "1px solid #fde68a", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                  <p style={{ fontSize: "11px", color: "#b45309", fontWeight: "bold", margin: 0 }}>2. Задлан шинжлэх</p>
+                  <p style={{ fontSize: "18px", fontWeight: "900", color: "#78350f", margin: "4px 0 0 0" }}>0 / 4 оноо</p>
+                </div>
+                <div style={{ backgroundColor: "#dcfce7", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                  <p style={{ fontSize: "11px", color: "#15803d", fontWeight: "bold", margin: 0 }}>3. Эргэцүүлэн дүгнэх</p>
+                  <p style={{ fontSize: "18px", fontWeight: "900", color: "#14532d", margin: "4px 0 0 0" }}>6 / 6 оноо</p>
+                </div>
+              </div>
+            </section>
+
+            {/* MAIN LAYOUT - 7:3 Ratio */}
+            <div style={{ display: "grid", gridTemplateColumns: "7fr 3fr", gap: "16px", alignItems: "start" }}>
+              
+              {/* ДААЛГАВРУУД БҮТНЭЭРЭЭ (Бүх 6 даалгавар) */}
+              <main style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "12px", padding: "16px" }}>
+                  <h3 style={{ fontSize: "15px", fontWeight: "bold", color: "#1e293b", marginTop: 0, marginBottom: "12px" }}>
+                    📋 Шалгалтын дэлгэрэнгүй хариулт ба Зөвлөмж (Нийт 6 даалгавар)
+                  </h3>
+
+                  {examResults.map((item) => (
+                    <div key={item.id} style={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px", marginBottom: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                        <p style={{ fontSize: "13px", fontWeight: "bold", color: "#0284c7", margin: 0 }}>{item.title}</p>
+                        <span style={{ fontSize: "13px", fontWeight: "bold", color: item.isCorrect ? "#166534" : "#dc2626", marginLeft: "12px", whiteSpace: "nowrap" }}>
+                          {item.score} оноо
+                        </span>
+                      </div>
+                      <div style={{ backgroundColor: "#f8fafc", padding: "8px 10px", borderRadius: "6px", fontSize: "12px", color: "#334155", marginBottom: "6px" }}>
+                        ✍️ <strong>Таны хариулт:</strong> {item.userAnswer}
+                      </div>
+                      <div style={{ backgroundColor: "#f0fdf4", padding: "8px 10px", borderRadius: "6px", fontSize: "12px", color: "#166534", marginBottom: "6px" }}>
+                        💡 <strong>Жишиг зөв хариулт:</strong> {item.correctAnswer}
+                      </div>
+                      <div style={{ backgroundColor: item.isCorrect ? "#dcfce7" : "#fee2e2", padding: "8px 10px", borderRadius: "6px", fontSize: "12px", color: item.isCorrect ? "#14532d" : "#991b1b" }}>
+                        👨‍🏫 <strong>Цэндао өвөө:</strong> {item.feedback}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </main>
+
+              {/* ЧАТБОТ SIDEBAR */}
+              <aside style={{ backgroundColor: "#fffdf6", border: "1px solid #fef08a", borderRadius: "12px", padding: "16px", position: "sticky", top: "16px" }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", borderBottom: "1px solid #fef08a", paddingBottom: "12px" }}>
+                  <img src="/tsendao.jpg" alt="Цэндао өвөө" style={{ width: "64px", height: "64px", borderRadius: "50%", border: "2px solid #f59e0b", objectFit: "cover", marginBottom: "8px" }} />
+                  <h4 style={{ fontSize: "14px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Цэндао өвөө-багштайгаа ярилцаарай</h4>
+                  <p style={{ fontSize: "12px", color: "#b45309", fontWeight: "bold", margin: "4px 0 0 0" }}>⏱️ Үлдсэн цаг: 18:38</p>
+                </div>
+
+                <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "350px", overflowY: "auto" }}>
+                  {messages.map((msg, index) => (
+                    <div key={index} style={{ backgroundColor: msg.sender === "student" ? "#dcfce7" : "#ffffff", color: msg.sender === "student" ? "#14532d" : "#1e293b", border: msg.sender === "student" ? "none" : "1px solid #e2e8f0", borderRadius: "8px", padding: "8px 10px", fontSize: "12px", alignSelf: msg.sender === "student" ? "flex-end" : "flex-start", maxWidth: "90%" }}>
+                      {msg.sender === "tsendao" && <strong>👨‍🏫 Цэндао өвөө: </strong>}
+                      {msg.text}
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ marginTop: "12px", display: "flex", gap: "6px" }}>
+                  <input type="text" placeholder="Асуултаа энд бичнэ үү..." value={inputQuestion} onChange={(e) => setInputQuestion(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "12px", outline: "none" }} />
+                  <button onClick={handleSendMessage} style={{ backgroundColor: "#00875a", color: "#ffffff", border: "none", borderRadius: "6px", padding: "8px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>Илгээх</button>
+                </div>
+              </aside>
+
+            </div>
+          </>
+        )}
+
       </div>
     </div>
   );

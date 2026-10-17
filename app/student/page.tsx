@@ -10,7 +10,7 @@ export default function StudentPage() {
   // Сурагчийн хариулт ба гүйцэтгэсэн даалгаврын түүх
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [submittedResult, setSubmittedResult] = useState<any | null>(null);
-  const [lastCompletedDate, setLastCompletedDate] = useState<string>("");
+  const [completedCodes, setCompletedCodes] = useState<string[]>([]);
 
   // ⏳ ТАЙМЕР STATE-ҮҮД
   const [examTimeLeft, setExamTimeLeft] = useState<number>(40 * 60);
@@ -23,15 +23,13 @@ export default function StudentPage() {
   const [chatInput, setChatInput] = useState("");
   const [imgError, setImgError] = useState(false);
 
-  const getTodayString = () => new Date().toISOString().slice(0, 10);
-
   useEffect(() => {
     const bankData = localStorage.getItem("creative_reading_task_bank");
     const assignedData = localStorage.getItem("creative_reading_assigned_tasks");
-    const savedDate = localStorage.getItem("creative_reading_last_completed_date");
+    const savedCompleted = localStorage.getItem("creative_reading_completed_codes");
 
-    if (savedDate) {
-      setLastCompletedDate(savedDate);
+    if (savedCompleted) {
+      try { setCompletedCodes(JSON.parse(savedCompleted)); } catch (e) { console.error(e); }
     }
 
     let validBankTitles: string[] = [];
@@ -91,13 +89,12 @@ export default function StudentPage() {
   };
 
   const handleOpenByCode = (codeToSearch?: string) => {
-    const today = getTodayString();
-    if (lastCompletedDate === today) {
-      return alert("🔒 Та өнөөдрийн 1 даалгавраа гүйцэтгэсэн байна. Өдөрт дахин даалгавар ажиллах боломжгүй!");
-    }
-
     const code = (codeToSearch || inputCode).trim().toUpperCase();
     if (!code) return alert("Даалгаврын кодоо оруулна уу!");
+
+    if (completedCodes.includes(code)) {
+      return alert("🔒 Та энэ даалгаврыг 1 удаагийн оролдлогоор гүйцэтгэсэн тул дахин нээх боломжгүй!");
+    }
 
     const found = assignedList.find((item) => item.assignmentCode.toUpperCase() === code);
     if (found) {
@@ -112,7 +109,7 @@ export default function StudentPage() {
     }
   };
 
-  // 🎯 ЧАНГА ОНООЖУУЛАЛТ (ИЛТ БУРУУД ОНОО ӨГӨХГҮЙ)
+  // 🎯 ЧАНГА БА УХААЛАГ ОНООЖУУЛАЛТ (ИЛТ БУРУУД ОНОО ӨГӨХГҮЙ)
   const handleSubmitExam = () => {
     if (!activeTask) return;
     setIsExamTimerRunning(false);
@@ -136,7 +133,7 @@ export default function StudentPage() {
 
       if (hasDuplicateSpam && t.num !== 1) {
         scoreEarned = 0;
-        advice = "👴 Цэндао өвөө: Нэг бичвэрийг олон асуултад хувилан тавьсан тул оноо олгогдоогүй. Асуулт бүрд тусдаа хариулна уу.";
+        advice = "👴 Цэндао өвөө: Нэг бичвэрийг дахин хуулж тавьсан тул оноо олгогдоогүй. Асуулт бүрд тусдаа хариулна уу.";
       } else if (t.num === 1 || t.form === "Сонгох тест") {
         if (userAns.toLowerCase() === t.correctAnswer.trim().toLowerCase() || (userAns.length > 0 && userAns.startsWith(t.correctAnswer.slice(0, 2)))) {
           scoreEarned = t.points;
@@ -190,12 +187,12 @@ export default function StudentPage() {
       feedbackList
     });
 
-    // Өдрийн лимит тохируулах (Өдөрт 1 даалгавар)
-    const today = getTodayString();
-    setLastCompletedDate(today);
-    localStorage.setItem("creative_reading_last_completed_date", today);
+    // Оролдлогыг түгжих
+    const newCompleted = [...completedCodes, activeTask.assignmentCode.toUpperCase()];
+    setCompletedCodes(newCompleted);
+    localStorage.setItem("creative_reading_completed_codes", JSON.stringify(newCompleted));
 
-    // Чатлах 20 минутын таймер эхлүүлэх
+    // Чатлах 20 минутын таймер эхлүүлж, чатыг автоматаар нээх
     setChatTimeLeft(20 * 60);
     setIsChatTimerRunning(true);
     setChatMessages([
@@ -216,8 +213,6 @@ export default function StudentPage() {
       ]);
     }, 600);
   };
-
-  const isTodayLocked = lastCompletedDate === getTodayString();
 
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#fffdf0", padding: "20px", fontFamily: "sans-serif" }}>
@@ -244,20 +239,17 @@ export default function StudentPage() {
             <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto 24px auto" }}>
               <div style={{ fontSize: "40px", marginBottom: "10px" }}>🔑</div>
               <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#065f46", margin: "0 0 6px 0" }}>Даалгаврын кодоо оруулна уу</h2>
-              <p style={{ fontSize: "13px", color: "#4b5563", margin: 0 }}>
-                {isTodayLocked ? "🔒 Та өнөөдрийн даалгавраа ажилласан байна. Маргааш дахин ажиллах боломжтой." : "Багшаас өгсөн тусгай кодыг оруулж даалгавраа ачаална уу (Өдөрт 1 даалгавар)."}
-              </p>
+              <p style={{ fontSize: "13px", color: "#4b5563", margin: 0 }}>Багшаас өгсөн тусгай кодыг оруулж даалгавраа ачаална уу.</p>
               
               <div style={{ display: "flex", gap: "8px", marginTop: "16px" }}>
                 <input
                   type="text"
                   value={inputCode}
-                  disabled={isTodayLocked}
                   onChange={(e) => setInputCode(e.target.value)}
-                  placeholder={isTodayLocked ? "ӨДРИЙН ЛИМИТ ХҮРСЭН" : "ЖИШЭЭ: 9E-LIT-4821"}
-                  style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "2px solid #059669", fontSize: "14px", fontWeight: "bold", textAlign: "center", textTransform: "uppercase", backgroundColor: isTodayLocked ? "#f1f5f9" : "#ffffff" }}
+                  placeholder="ЖИШЭЭ: 9E-LIT-4821"
+                  style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "2px solid #059669", fontSize: "14px", fontWeight: "bold", textAlign: "center", textTransform: "uppercase" }}
                 />
-                <button type="button" onClick={() => handleOpenByCode()} disabled={isTodayLocked} style={{ backgroundColor: isTodayLocked ? "#94a3b8" : "#059669", color: "#ffffff", border: "none", padding: "0 24px", borderRadius: "10px", fontWeight: "bold", cursor: isTodayLocked ? "not-allowed" : "pointer" }}>Нээх</button>
+                <button type="button" onClick={() => handleOpenByCode()} style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "0 24px", borderRadius: "10px", fontWeight: "bold", cursor: "pointer" }}>Нээх</button>
               </div>
             </div>
 
@@ -265,60 +257,61 @@ export default function StudentPage() {
               <div style={{ borderTop: "1px dashed #fcd34d", paddingTop: "20px" }}>
                 <p style={{ fontSize: "13px", fontWeight: "bold", color: "#374151", margin: "0 0 12px 0" }}>🏫 Сүүлд 9Е ангид ирсэн даалгаврууд ({assignedList.length}):</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {assignedList.map((item) => (
-                    <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: isTodayLocked ? "#f1f5f9" : "#fffdf0", padding: "12px 16px", borderRadius: "10px", border: "1px solid #fde68a" }}>
-                      <div>
-                        <span style={{ fontWeight: "bold", fontSize: "14px", color: isTodayLocked ? "#64748b" : "#065f46" }}>[{item.taskData.subject}] {item.taskData.title}</span>
-                        <p style={{ fontSize: "12px", color: "#475569", margin: "2px 0 0 0" }}>Код: <strong>{item.assignmentCode}</strong> • Хугацаа: 40 минут</p>
-                      </div>
+                  {assignedList.map((item) => {
+                    const isDone = completedCodes.includes(item.assignmentCode.toUpperCase());
+                    return (
+                      <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: isDone ? "#f1f5f9" : "#fffdf0", padding: "12px 16px", borderRadius: "10px", border: "1px solid #fde68a" }}>
+                        <div>
+                          <span style={{ fontWeight: "bold", fontSize: "14px", color: isDone ? "#64748b" : "#065f46" }}>[{item.taskData.subject}] {item.taskData.title}</span>
+                          <p style={{ fontSize: "12px", color: "#475569", margin: "2px 0 0 0" }}>Код: <strong>{item.assignmentCode}</strong> • Хугацаа: 40 минут</p>
+                        </div>
 
-                      {isTodayLocked ? (
-                        <span style={{ backgroundColor: "#e2e8f0", color: "#475569", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold" }}>🔒 Өдөрт 1 удаа (Түгжсэн)</span>
-                      ) : (
-                        <button type="button" onClick={() => handleOpenByCode(item.assignmentCode)} style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "8px 16px", borderRadius: "8px", fontWeight: "bold", fontSize: "12px", cursor: "pointer" }}>Ажиллах ➔</button>
-                      )}
-                    </div>
-                  ))}
+                        {isDone ? (
+                          <span style={{ backgroundColor: "#e2e8f0", color: "#475569", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold" }}>✅ Гүйцэтгэсэн (Түгжсэн)</span>
+                        ) : (
+                          <button type="button" onClick={() => handleOpenByCode(item.assignmentCode)} style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "8px 16px", borderRadius: "8px", fontWeight: "bold", fontSize: "12px", cursor: "pointer" }}>Ажиллах ➔</button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
         ) : submittedResult ? (
-          /* 🚀 ЗУРАГ 2, 3, 4 ШААРДЛАГУУД: 7:1 ХААРЦАА БА 7:3 ХАРЬЦААТАЙ ДЭЛГЭЦ */
+          /* 🚀 ШААРДЛАГА 3: ДААЛГАВАР ИЛГЭЭСНИЙ ДАРААХ 3 ХЭСЭГ ХАРАГДАЦ */
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             
-            {/* 3️⃣ ЗУРАГ-2 ХЭСЭГ: ДЭЛГЭЦИЙН 7:1 ХАРЬЦААНД ДООШ ЦУВУУЛЖ БАЙРЛУУЛСАН ДҮН ХЭСЭГ */}
-            <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "16px 24px", border: "2px solid #10b981", display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "10px" }}>
-                <div>
-                  <span style={{ fontSize: "13px", color: "#047857", fontWeight: "bold" }}>Нийт нийтлэг дүн:</span>
-                  <h2 style={{ fontSize: "28px", fontWeight: "900", color: "#059669", margin: "2px 0" }}>{submittedResult.totalScore} / 12 оноо (Гүйцэтгэл: {submittedResult.percentage}%)</h2>
-                </div>
-                <span style={{ backgroundColor: "#dcfce7", color: "#15803d", padding: "6px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: "bold" }}>✅ Өдрийн даалгавар амжилттай гүйцэтгэлээ</span>
+            {/* 1️⃣ ХЭСЭГ: ДЭЛГЭЦИЙН 7:1 ХЭСЭГТ - ДҮН ОНОО БА БЛЮПРИНТИЙН 3 ТҮВШНИЙ НЭГТГЭЛ */}
+            <div style={{ backgroundColor: "#ffffff", borderRadius: "16px", padding: "16px 24px", border: "2px solid #10b981", display: "grid", gridTemplateColumns: "2fr 3fr", gap: "20px", alignItems: "center" }}>
+              <div style={{ textAlign: "center", borderRight: "2px solid #e2e8f0", paddingRight: "20px" }}>
+                <span style={{ fontSize: "12px", color: "#047857", fontWeight: "bold" }}>Нийт нийтлэг дүн:</span>
+                <h2 style={{ fontSize: "32px", fontWeight: "900", color: "#059669", margin: "2px 0" }}>{submittedResult.totalScore} / 12 оноо</h2>
+                <span style={{ backgroundColor: "#dcfce7", color: "#15803d", padding: "3px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}>Гүйцэтгэл: {submittedResult.percentage}%</span>
               </div>
 
-              {/* БЛЮПРИНТИЙН 3 ТҮВШНИЙ НЭГТГЭЛ - ДООШ ЦУВУУЛСАН */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                <div style={{ backgroundColor: "#f0f9ff", padding: "12px", borderRadius: "10px", border: "1px solid #bae6fd", textAlign: "center" }}>
-                  <p style={{ fontSize: "11px", color: "#0369a1", fontWeight: "bold", margin: 0 }}>1. Мэдээлэл олох</p>
-                  <h4 style={{ fontSize: "18px", fontWeight: "bold", color: "#0284c7", margin: "4px 0 0 0" }}>{submittedResult.level1Score} / {submittedResult.level1Max} оноо</h4>
+              {/* БЛЮПРИНТИЙН 3 ТҮВШИН */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+                <div style={{ backgroundColor: "#f0f9ff", padding: "10px", borderRadius: "10px", border: "1px solid #bae6fd", textAlign: "center" }}>
+                  <p style={{ fontSize: "10.5px", color: "#0369a1", fontWeight: "bold", margin: 0 }}>1. Мэдээлэл олох</p>
+                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#0284c7", margin: "4px 0 0 0" }}>{submittedResult.level1Score} / {submittedResult.level1Max} оноо</h4>
                 </div>
-                <div style={{ backgroundColor: "#fef3c7", padding: "12px", borderRadius: "10px", border: "1px solid #fde68a", textAlign: "center" }}>
-                  <p style={{ fontSize: "11px", color: "#92400e", fontWeight: "bold", margin: 0 }}>2. Задлан шинжлэх</p>
-                  <h4 style={{ fontSize: "18px", fontWeight: "bold", color: "#d97706", margin: "4px 0 0 0" }}>{submittedResult.level2Score} / {submittedResult.level2Max} оноо</h4>
+                <div style={{ backgroundColor: "#fef3c7", padding: "10px", borderRadius: "10px", border: "1px solid #fde68a", textAlign: "center" }}>
+                  <p style={{ fontSize: "10.5px", color: "#92400e", fontWeight: "bold", margin: 0 }}>2. Задлан шинжлэх</p>
+                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#d97706", margin: "4px 0 0 0" }}>{submittedResult.level2Score} / {submittedResult.level2Max} оноо</h4>
                 </div>
-                <div style={{ backgroundColor: "#f0fdf4", padding: "12px", borderRadius: "10px", border: "1px solid #bbf7d0", textAlign: "center" }}>
-                  <p style={{ fontSize: "11px", color: "#15803d", fontWeight: "bold", margin: 0 }}>3. Эргэцүүлэн дүгнэх</p>
-                  <h4 style={{ fontSize: "18px", fontWeight: "bold", color: "#16a34a", margin: "4px 0 0 0" }}>{submittedResult.level3Score} / {submittedResult.level3Max} оноо</h4>
+                <div style={{ backgroundColor: "#f0fdf4", padding: "10px", borderRadius: "10px", border: "1px solid #bbf7d0", textAlign: "center" }}>
+                  <p style={{ fontSize: "10.5px", color: "#15803d", fontWeight: "bold", margin: 0 }}>3. Эргэцүүлэн дүгнэх</p>
+                  <h4 style={{ fontSize: "16px", fontWeight: "bold", color: "#16a34a", margin: "4px 0 0 0" }}>{submittedResult.level3Score} / {submittedResult.level3Max} оноо</h4>
                 </div>
               </div>
             </div>
 
-            {/* 4️⃣ БА 5️⃣ ЗУРАГ-3 БА ЗУРАГ-4 ХЭСЭГ: ДЭЛГЭЦИЙН 7:3 ХАРЬЦААТАЙ СЕКЦ */}
+            {/* ДЭЛГЭЦИЙН 7:3 ХАРЬЦАА СЕКЦ (2 Ба 3-р хэсгүүд) */}
             <div style={{ display: "grid", gridTemplateColumns: "5fr 2fr", gap: "16px" }}>
               
-              {/* 4️⃣ ЗУРАГ-3 ХЭСЭГ: ДЭЛГЭЦИЙН 7:3 ХАРЬЦААНД ЗҮҮН ТАЛД БАЙРЛАСАН ДЭЛГЭРЭНГҮЙ ЗӨВЛӨМЖ */}
-              <div style={{ backgroundColor: "#fffdf0", padding: "20px", borderRadius: "16px", border: "1.5px solid #fde68a", maxHeight: "680px", overflowY: "auto" }}>
+              {/* 2️⃣ ХЭСЭГ: СУРАГЧИЙН ИЛГЭЭСЭН ХАРИУ, ЖИШИГ ЗӨВ ХАРИУ, ЦЭНДАО ӨВӨӨГИЙН ЗӨВЛӨМЖ */}
+              <div style={{ backgroundColor: "#fffdf0", padding: "20px", borderRadius: "16px", border: "1.5px solid #fde68a", maxHeight: "650px", overflowY: "auto" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0f172a", margin: "0 0 14px 0", borderBottom: "1.5px solid #fde68a", paddingBottom: "8px" }}>📋 Шалгалтын дэлгэрэнгүй хариулт ба Зөвлөмж</h3>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -345,22 +338,24 @@ export default function StudentPage() {
                 </div>
               </div>
 
-              {/* 5️⃣ ЗУРАГ-4 ХЭСЭГ: ДЭЛГЭЦИЙН 7:3 ХАРЬЦААНД БАРУУН ТАЛД ЦЭНДАО ӨВӨӨГИЙН ТОМРУУЛСАН ЗУРАГ БА ЧАТ */}
-              <div style={{ backgroundColor: "#fffdf0", padding: "18px", borderRadius: "16px", border: "1.5px solid #fde68a", display: "flex", flexDirection: "column", justifyContent: "space-between", maxHeight: "680px" }}>
+              {/* 3️⃣ ХЭСЭГ: ЦЭНДАО ӨВӨӨ БАГШТАЙ ЯРИЛЦАХ ШУУД ЧАТ (20 МИНУТЫН ТАЙМЕРТАЙ) */}
+              <div style={{ backgroundColor: "#fffdf0", padding: "16px", borderRadius: "16px", border: "1.5px solid #fde68a", display: "flex", flexDirection: "column", justifyContent: "space-between", maxHeight: "650px" }}>
                 <div>
-                  {/* ӨВӨӨ БАГШИЙН ТОМРУУЛСАН ЗУРАГ БА ГАРЧИГ */}
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", borderBottom: "1.5px solid #fde68a", paddingBottom: "12px", marginBottom: "12px" }}>
-                    <div style={{ width: "80px", height: "80px", borderRadius: "50%", border: "3px solid #f59e0b", overflow: "hidden", backgroundColor: "#fef3c7", marginBottom: "8px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}>
-                      {!imgError ? <img src="/tsendao.jpg" alt="Цэндао өвөө" onError={() => setImgError(true)} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ fontSize: "40px" }}>👨‍🏫</span>}
+                  {/* ӨВӨӨ БАГШИЙН ПРОФАЙЛ */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", borderBottom: "1.5px solid #fde68a", paddingBottom: "10px", marginBottom: "10px" }}>
+                    <div style={{ width: "50px", height: "50px", borderRadius: "50%", border: "2px solid #f59e0b", overflow: "hidden", backgroundColor: "#fef3c7" }}>
+                      {!imgError ? <img src="/tsendao.jpg" alt="Цэндао өвөө" onError={() => setImgError(true)} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ fontSize: "28px" }}>👨‍🏫</span>}
                     </div>
-                    <h4 style={{ fontSize: "15px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Цэндао өвөө-багштайгаа ярилцаарай</h4>
-                    <span style={{ fontSize: "11px", color: "#d97706", fontWeight: "bold", marginTop: "2px" }}>⏱️ Үлдсэн цаг: {formatTime(chatTimeLeft)}</span>
+                    <div>
+                      <h4 style={{ fontSize: "14px", fontWeight: "bold", color: "#0f172a", margin: 0 }}>Цэндао өвөө-багш</h4>
+                      <span style={{ fontSize: "11px", color: "#d97706", fontWeight: "bold" }}>⏱️ Үлдсэн цаг: {formatTime(chatTimeLeft)}</span>
+                    </div>
                   </div>
 
                   {/* ЧАТГИЙН МЕССЕЖҮҮД */}
-                  <div style={{ height: "360px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px", paddingRight: "4px" }}>
+                  <div style={{ height: "380px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px", paddingRight: "4px" }}>
                     {chatMessages.map((m, idx) => (
-                      <div key={idx} style={{ alignSelf: m.sender === "user" ? "flex-end" : "flex-start", backgroundColor: m.sender === "user" ? "#dcfce7" : "#ffffff", border: "1px solid #cbd5e1", padding: "8px 12px", borderRadius: "10px", fontSize: "12px", maxWidth: "92%" }}>
+                      <div key={idx} style={{ alignSelf: m.sender === "user" ? "flex-end" : "flex-start", backgroundColor: m.sender === "user" ? "#dcfce7" : "#ffffff", border: "1px solid #cbd5e1", padding: "8px 12px", borderRadius: "10px", fontSize: "12px", maxWidth: "90%" }}>
                         {m.sender === "tsendao" && <strong style={{ color: "#92400e", display: "block", marginBottom: "2px" }}>👴 Цэндао өвөө:</strong>}
                         {m.text}
                       </div>
@@ -375,7 +370,7 @@ export default function StudentPage() {
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSendChatMessage()}
-                    placeholder="Өвөө багшаас асуух..."
+                    placeholder="Өвөө багшаасаа асуулт асуух..."
                     style={{ flex: 1, padding: "8px 10px", border: "1.5px solid #fcd34d", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" }}
                   />
                   <button type="button" onClick={handleSendChatMessage} style={{ backgroundColor: "#fbbf24", color: "#78350f", border: "none", padding: "8px 12px", borderRadius: "8px", fontWeight: "bold", fontSize: "12px", cursor: "pointer" }}>Асуух</button>
@@ -386,7 +381,7 @@ export default function StudentPage() {
 
             {/* ТАНХИМ РУУ БУЦАХ ТОВЧ */}
             <button type="button" onClick={() => setActiveTask(null)} style={{ backgroundColor: "#059669", color: "#ffffff", border: "none", padding: "12px", borderRadius: "10px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>
-              🏠 Сурагчийн танхим руу буцах (Өдрийн даалгавар дууссан)
+              🏠 Сурагчийн танхим руу буцах
             </button>
 
           </div>

@@ -222,13 +222,14 @@ export default function TeacherRoom() {
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
-      {/* HEADER SECTION */}
+      {/* HEADER SECTION (ТОМРУУЛСАН ЗУРАГ БУЮУ 68px & 64px) */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* ТӨСЛИЙН ЛОГО 30% ТОМРУУЛСАН (68px x 68px) */}
+          <img src="/project-logo.jpg" alt="Logo" style={{ width: '68px', height: '68px', borderRadius: '12px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
-            <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>Creative reading-2 project</p>
+            <p style={{ fontSize: '12px', color: '#0284c7', margin: '3px 0 0 0', fontWeight: 'bold' }}>Creative reading-2 project</p>
           </div>
         </div>
 
@@ -247,13 +248,13 @@ export default function TeacherRoom() {
           </div>
         </div>
 
-        {/* AVATAR */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* AVATAR (30% ТОМРУУЛСАН 64px x 64px) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '13px', fontWeight: '800', color: '#0f172a' }}>Таны Ментор</div>
-            <div style={{ fontSize: '10px', color: '#16a34a', fontWeight: 'bold' }}>• Онлайн</div>
+            <div style={{ fontSize: '14px', fontWeight: '800', color: '#0f172a' }}>Таны Ментор</div>
+            <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 'bold' }}>• Онлайн</div>
           </div>
-          <img src="/tsendao.jpg" alt="Цэндао багш" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #f59e0b', objectFit: 'cover' }} />
+          <img src="/tsendao.jpg" alt="Цэндао багш" style={{ width: '64px', height: '64px', borderRadius: '50%', border: '3px solid #f59e0b', objectFit: 'cover' }} />
         </div>
       </header>
 

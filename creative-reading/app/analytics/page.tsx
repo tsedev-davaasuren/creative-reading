@@ -3,290 +3,192 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-interface AssignmentAttempt {
-  taskNo: number; // 1-ээс 5 даалгавар
-  title: string;
-  recall: number; // Max 2
-  analyze: number; // Max 4
-  evalScore: number; // Max 6
-  total: number; // Max 12
-  date: string;
-}
-
 interface StudentResult {
-  id: number;
+  id: string;
   name: string;
-  attempts: AssignmentAttempt[]; // 5 удаагийн даалгаврын түүх
-  avgTotal: number;
-  status: 'Баталгаажсан' | 'Хүлээгдэж буй';
+  class: string;
+  recall: number; // Мэдээлэл олох сэргээн санах (макс 2)
+  analyze: number; // Задлан шинжлэх (макс 4)
+  eval: number; // Эргэцүүлэн дүгнэх (макс 6)
+  total: number; // Нийт (макс 12)
+  feedback: string;
+  approvedAt: string;
 }
 
 export default function AnalyticsPage() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState<string>('Газар зүй');
-  const [selectedStudent, setSelectedStudent] = useState<StudentResult | null>(null);
-
-  const subjects = ['Уран зохиол', 'Хими', 'Биологи', 'Түүх', 'Физик', 'Газар зүй'];
-
-  const studentNames = [
-    'Амарболд Б.', 'Анужин Т.', 'Баатар С.', 'Болд-Эрдэнэ Э.', 'Бат-Эрдэнэ Г.',
-    'Ганзориг Д.', 'Дулмаа О.', 'Есүй Б.', 'Золбоо М.', 'Индра Т.',
-    'Мөнх-Эрдэнэ Б.', 'Номин-Эрдэнэ С.', 'Онон Г.', 'Өлзий Д.', 'Сүхбат Б.',
-    'Тэмүүлэн М.', 'Урангоо Б.', 'Хулан А.', 'Цэнгэл Т.', 'Энхжин Н.'
-  ];
-
-  const [subjectData, setSubjectData] = useState<Record<string, StudentResult[]>>({});
+  const [results, setResults] = useState<StudentResult[]>([]);
 
   useEffect(() => {
-    setIsMounted(true);
-
-    const generatedData: Record<string, StudentResult[]> = {};
-
-    subjects.forEach((subj, subIdx) => {
-      generatedData[subj] = studentNames.map((name, stIdx) => {
-        // Сурагч бүрт 5 удаагийн даалгавар ажилласан түүх үүсгэх
-        const attempts: AssignmentAttempt[] = [1, 2, 3, 4, 5].map((taskNo) => {
-          const recall = Math.min(2, Math.floor(((stIdx + subIdx + taskNo) % 3) + 1));
-          const analyze = Math.min(4, Math.floor(((stIdx + taskNo) % 4) + 1));
-          const evalScore = Math.min(6, Math.floor(((stIdx + subIdx + taskNo) % 5) + 2));
-          return {
-            taskNo,
-            title: `${subj} - Даалгавар ${taskNo}`,
-            recall,
-            analyze,
-            evalScore,
-            total: recall + analyze + evalScore,
-            date: `2026.10.${10 + taskNo}`,
-          };
-        });
-
-        const sumTotal = attempts.reduce((acc, a) => acc + a.total, 0);
-        const avgTotal = Number((sumTotal / 5).toFixed(1));
-
-        return {
-          id: stIdx + 1,
-          name,
-          attempts,
-          avgTotal,
-          status: stIdx % 4 === 0 ? 'Хүлээгдэж буй' : 'Баталгаажсан',
-        };
-      });
-    });
-
-    setSubjectData(generatedData);
-    // Анужин Т. (2 дахь сурагч)-ийг анхнаас нь сонгох
-    if (generatedData['Газар зүй'] && generatedData['Газар зүй'].length > 1) {
-      setSelectedStudent(generatedData['Газар зүй'][1]);
-    }
+    loadResults();
   }, []);
 
-  if (!isMounted) return <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'Arial' }}>Уншиж байна...</div>;
+  const loadResults = () => {
+    // LocalStorage-оос баталгаажсан дүнгүүдийг унших
+    const saved = localStorage.getItem('student_approved_analytics_data');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setResults(parsed);
+        } else {
+          setResults([{ id: 'STU-001', name: 'Анужин Т.', class: '9Е', ...parsed }]);
+        }
+      } catch (e) {
+        setResults([]);
+      }
+    } else {
+      // Анхдагч дээж туршилтын дата (Хэрэв байхгүй бол)
+      setResults([
+        {
+          id: 'STU-001',
+          name: 'Анужин Т.',
+          class: '9Е',
+          recall: 2,
+          analyze: 3,
+          eval: 4,
+          total: 9,
+          feedback: 'Цэндао өвөө-багшийн дүгнэлт: Даалгавар 5, 6 дээр өгүүлбэрийн тоо дутуу бичсэн тул рубрикийн дагуу оноо хасаж үнэлэв.',
+          approvedAt: new Date().toLocaleString('mn-MN'),
+        },
+      ]);
+    }
+  };
 
-  const currentStudents = subjectData[selectedSubject] || [];
-  const classAvg = currentStudents.length > 0
-    ? (currentStudents.reduce((acc, s) => acc + s.avgTotal, 0) / currentStudents.length).toFixed(1)
-    : '0';
-  const classAvgPercent = Math.round((Number(classAvg) / 12) * 100);
+  // НЭГ СУРАГЧИЙН ҮНЭЛГЭЭГ УСТГАХ
+  const handleDeleteSingle = (id: string) => {
+    if (confirm('Энэ сурагчийн үнэлгээг устгахдаа итгэлтэй байна уу?')) {
+      const updated = results.filter((item) => item.id !== id);
+      setResults(updated);
+      localStorage.setItem('student_approved_analytics_data', JSON.stringify(updated));
+    }
+  };
+
+  // БҮХ ТУРШИЛТЫН ҮНЭЛГЭЭГ АРИЛГАЖ ЦЭВЭРЛЭХ
+  const handleClearAll = () => {
+    if (confirm('🚨 Анхаар: Бүх туршилтын үнэлгээ болон сурагчдын дүнг сангаас бүрэн арилгах уу?')) {
+      setResults([]);
+      localStorage.removeItem('student_approved_analytics_data');
+      alert('Туршилтын үнэлгээ, дүнгүүд амжилттай арилгагдлаа!');
+    }
+  };
 
   return (
-    <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '20px 24px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '20px 30px', fontFamily: 'Arial, sans-serif' }}>
       
       {/* HEADER SECTION */}
-      <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ backgroundColor: '#0284c7', color: '#fff', padding: '10px 14px', borderRadius: '12px', fontSize: '20px' }}>📊</div>
+      <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <img src="/project-logo.jpg" alt="Logo" style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
-            <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>
-              Хяналт Шинжилгээ & 5 Удаагийн Даалгаврын Аналитик
-            </h1>
-            <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>
-              Creative reading-2 project | 6 Хичээл × 5 Даалгавар (Нийт 30 Даалгавар)
-            </p>
+            <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>📊 Хяналт шинжилгээ & Аналитик танчим</h1>
+            <p style={{ fontSize: '12px', color: '#0284c7', margin: '4px 0 0 0', fontWeight: 'bold' }}>Бүтээлч уншлага-2 төсөл | Анги: 9Е</p>
           </div>
         </div>
 
-        <Link
-          href="/teacher"
-          style={{ backgroundColor: '#059669', color: '#fff', padding: '8px 16px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none' }}
-        >
-          👨‍🏫 Багшийн танхим руу буцах
-        </Link>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {/* БҮХ ТУРШИЛТЫН ДҮНГ АРИЛГАХ ТОВЧ */}
+          <button
+            onClick={handleClearAll}
+            style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '10px 18px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            🗑️ Туршилтын үнэлгээг арилгах
+          </button>
+
+          <Link
+            href="/teacher"
+            style={{ backgroundColor: '#0284c7', color: '#fff', padding: '10px 18px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block' }}
+          >
+            👨‍🏫 Багшийн танхим руу буцах
+          </Link>
+        </div>
       </header>
 
-      {/* 6 ХИЧЭЭЛИЙН СОНГОЛТ */}
-      <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
-        <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#854d0e', marginBottom: '10px' }}>
-          📌 Хичээл сонгох (Тухайн хичээлийн 20 сурагч тус бүрийн 5 удаагийн дүн харагдана):
+      {/* АНАЛИТИК НЭГДСЭН САТАСТИК КАРТУУД */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', padding: '16px', borderRadius: '14px' }}>
+          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Нийт шалгуулсан сурагч</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', marginTop: '4px' }}>{results.length} сурагч</div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {subjects.map((subj) => {
-            const isSelected = selectedSubject === subj;
-            return (
-              <button
-                key={subj}
-                onClick={() => {
-                  setSelectedSubject(subj);
-                  if (subjectData[subj] && subjectData[subj].length > 0) {
-                    setSelectedStudent(subjectData[subj][0]);
-                  }
-                }}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: '12px',
-                  border: isSelected ? '2px solid #0284c7' : '1px solid #cbd5e1',
-                  backgroundColor: isSelected ? '#0284c7' : '#fff',
-                  color: isSelected ? '#fff' : '#334155',
-                  fontSize: '13px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                }}
-              >
-                {subj}
-              </button>
-            );
-          })}
+
+        <div style={{ backgroundColor: '#e0f2fe', border: '1px solid #bae6fd', padding: '16px', borderRadius: '14px' }}>
+          <div style={{ fontSize: '12px', color: '#0369a1', fontWeight: 'bold' }}>1. Сэргээн санах (Дундаж)</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#0284c7', marginTop: '4px' }}>
+            {results.length > 0 ? (results.reduce((acc, r) => acc + r.recall, 0) / results.length).toFixed(1) : 0} / 2 оноо
+          </div>
+        </div>
+
+        <div style={{ backgroundColor: '#f3e8ff', border: '1px solid #d8b4fe', padding: '16px', borderRadius: '14px' }}>
+          <div style={{ fontSize: '12px', color: '#6b21a8', fontWeight: 'bold' }}>2. Задлан шинжлэх (Дундаж)</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#7c3aed', marginTop: '4px' }}>
+            {results.length > 0 ? (results.reduce((acc, r) => acc + r.analyze, 0) / results.length).toFixed(1) : 0} / 4 оноо
+          </div>
+        </div>
+
+        <div style={{ backgroundColor: '#fef3c7', border: '1px solid #fde68a', padding: '16px', borderRadius: '14px' }}>
+          <div style={{ fontSize: '12px', color: '#92400e', fontWeight: 'bold' }}>3. Эргэцүүлэн дүгнэх (Дундаж)</div>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#d97706', marginTop: '4px' }}>
+            {results.length > 0 ? (results.reduce((acc, r) => acc + r.eval, 0) / results.length).toFixed(1) : 0} / 6 оноо
+          </div>
         </div>
       </div>
 
-      {/* СУРАГЧИЙН 5 УДААГИЙН ДААЛГАВРЫН ДЭЛГЭРЭНГҮЙ СТАТИСТИК */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '20px', marginBottom: '20px' }}>
-        
-        {/* АНГИЙН ДУНДАЖ */}
-        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#854d0e', marginBottom: '10px' }}>
-            🏆 {selectedSubject} - Нийт дундаж
-          </div>
-          <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: `conic-gradient(#059669 ${classAvgPercent}%, #e2e8f0 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-            <div style={{ width: '92px', height: '92px', backgroundColor: '#fff', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a' }}>{classAvgPercent}%</span>
-              <span style={{ fontSize: '10px', color: '#16a34a', fontWeight: 'bold' }}>{classAvg} / 12 оноо</span>
-            </div>
-          </div>
-          <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#166534', backgroundColor: '#dcfce7', padding: '4px 12px', borderRadius: '12px' }}>
-            20 Сурагч × 5 Даалгавар
-          </div>
-        </div>
-
-        {/* СОНГОСОН СУРАГЧИЙН (Ж: АНУЖИН Т.) 5 УДААГИЙН ДААЛГАВРЫН ТҮҮХ */}
-        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '20px' }}>
-          {selectedStudent ? (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #fde047', paddingBottom: '8px' }}>
-                <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
-                    👤 {selectedStudent.name} (<span style={{ color: '#0284c7' }}>{selectedSubject} - 5 даалгаврын түүх</span>)
-                  </h3>
-                  <p style={{ fontSize: '11px', color: '#64748b', margin: '2px 0 0 0' }}>
-                    Дундаж оноо: <strong>{selectedStudent.avgTotal} / 12</strong> ({Math.round((selectedStudent.avgTotal / 12) * 100)}%)
-                  </p>
-                </div>
-                <span style={{ fontSize: '11px', fontWeight: 'bold', color: selectedStudent.status === 'Баталгаажсан' ? '#15803d' : '#b45309', backgroundColor: selectedStudent.status === 'Баталгаажсан' ? '#dcfce7' : '#fef9c3', padding: '4px 10px', borderRadius: '10px' }}>
-                  {selectedStudent.status}
-                </span>
-              </div>
-
-              {/* 5 УДААГИЙН ДААЛГАВРЫН ЖАГСААЛТ БА ПРОГРЕСС БАР */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {selectedStudent.attempts.map((att) => {
-                  const percent = Math.round((att.total / 12) * 100);
-                  return (
-                    <div key={att.taskNo} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', padding: '10px 14px', borderRadius: '10px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                        <span style={{ color: '#0f172a' }}>📝 Даалгавар {att.taskNo} ({att.date})</span>
-                        <span style={{ color: percent >= 75 ? '#15803d' : percent >= 50 ? '#b45309' : '#dc2626' }}>
-                          {att.total} / 12 оноо ({percent}%)
-                        </span>
-                      </div>
-
-                      {/* 3 ТҮВШНИЙ ОНООНЫ ЗАДАРГАА */}
-                      <div style={{ display: 'flex', gap: '16px', fontSize: '11px', color: '#475569', marginBottom: '6px' }}>
-                        <span>📌 Сэргээн санах: <strong style={{ color: '#3730a3' }}>{att.recall}/2</strong></span>
-                        <span>📝 Задлан шинжлэх: <strong style={{ color: '#6b21a8' }}>{att.analyze}/4</strong></span>
-                        <span>💡 Эргэцүүлэн дүгнэх: <strong style={{ color: '#854d0e' }}>{att.evalScore}/6</strong></span>
-                      </div>
-
-                      <div style={{ height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${percent}%`, backgroundColor: percent >= 75 ? '#059669' : percent >= 50 ? '#d97706' : '#dc2626', height: '100%' }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', color: '#64748b', padding: '20px' }}>Сурагч сонгоно уу.</div>
-          )}
-        </div>
-
-      </div>
-
-      {/* 20 СУРАГЧИЙН ДҮНГИЙН НЭГДСЭН ХҮСНЭГТ */}
+      {/* ДҮНГИЙН ХҮСНЭГТ */}
       <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '20px' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a', marginBottom: '14px' }}>
-          📋 {selectedSubject} хичээлийн 20 сурагчийн 5 удаагийн дундаж дүнгүүд:
+        <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: '0 0 16px 0' }}>
+          📋 Сурагчдын гүйцэтгэл ба Рубрикийн үнэлгээний жагсаалт
         </h3>
 
-        <div style={{ overflowX: 'auto' }}>
+        {results.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', fontSize: '14px' }}>
+            Одоогоор хадгалагдсан үнэлгээ, дүн байхгүй байна.
+          </div>
+        ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
             <thead>
               <tr style={{ backgroundColor: '#fef08a', color: '#854d0e', textAlign: 'left' }}>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>№</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Сурагчийн нэр</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-1</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-2</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-3</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-4</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-5</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>5 Даалгаврын дундаж</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Гүйцэтгэл (%)</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Анги / Сурагч</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Сэргээн санах (2)</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Задлан шинжлэх (4)</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Эргэцүүлэн дүгнэх (6)</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Нийт оноо (12)</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Тайлан ба санал</th>
                 <th style={{ padding: '10px', border: '1px solid #fde047' }}>Үйлдэл</th>
               </tr>
             </thead>
             <tbody>
-              {currentStudents.map((st) => {
-                const percent = Math.round((st.avgTotal / 12) * 100);
-                const isSelected = selectedStudent?.id === st.id;
-
-                return (
-                  <tr
-                    key={st.id}
-                    style={{
-                      backgroundColor: isSelected ? '#e0f2fe' : '#fffdf0',
-                      borderBottom: '1px solid #fde047',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => setSelectedStudent(st)}
-                  >
-                    <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold' }}>{st.id}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold', color: '#0f172a' }}>{st.name}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[0]?.total}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[1]?.total}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[2]?.total}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[3]?.total}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[4]?.total}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', color: '#166534', fontWeight: 'bold' }}>{st.avgTotal} / 12</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold' }}>
-                      <span style={{ color: percent >= 75 ? '#15803d' : percent >= 50 ? '#b45309' : '#dc2626' }}>
-                        {percent}%
-                      </span>
-                    </td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedStudent(st);
-                        }}
-                        style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '4px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
-                      >
-                        5 Даалгаврын түүх 👁️
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {results.map((r) => (
+                <tr key={r.id} style={{ backgroundColor: '#fffdf0' }}>
+                  <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold' }}>
+                    {r.class} - {r.name}
+                  </td>
+                  <td style={{ padding: '10px', border: '1px solid #fde047', color: '#0284c7', fontWeight: 'bold' }}>
+                    {r.recall} / 2
+                  </td>
+                  <td style={{ padding: '10px', border: '1px solid #fde047', color: '#7c3aed', fontWeight: 'bold' }}>
+                    {r.analyze} / 4
+                  </td>
+                  <td style={{ padding: '10px', border: '1px solid #fde047', color: '#d97706', fontWeight: 'bold' }}>
+                    {r.eval} / 6
+                  </td>
+                  <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: '800', color: '#15803d', fontSize: '13px' }}>
+                    {r.total} ({Math.round((r.total / 12) * 100)}%)
+                  </td>
+                  <td style={{ padding: '10px', border: '1px solid #fde047', color: '#334155', maxWidth: '300px' }}>
+                    {r.feedback}
+                  </td>
+                  <td style={{ padding: '10px', border: '1px solid #fde047' }}>
+                    <button
+                      onClick={() => handleDeleteSingle(r.id)}
+                      style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
+                      🗑️ Устгах
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
 
     </div>

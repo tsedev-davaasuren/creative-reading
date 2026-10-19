@@ -322,11 +322,6 @@ export default function TeacherRoom() {
     ? savedBundles 
     : savedBundles.filter((b) => b.subject === bankFilterSubject);
 
-  // ХЯНАЛТ ШИНЖИЛГЭЭНИЙ ХУУДАС РУУ ШУУД НЭВТРЭХ ФУНКЦ
-  const handleOpenAnalytics = () => {
-    window.location.href = 'https://creative-reading.vercel.app/analytics';
-  };
-
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
@@ -379,16 +374,12 @@ export default function TeacherRoom() {
               </tr>
             </thead>
             <tbody>
-              {blueprintTasks.map((t) => (
-                <tr key={t.no}>
-                  <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.no}</td>
-                  <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.type}</td>
-                  <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.cognitive}</td>
-                  <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.action}</td>
-                  <td style={{ padding: '6px', border: '1px solid #fde047', fontWeight: 'bold' }}>{t.score}</td>
-                  <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.rubric}</td>
-                </tr>
-              ))}
+              <tr><td style={{ padding: '6px', border: '1px solid #fde047' }}>1</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Сонгох тест</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Мэдээлэл олох сэргээн санах</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>ABCD сонголтоос нэг хариулт сонгох</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>0-1</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Зөв сонгосон бол 1 оноо, буруу бол 0 оноо</td></tr>
+              <tr><td style={{ padding: '6px', border: '1px solid #fde047' }}>2</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задгай даалгавар</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Мэдээлэл олох сэргээн санах</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Нэг өгүүлбэр олж бичих</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>0-1</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Зөв олсон бол 1 оноо, огт бичээгүй бол 0 оноо</td></tr>
+              <tr><td style={{ padding: '6px', border: '1px solid #fde047' }}>3</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задгай даалгавар</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задлан шинжлэх</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>1-2 өгүүлбэр бичих</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>0-2</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу бол 1 оноо</td></tr>
+              <tr><td style={{ padding: '6px', border: '1px solid #fde047' }}>4</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задгай даалгавар</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задлан шинжлэх</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>1-2 өгүүлбэр бичих</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>0-2</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу бол 1 оноо</td></tr>
+              <tr><td style={{ padding: '6px', border: '1px solid #fde047' }}>5</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задгай даалгавар</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Эргэцүүлэн дүгнэх</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>2-3 өгүүлбэр бичих</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>0-3</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>2-3 өгүүлбэрээр шинэ санаа гаргасан бол 3 оноо, шинэ санаагүй 2 оноо</td></tr>
+              <tr><td style={{ padding: '6px', border: '1px solid #fde047' }}>6</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Задгай даалгавар</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>Эргэцүүлэн дүгнэх</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>2-3 өгүүлбэр бичих</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>0-3</td><td style={{ padding: '6px', border: '1px solid #fde047' }}>2-3 өгүүлбэрээр шинэ санаа гаргасан бол 3 оноо, шинэ санаагүй 2 оноо</td></tr>
             </tbody>
           </table>
         </div>
@@ -568,7 +559,7 @@ export default function TeacherRoom() {
                           {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
                           <div style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '16px' }}>
                             <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '10px' }}>
-                              📖 Эх бичвэр
+                              📖 Эх бичвэр (8:5 хэмжээ)
                             </div>
                             <div style={{ marginBottom: '10px' }}>
                               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Эх бичвэрийн гарчиг:</label>
@@ -580,27 +571,114 @@ export default function TeacherRoom() {
                               />
                             </div>
                             <div>
-                              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Агуулга:</label>
-                              <div style={{ fontSize: '11px', color: '#1e293b', backgroundColor: '#fffbe8', padding: '12px', borderRadius: '8px', border: '1px solid #fde047', maxHeight: '220px', overflowY: 'auto', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
-                                {bundle.text}
-                              </div>
+                              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Унших эх бичвэр:</label>
+                              <textarea
+                                readOnly
+                                defaultValue={bundle.text || initialSubjectData['Уран зохиол'].text}
+                                style={{ width: '100%', height: '500px', padding: '10px', backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '8px', fontSize: '11px', color: '#1e293b', lineHeight: '1.6', boxSizing: 'border-box', resize: 'vertical' }}
+                              />
                             </div>
                           </div>
 
-                          {/* БАРУУН ТАЛ: ДААЛГАВРУУД */}
+                          {/* БАРУУН ТАЛ: АСУУЛТУУД */}
                           <div style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '16px' }}>
-                            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '10px' }}>
-                              ✏️ Багч даалгаврууд ({bundle.tasks.length})
+                            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '12px' }}>
+                              Нийт даалгаврын жагсаалт:
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '300px', overflowY: 'auto' }}>
-                              {bundle.tasks.map((task, idx) => (
-                                <div key={idx} style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '8px', padding: '10px' }}>
-                                  <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '4px' }}>
-                                    📌 Даалгавар {task.no} ({task.cognitive}) - Оноо: {task.score}
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                              {bundle.tasks.map((t, idx) => (
+                                <div key={idx} style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '12px', padding: '12px' }}>
+                                  
+                                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span style={{ backgroundColor: '#e0e7ff', color: '#3730a3', padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold' }}>
+                                      📌 {t.cognitive || 'Мэдээлэл олох сэргээн санах'}
+                                    </span>
+                                    <span style={{ backgroundColor: '#f3e8ff', color: '#6b21a8', padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold' }}>
+                                      📝 {t.type || (idx === 0 ? 'Сонгох тест' : 'Задгай даалгавар')}
+                                    </span>
+                                    <span style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', marginLeft: 'auto' }}>
+                                      🏆 Оноо: {t.score || (idx === 0 ? '0-1' : '0-2')}
+                                    </span>
                                   </div>
-                                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>
-                                    {task.question}
+
+                                  <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#334155', marginBottom: '6px' }}>
+                                    ⚡ Гүйцэтгэх ажил: <span style={{ fontWeight: 'normal', color: '#0f172a' }}>{t.action || 'ABCD сонголтоос зөв нэг хариултыг сонгох'}</span>
                                   </div>
+
+                                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '4px' }}>
+                                    Даалгавар {t.no || idx + 1}:
+                                  </div>
+                                  <div style={{ fontSize: '11px', color: '#0f172a', marginBottom: '8px', lineHeight: '1.5', backgroundColor: '#fff', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                                    {t.question}
+                                  </div>
+
+                                  {/* ДААЛГАВАР 1: ДАРЖ СОНГОЛТОО СОЛИХ БОЛОМЖТОЙ (ИНТЕРАКТИВ) */}
+                                  {idx === 0 && (
+                                    <div style={{ marginBottom: '6px' }}>
+                                      <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '4px' }}>Сонголтууд (Дарж солих боломжтой):</div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                        {(t.options || ['А. Адуу', 'Б. Тэмээ', 'В. Үхэр', 'Г. Морь']).map((opt, optIdx) => {
+                                          const currentSelected = bankSelectedAnswers[bundle.id] || t.answer || '';
+                                          const isSelected = currentSelected && (opt.trim() === currentSelected.trim() || opt.startsWith(currentSelected));
+                                          
+                                          return (
+                                            <label
+                                              key={optIdx}
+                                              onClick={() => setBankSelectedAnswers({ ...bankSelectedAnswers, [bundle.id]: opt })}
+                                              style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                padding: '6px 10px',
+                                                borderRadius: '6px',
+                                                border: isSelected ? '2px solid #0284c7' : '1px solid #cbd5e1',
+                                                backgroundColor: isSelected ? '#e0f2fe' : '#fff',
+                                                fontSize: '11px',
+                                                color: isSelected ? '#0369a1' : '#334155',
+                                                fontWeight: isSelected ? 'bold' : 'normal',
+                                                cursor: 'pointer'
+                                              }}
+                                            >
+                                              <input
+                                                type="radio"
+                                                name={`bundle-opt-${bundle.id}`}
+                                                checked={!!isSelected}
+                                                onChange={() => setBankSelectedAnswers({ ...bankSelectedAnswers, [bundle.id]: opt })}
+                                                style={{ width: '14px', height: '14px', cursor: 'pointer' }}
+                                              />
+                                              {opt}
+                                            </label>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* ДААЛГАВАР 2-6 ХАРИУЛАН БИЧИХ ӨРГӨН ЦОНХ */}
+                                  {idx > 0 && (
+                                    <div>
+                                      <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#15803d', marginBottom: '4px' }}>Хариулан бичих цонх:</div>
+                                      <textarea
+                                        placeholder="Энд сурагч хариултаа бичнэ..."
+                                        style={{
+                                          width: '100%',
+                                          minHeight: '75px',
+                                          padding: '8px 10px',
+                                          borderRadius: '6px',
+                                          border: '1px solid #86efac',
+                                          fontSize: '11px',
+                                          color: '#14532d',
+                                          backgroundColor: '#f0fdf4',
+                                          lineHeight: '1.6',
+                                          resize: 'vertical',
+                                          boxSizing: 'border-box',
+                                          outline: 'none',
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+
                                 </div>
                               ))}
                             </div>
@@ -608,138 +686,212 @@ export default function TeacherRoom() {
 
                         </div>
                       )}
+
                     </div>
                   );
                 })
               ) : (
-                <div style={{ textAlign: 'center', color: '#64748b', padding: '30px' }}>Сонгосон хичээл дээр даалгавар одоогоор хадгалагдаагүй байна.</div>
+                <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
+                  Хадгалагдсан даалгавар одоогоор байхгүй байна.
+                </div>
               )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ANALYTICS MODAL */}
+      {showAnalytics && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, padding: '20px' }}>
+          <div style={{ backgroundColor: '#fffdf0', width: '100%', maxWidth: '960px', borderRadius: '20px', border: '1px solid #fde047', padding: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div>
+                <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  📊 Хяналт шинжилгээ ба PISA чадварын аналитик
+                </h2>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>
+                  9Е анги / Уран зохиол - Ж.Лхагва "Арван долоотой байхад" өгүүлэг
+                </p>
+              </div>
+              <button onClick={() => setShowAnalytics(false)} style={{ backgroundColor: '#e2e8f0', color: '#334155', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+                Хаах ✕
+              </button>
+            </div>
+            <div style={{ padding: '20px', textAlign: 'center', color: '#334155' }}>
+              Аналитик мэдээлэл идэвхтэй байна.
             </div>
           </div>
         </div>
       )}
 
-      {/* MAIN WORKSPACE LAYOUT */}
-      <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
+      {/* MAIN WORKSPACE */}
+      <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', alignItems: 'start', maxWidth: '1440px', margin: '0 auto' }}>
         
         {/* LEFT COLUMN: TEXT EDITOR */}
-        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '700px' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>📖 Эх бичвэр</h2>
+              <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                📖 Эх бичвэр
+              </div>
               <button
                 onClick={() => setShowTaskBank(true)}
-                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 📁 Даалгаврын сан ({savedBundles.length}) ➔
               </button>
             </div>
 
-            {/* SUBJECT BUTTONS */}
             <div style={{ marginBottom: '14px' }}>
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '6px' }}>Хичээл сонгох:</label>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                {subjects.map((sub) => (
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {subjects.map((subj) => (
                   <button
-                    key={sub}
-                    type="button"
-                    onClick={() => setSelectedSubject(sub)}
+                    key={subj}
+                    onClick={() => setSelectedSubject(subj)}
                     style={{
-                      padding: '6px 14px',
+                      padding: '6px 16px',
                       borderRadius: '16px',
                       border: 'none',
                       fontSize: '11px',
                       fontWeight: 'bold',
-                      backgroundColor: selectedSubject === sub ? '#0284c7' : '#38bdf8',
+                      cursor: 'pointer',
+                      backgroundColor: selectedSubject === subj ? '#0284c7' : '#38bdf8',
                       color: '#fff',
-                      cursor: 'pointer'
                     }}
                   >
-                    {sub}
+                    {subj}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* TITLE */}
-            <div style={{ marginBottom: '12px' }}>
+            <div style={{ marginBottom: '14px' }}>
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Эх бичвэрийн гарчиг</label>
               <input
                 type="text"
                 value={subjectTexts[selectedSubject]?.title || ''}
                 onChange={(e) => setSubjectTexts({ ...subjectTexts, [selectedSubject]: { ...subjectTexts[selectedSubject], title: e.target.value } })}
-                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #fde047', fontSize: '12px', backgroundColor: '#fff', fontWeight: 'bold', color: '#0f172a', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #fde047', fontSize: '12px', backgroundColor: '#fffdf0', color: '#0f172a', fontWeight: 'bold', boxSizing: 'border-box', outline: 'none' }}
               />
             </div>
 
-            {/* TEXTAREA */}
-            <div style={{ marginBottom: '16px' }}>
+            <div>
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Унших эх бичвэр (Бүрэн эхээр)</label>
               <textarea
                 value={subjectTexts[selectedSubject]?.text || ''}
                 onChange={(e) => setSubjectTexts({ ...subjectTexts, [selectedSubject]: { ...subjectTexts[selectedSubject], text: e.target.value } })}
-                style={{ width: '100%', height: '320px', padding: '14px', backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '10px', fontSize: '12px', color: '#1e293b', lineHeight: '1.7', resize: 'vertical', boxSizing: 'border-box', outline: 'none' }}
+                style={{ width: '100%', height: '400px', padding: '14px', backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '10px', fontSize: '12px', color: '#1e293b', lineHeight: '1.7', resize: 'vertical', boxSizing: 'border-box', outline: 'none' }}
               />
             </div>
           </div>
 
-          {/* GREEN GENERATE BUTTON */}
           <button
             onClick={handleGenerateTasks}
-            style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+            disabled={loadingTasks}
+            style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '16px' }}
           >
-            {loadingTasks ? '⏳ Боловсруулж байна...' : `⚡ ${selectedSubject} хичээлийн даалгавар боловсруулах`}
+            {loadingTasks ? '⚡ Даалгавар боловсруулж байна...' : `⚡ ${selectedSubject} хичээлийн даалгавар боловсруулах`}
           </button>
         </div>
 
-        {/* RIGHT COLUMN: TASKS & LINK */}
-        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* RIGHT COLUMN: TASK PANEL */}
+        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '700px' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>✏️ Асуулт даалгавар</h2>
-              
-              {/* ЗУРАГ-1 ДЭЭРХ ХЯНАЛТ ШИНЖИЛГЭЭ ТОВЧЛУУР (https://creative-reading.vercel.app/analytics РҮҮ ШУУД НЭВТРЭХ) */}
+              <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                ✏️ Асуулт даалгавар
+              </div>
               <button
-                type="button"
-                onClick={handleOpenAnalytics}
-                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', display: 'inline-block' }}
+                onClick={() => setShowAnalytics(true)}
+                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 📊 Хяналт шинжилгээ ➔
               </button>
             </div>
 
-            {currentTasks.length === 0 ? (
-              <div style={{ backgroundColor: '#fff', border: '1px solid #fde047', borderRadius: '12px', padding: '40px 20px', textAlign: 'center', margin: '40px 0' }}>
-                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '8px' }}>
-                  Даалгавар боловсруулаагүй байна.
-                </div>
-                <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                  "⚡ Даалгавар боловсруулах" товчийг дараарай.
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '420px', overflowY: 'auto' }}>
-                {currentTasks.map((t, idx) => (
-                  <div key={idx} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '10px', marginBottom: '10px' }}>
-                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#3730a3', marginBottom: '4px' }}>📌 {t.cognitive} | Оноо: {t.score}</div>
-                    <input
-                      type="text"
-                      value={t.question}
-                      onChange={(e) => handleUpdateTaskQuestion(idx, e.target.value)}
-                      style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', fontWeight: 'bold', color: '#0f172a', boxSizing: 'border-box' }}
+            <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '560px', overflowY: 'auto', paddingRight: '4px' }}>
+              {currentTasks.map((t, idx) => (
+                <div key={idx} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '14px', padding: '14px', marginBottom: '14px' }}>
+                  
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px' }}>
+                    <span style={{ backgroundColor: '#e0e7ff', color: '#3730a3', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
+                      📌 {t.cognitive}
+                    </span>
+                    <span style={{ backgroundColor: '#f3e8ff', color: '#6b21a8', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold' }}>
+                      📝 {t.type}
+                    </span>
+                    <span style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', marginLeft: 'auto' }}>
+                      🏆 Оноо: {t.score}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#334155', marginBottom: '8px' }}>
+                    ⚡ Гүйцэтгэх ажил: <span style={{ backgroundColor: '#fff', padding: '4px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 'normal' }}>{t.action}</span>
+                  </div>
+
+                  <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '6px' }}>
+                    Даалгавар {t.no}:
+                  </div>
+
+                  <textarea
+                    value={t.question}
+                    onChange={(e) => handleUpdateTaskQuestion(idx, e.target.value)}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #3b82f6', fontSize: '11px', color: '#0f172a', lineHeight: '1.5', backgroundColor: '#fff', marginBottom: '10px', resize: 'vertical', boxSizing: 'border-box' }}
+                  />
+
+                  {idx === 0 && t.options && (
+                    <div style={{ marginBottom: '10px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '6px' }}>Сонголтууд (Засах боломжтой):</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {t.options.map((opt, oIdx) => (
+                          <input
+                            key={oIdx}
+                            type="text"
+                            value={opt}
+                            onChange={(e) => handleUpdateTaskOption(idx, oIdx, e.target.value)}
+                            style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', backgroundColor: '#fff', boxSizing: 'border-box' }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {t.answer !== undefined && (
+                    <div style={{ marginBottom: '10px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '4px' }}>
+                        {idx === 0 ? 'Зөв хариулт:' : 'Жишиг хариулт:'}
+                      </div>
+                      <textarea
+                        value={t.answer}
+                        onChange={(e) => handleUpdateTaskAnswer(idx, e.target.value)}
+                        style={{ width: '100%', backgroundColor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '6px', padding: '8px 10px', fontSize: '11px', color: '#14532d', fontWeight: 'bold', resize: 'vertical', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#b45309', marginBottom: '4px' }}>
+                      📊 Онооны рубрик задаргаа (Тогтмол / Засахгүй):
+                    </div>
+                    <textarea
+                      readOnly
+                      value={t.rubric}
+                      style={{ width: '100%', backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '6px', padding: '8px 10px', fontSize: '11px', color: '#78350f', resize: 'none', boxSizing: 'border-box' }}
                     />
                   </div>
-                ))}
-              </div>
-            )}
+
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* GREEN SAVE BUTTON */}
           <button
             onClick={handleSaveToBank}
-            style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', marginTop: '12px' }}
+            style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '16px' }}
           >
-            💾 Даалгаврыг баталж, санд илгээх
+            ✅ Баталж, даалгаврын санд илгээх
           </button>
         </div>
 

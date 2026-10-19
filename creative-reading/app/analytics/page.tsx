@@ -3,24 +3,31 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-interface StudentResult {
-  id: number;
-  name: string;
+interface AssignmentAttempt {
+  taskNo: number; // 1-ээс 5 даалгавар
+  title: string;
   recall: number; // Max 2
   analyze: number; // Max 4
   evalScore: number; // Max 6
   total: number; // Max 12
+  date: string;
+}
+
+interface StudentResult {
+  id: number;
+  name: string;
+  attempts: AssignmentAttempt[]; // 5 удаагийн даалгаврын түүх
+  avgTotal: number;
   status: 'Баталгаажсан' | 'Хүлээгдэж буй';
 }
 
 export default function AnalyticsPage() {
   const [isMounted, setIsMounted] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState<string>('Уран зохиол');
+  const [selectedSubject, setSelectedSubject] = useState<string>('Газар зүй');
   const [selectedStudent, setSelectedStudent] = useState<StudentResult | null>(null);
 
   const subjects = ['Уран зохиол', 'Хими', 'Биологи', 'Түүх', 'Физик', 'Газар зүй'];
 
-  // 20 СУРАГЧИЙН НЭРСИЙН ЖАГСААЛТ
   const studentNames = [
     'Амарболд Б.', 'Анужин Т.', 'Баатар С.', 'Болд-Эрдэнэ Э.', 'Бат-Эрдэнэ Г.',
     'Ганзориг Д.', 'Дулмаа О.', 'Есүй Б.', 'Золбоо М.', 'Индра Т.',
@@ -28,7 +35,6 @@ export default function AnalyticsPage() {
     'Тэмүүлэн М.', 'Урангоо Б.', 'Хулан А.', 'Цэнгэл Т.', 'Энхжин Н.'
   ];
 
-  // 6 ХИЧЭЭЛ ТУС БҮРТ 20 СУРАГЧИЙН ДҮНГИЙН ӨГӨГДӨЛ ҮҮСГЭХ
   const [subjectData, setSubjectData] = useState<Record<string, StudentResult[]>>({});
 
   useEffect(() => {
@@ -37,38 +43,50 @@ export default function AnalyticsPage() {
     const generatedData: Record<string, StudentResult[]> = {};
 
     subjects.forEach((subj, subIdx) => {
-      generatedData[subj] = studentNames.map((name, idx) => {
-        // Хичээл болон сурагч бүрт тохирсон дүнгийн симуляци
-        const recall = Math.min(2, Math.floor(((idx + subIdx) % 3) + 1));
-        const analyze = Math.min(4, Math.floor(((idx * 2 + subIdx) % 4) + 1));
-        const evalScore = Math.min(6, Math.floor(((idx + subIdx * 2) % 5) + 2));
-        const total = recall + analyze + evalScore;
+      generatedData[subj] = studentNames.map((name, stIdx) => {
+        // Сурагч бүрт 5 удаагийн даалгавар ажилласан түүх үүсгэх
+        const attempts: AssignmentAttempt[] = [1, 2, 3, 4, 5].map((taskNo) => {
+          const recall = Math.min(2, Math.floor(((stIdx + subIdx + taskNo) % 3) + 1));
+          const analyze = Math.min(4, Math.floor(((stIdx + taskNo) % 4) + 1));
+          const evalScore = Math.min(6, Math.floor(((stIdx + subIdx + taskNo) % 5) + 2));
+          return {
+            taskNo,
+            title: `${subj} - Даалгавар ${taskNo}`,
+            recall,
+            analyze,
+            evalScore,
+            total: recall + analyze + evalScore,
+            date: `2026.10.${10 + taskNo}`,
+          };
+        });
+
+        const sumTotal = attempts.reduce((acc, a) => acc + a.total, 0);
+        const avgTotal = Number((sumTotal / 5).toFixed(1));
 
         return {
-          id: idx + 1,
+          id: stIdx + 1,
           name,
-          recall,
-          analyze,
-          evalScore,
-          total,
-          status: idx % 4 === 0 ? 'Хүлээгдэж буй' : 'Баталгаажсан',
+          attempts,
+          avgTotal,
+          status: stIdx % 4 === 0 ? 'Хүлээгдэж буй' : 'Баталгаажсан',
         };
       });
     });
 
     setSubjectData(generatedData);
-    if (generatedData['Уран зохиол'] && generatedData['Уран зохиол'].length > 0) {
-      setSelectedStudent(generatedData['Уран зохиол'][0]);
+    // Анужин Т. (2 дахь сурагч)-ийг анхнаас нь сонгох
+    if (generatedData['Газар зүй'] && generatedData['Газар зүй'].length > 1) {
+      setSelectedStudent(generatedData['Газар зүй'][1]);
     }
   }, []);
 
   if (!isMounted) return <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'Arial' }}>Уншиж байна...</div>;
 
   const currentStudents = subjectData[selectedSubject] || [];
-  const avgTotal = currentStudents.length > 0
-    ? (currentStudents.reduce((acc, s) => acc + s.total, 0) / currentStudents.length).toFixed(1)
+  const classAvg = currentStudents.length > 0
+    ? (currentStudents.reduce((acc, s) => acc + s.avgTotal, 0) / currentStudents.length).toFixed(1)
     : '0';
-  const avgPercent = Math.round((Number(avgTotal) / 12) * 100);
+  const classAvgPercent = Math.round((Number(classAvg) / 12) * 100);
 
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '20px 24px', fontFamily: 'Arial, sans-serif' }}>
@@ -79,10 +97,10 @@ export default function AnalyticsPage() {
           <div style={{ backgroundColor: '#0284c7', color: '#fff', padding: '10px 14px', borderRadius: '12px', fontSize: '20px' }}>📊</div>
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>
-              Хяналт Шинжилгээ & PISA чадварын аналитик (6 Хичээл)
+              Хяналт Шинжилгээ & 5 Удаагийн Даалгаврын Аналитик
             </h1>
             <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>
-              Creative reading-2 project | 9Е Анги - 20 Сурагч
+              Creative reading-2 project | 6 Хичээл × 5 Даалгавар (Нийт 30 Даалгавар)
             </p>
           </div>
         </div>
@@ -95,10 +113,10 @@ export default function AnalyticsPage() {
         </Link>
       </header>
 
-      {/* 6 ХИЧЭЭЛИЙН ТОБИУД (БАГШ ТУС БҮР ӨӨРИЙН ХИЧЭЭЛИЙГ СОНГОНО) */}
+      {/* 6 ХИЧЭЭЛИЙН СОНГОЛТ */}
       <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
         <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#854d0e', marginBottom: '10px' }}>
-          📌 Багшийн хичээл сонгох (Тухайн хичээлийн 20 сурагчийн дүн харагдана):
+          📌 Хичээл сонгох (Тухайн хичээлийн 20 сурагч тус бүрийн 5 удаагийн дүн харагдана):
         </div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {subjects.map((subj) => {
@@ -121,7 +139,6 @@ export default function AnalyticsPage() {
                   fontSize: '13px',
                   fontWeight: 'bold',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
                 }}
               >
                 {subj}
@@ -131,68 +148,69 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* ХИЧЭЭЛИЙН НЭГДСЭН ДҮНГИЙН СТАТИСТИК */}
+      {/* СУРАГЧИЙН 5 УДААГИЙН ДААЛГАВРЫН ДЭЛГЭРЭНГҮЙ СТАТИСТИК */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '20px', marginBottom: '20px' }}>
         
-        {/* ХИЧЭЭЛИЙН ДУНДАЖ ГҮЙЦЭТГЭЛ */}
+        {/* АНГИЙН ДУНДАЖ */}
         <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#854d0e', marginBottom: '10px' }}>
-            🏆 {selectedSubject} - Ангийн дундаж
+            🏆 {selectedSubject} - Нийт дундаж
           </div>
-          <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: `conic-gradient(#059669 ${avgPercent}%, #e2e8f0 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+          <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: `conic-gradient(#059669 ${classAvgPercent}%, #e2e8f0 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
             <div style={{ width: '92px', height: '92px', backgroundColor: '#fff', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a' }}>{avgPercent}%</span>
-              <span style={{ fontSize: '10px', color: '#16a34a', fontWeight: 'bold' }}>{avgTotal} / 12</span>
+              <span style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a' }}>{classAvgPercent}%</span>
+              <span style={{ fontSize: '10px', color: '#16a34a', fontWeight: 'bold' }}>{classAvg} / 12 оноо</span>
             </div>
           </div>
           <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#166534', backgroundColor: '#dcfce7', padding: '4px 12px', borderRadius: '12px' }}>
-            Нийт 20 сурагч суралцаж байна
+            20 Сурагч × 5 Даалгавар
           </div>
         </div>
 
-        {/* СОНГОГДСОН СУРАГЧИЙН ДЭЛГЭРЭНГҮЙ КОГНИТИВ АНАЛИТИК */}
+        {/* СОНГОСОН СУРАГЧИЙН (Ж: АНУЖИН Т.) 5 УДААГИЙН ДААЛГАВРЫН ТҮҮХ */}
         <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '20px' }}>
           {selectedStudent ? (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #fde047', paddingBottom: '8px' }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
-                  👤 Сонгосон сурагч: <span style={{ color: '#0284c7' }}>{selectedStudent.name}</span> ({selectedSubject})
-                </h3>
+                <div>
+                  <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
+                    👤 {selectedStudent.name} (<span style={{ color: '#0284c7' }}>{selectedSubject} - 5 даалгаврын түүх</span>)
+                  </h3>
+                  <p style={{ fontSize: '11px', color: '#64748b', margin: '2px 0 0 0' }}>
+                    Дундаж оноо: <strong>{selectedStudent.avgTotal} / 12</strong> ({Math.round((selectedStudent.avgTotal / 12) * 100)}%)
+                  </p>
+                </div>
                 <span style={{ fontSize: '11px', fontWeight: 'bold', color: selectedStudent.status === 'Баталгаажсан' ? '#15803d' : '#b45309', backgroundColor: selectedStudent.status === 'Баталгаажсан' ? '#dcfce7' : '#fef9c3', padding: '4px 10px', borderRadius: '10px' }}>
                   {selectedStudent.status}
                 </span>
               </div>
 
+              {/* 5 УДААГИЙН ДААЛГАВРЫН ЖАГСААЛТ БА ПРОГРЕСС БАР */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    <span style={{ color: '#3730a3' }}>📌 Сэргээн санах түвшин:</span>
-                    <span style={{ color: '#3730a3' }}>{selectedStudent.recall} / 2 оноо</span>
-                  </div>
-                  <div style={{ height: '8px', backgroundColor: '#e0e7ff', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${(selectedStudent.recall / 2) * 100}%`, backgroundColor: '#4f46e5', height: '100%' }} />
-                  </div>
-                </div>
+                {selectedStudent.attempts.map((att) => {
+                  const percent = Math.round((att.total / 12) * 100);
+                  return (
+                    <div key={att.taskNo} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', padding: '10px 14px', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                        <span style={{ color: '#0f172a' }}>📝 Даалгавар {att.taskNo} ({att.date})</span>
+                        <span style={{ color: percent >= 75 ? '#15803d' : percent >= 50 ? '#b45309' : '#dc2626' }}>
+                          {att.total} / 12 оноо ({percent}%)
+                        </span>
+                      </div>
 
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    <span style={{ color: '#6b21a8' }}>📝 Задлан шинжлэх түвшин:</span>
-                    <span style={{ color: '#6b21a8' }}>{selectedStudent.analyze} / 4 оноо</span>
-                  </div>
-                  <div style={{ height: '8px', backgroundColor: '#f3e8ff', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${(selectedStudent.analyze / 4) * 100}%`, backgroundColor: '#9333ea', height: '100%' }} />
-                  </div>
-                </div>
+                      {/* 3 ТҮВШНИЙ ОНООНЫ ЗАДАРГАА */}
+                      <div style={{ display: 'flex', gap: '16px', fontSize: '11px', color: '#475569', marginBottom: '6px' }}>
+                        <span>📌 Сэргээн санах: <strong style={{ color: '#3730a3' }}>{att.recall}/2</strong></span>
+                        <span>📝 Задлан шинжлэх: <strong style={{ color: '#6b21a8' }}>{att.analyze}/4</strong></span>
+                        <span>💡 Эргэцүүлэн дүгнэх: <strong style={{ color: '#854d0e' }}>{att.evalScore}/6</strong></span>
+                      </div>
 
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    <span style={{ color: '#854d0e' }}>💡 Эргэцүүлэн дүгнэх түвшин:</span>
-                    <span style={{ color: '#854d0e' }}>{selectedStudent.evalScore} / 6 оноо</span>
-                  </div>
-                  <div style={{ height: '8px', backgroundColor: '#fef3c7', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${(selectedStudent.evalScore / 6) * 100}%`, backgroundColor: '#d97706', height: '100%' }} />
-                  </div>
-                </div>
+                      <div style={{ height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ width: `${percent}%`, backgroundColor: percent >= 75 ? '#059669' : percent >= 50 ? '#d97706' : '#dc2626', height: '100%' }} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ) : (
@@ -202,10 +220,10 @@ export default function AnalyticsPage() {
 
       </div>
 
-      {/* 20 СУРАГЧИЙН НЭГДСЭН ДҮНГИЙН ХҮСНЭГТ */}
+      {/* 20 СУРАГЧИЙН ДҮНГИЙН НЭГДСЭН ХҮСНЭГТ */}
       <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '20px' }}>
         <h3 style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a', marginBottom: '14px' }}>
-          📋 {selectedSubject} хичээлийн 20 сурагчийн дүнгийн жагсаалт:
+          📋 {selectedSubject} хичээлийн 20 сурагчийн 5 удаагийн дундаж дүнгүүд:
         </h3>
 
         <div style={{ overflowX: 'auto' }}>
@@ -214,18 +232,19 @@ export default function AnalyticsPage() {
               <tr style={{ backgroundColor: '#fef08a', color: '#854d0e', textAlign: 'left' }}>
                 <th style={{ padding: '10px', border: '1px solid #fde047' }}>№</th>
                 <th style={{ padding: '10px', border: '1px solid #fde047' }}>Сурагчийн нэр</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Сэргээн санах (2)</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Задлан шинжлэх (4)</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Эргэцүүлэн дүгнэх (6)</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Нийт оноо (12)</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-1</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-2</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-3</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-4</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Д-5</th>
+                <th style={{ padding: '10px', border: '1px solid #fde047' }}>5 Даалгаврын дундаж</th>
                 <th style={{ padding: '10px', border: '1px solid #fde047' }}>Гүйцэтгэл (%)</th>
-                <th style={{ padding: '10px', border: '1px solid #fde047' }}>Төлөв</th>
                 <th style={{ padding: '10px', border: '1px solid #fde047' }}>Үйлдэл</th>
               </tr>
             </thead>
             <tbody>
               {currentStudents.map((st) => {
-                const percent = Math.round((st.total / 12) * 100);
+                const percent = Math.round((st.avgTotal / 12) * 100);
                 const isSelected = selectedStudent?.id === st.id;
 
                 return (
@@ -240,18 +259,15 @@ export default function AnalyticsPage() {
                   >
                     <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold' }}>{st.id}</td>
                     <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold', color: '#0f172a' }}>{st.name}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', color: '#3730a3', fontWeight: 'bold' }}>{st.recall}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', color: '#6b21a8', fontWeight: 'bold' }}>{st.analyze}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', color: '#854d0e', fontWeight: 'bold' }}>{st.evalScore}</td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047', color: '#166534', fontWeight: 'bold' }}>{st.total}</td>
+                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[0]?.total}</td>
+                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[1]?.total}</td>
+                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[2]?.total}</td>
+                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[3]?.total}</td>
+                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>{st.attempts[4]?.total}</td>
+                    <td style={{ padding: '10px', border: '1px solid #fde047', color: '#166534', fontWeight: 'bold' }}>{st.avgTotal} / 12</td>
                     <td style={{ padding: '10px', border: '1px solid #fde047', fontWeight: 'bold' }}>
                       <span style={{ color: percent >= 75 ? '#15803d' : percent >= 50 ? '#b45309' : '#dc2626' }}>
                         {percent}%
-                      </span>
-                    </td>
-                    <td style={{ padding: '10px', border: '1px solid #fde047' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '8px', color: st.status === 'Баталгаажсан' ? '#15803d' : '#b45309', backgroundColor: st.status === 'Баталгаажсан' ? '#dcfce7' : '#fef9c3' }}>
-                        {st.status}
                       </span>
                     </td>
                     <td style={{ padding: '10px', border: '1px solid #fde047' }}>
@@ -262,7 +278,7 @@ export default function AnalyticsPage() {
                         }}
                         style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '4px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
                       >
-                        Дэлгэрэнгүй 👁️
+                        5 Даалгаврын түүх 👁️
                       </button>
                     </td>
                   </tr>

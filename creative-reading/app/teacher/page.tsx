@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 interface Task {
   no: number;
@@ -28,10 +27,14 @@ export default function TeacherRoom() {
   const [showChat, setShowChat] = useState(false);
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [showTaskBank, setShowTaskBank] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   // ГҮЙЦЭТГЭЖ ДУУСАХ ХУГАЦАА СУУРИЛУУЛАХ MODAL-ИЙН СТЭЙТҮҮД
   const [sendingBundle, setSendingBundle] = useState<TaskBundle | null>(null);
   const [dueDate, setDueDate] = useState('');
+
+  // ДААЛГАВРЫН САНД СОНГОСОН ХАРИУЛТЫГ ХАДГАЛАХ СТЭЙТ
+  const [bankSelectedAnswers, setBankSelectedAnswers] = useState<Record<string, string>>({});
 
   const [selectedSubject, setSelectedSubject] = useState('Уран зохиол');
   const [bankFilterSubject, setBankFilterSubject] = useState('Бүх хичээл');
@@ -256,6 +259,28 @@ export default function TeacherRoom() {
     setSendingBundle(null);
   };
 
+  const handleUpdateTaskQuestion = (index: number, val: string) => {
+    const updated = [...currentTasks];
+    updated[index].question = val;
+    setCurrentTasks(updated);
+  };
+
+  const handleUpdateTaskOption = (taskIndex: number, optIndex: number, val: string) => {
+    const updated = [...currentTasks];
+    if (updated[taskIndex].options) {
+      const opts = [...(updated[taskIndex].options || [])];
+      opts[optIndex] = val;
+      updated[taskIndex].options = opts;
+      setCurrentTasks(updated);
+    }
+  };
+
+  const handleUpdateTaskAnswer = (index: number, val: string) => {
+    const updated = [...currentTasks];
+    updated[index].answer = val;
+    setCurrentTasks(updated);
+  };
+
   const handleSendChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -297,21 +322,26 @@ export default function TeacherRoom() {
     ? savedBundles 
     : savedBundles.filter((b) => b.subject === bankFilterSubject);
 
+  // ХЯНАЛТ ШИНЖИЛГЭЭНИЙ ХУУДАС РУУ ШУУД НЭВТРЭХ ФУНКЦ
+  const handleOpenAnalytics = () => {
+    window.location.href = 'https://creative-reading.vercel.app/analytics';
+  };
+
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
       {/* HEADER SECTION */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <img src="/project-logo.jpg" alt="Logo" style={{ width: '68px', height: '68px', borderRadius: '12px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
-            <p style={{ fontSize: '12px', color: '#0284c7', margin: '3px 0 0 0', fontWeight: 'bold' }}>Creative reading-2 project</p>
+            <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>Creative reading-2 project</p>
           </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-          <span style={{ backgroundColor: '#f59e0b', color: '#000', fontWeight: 'bold', padding: '4px 16px', borderRadius: '16px', fontSize: '11px' }}>
+          <span style={{ backgroundColor: '#f59e0b', color: '#000', fontWeight: 'bold', padding: '6px 20px', borderRadius: '20px', fontSize: '12px' }}>
             Mentor AI Цэндао багштай
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -324,12 +354,12 @@ export default function TeacherRoom() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '4px 10px', backgroundColor: '#fef9c3', borderRadius: '12px', border: '1px solid #fde047' }}>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '14px', fontWeight: '800', color: '#0f172a' }}>Таны Ментор</div>
-            <div style={{ fontSize: '11px', color: '#16a34a', fontWeight: 'bold' }}>• Онлайн</div>
+            <div style={{ fontSize: '15px', fontWeight: '800', color: '#0f172a' }}>Таны Ментор</div>
+            <div style={{ fontSize: '12px', color: '#16a34a', fontWeight: 'bold' }}>Онлайн</div>
           </div>
-          <img src="/tsendao.jpg" alt="Цэндао багш" style={{ width: '64px', height: '64px', borderRadius: '50%', border: '3px solid #f59e0b', objectFit: 'cover' }} />
+          <img src="/tsendao.jpg" alt="Цэндао багш" style={{ width: '56px', height: '56px', borderRadius: '50%', border: '3px solid #f59e0b', objectFit: 'cover' }} />
         </div>
       </header>
 
@@ -349,7 +379,7 @@ export default function TeacherRoom() {
               </tr>
             </thead>
             <tbody>
-              {blueprintTasks.map(t => (
+              {blueprintTasks.map((t) => (
                 <tr key={t.no}>
                   <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.no}</td>
                   <td style={{ padding: '6px', border: '1px solid #fde047' }}>{t.type}</td>
@@ -381,15 +411,15 @@ export default function TeacherRoom() {
               </div>
             ))}
           </div>
-          <form onSubmit={handleSendChat} style={{ display: 'flex', gap: '10px' }}>
-            <input
-              type="text"
+          <form onSubmit={handleSendChat} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+            <textarea
+              rows={3}
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Асуултаа бичээд Илгээх товч дараарай..."
-              style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #fde047', fontSize: '12px', outline: 'none' }}
+              placeholder="Асуултаа энд бүтнээр нь бичиж хянаад илгээгээрэй..."
+              style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', border: '1px solid #fde047', fontSize: '12px', resize: 'vertical', minHeight: '60px', outline: 'none', backgroundColor: '#fffbe8' }}
             />
-            <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#f59e0b', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}>
+            <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#f59e0b', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}>
               Илгээх
             </button>
           </form>
@@ -399,7 +429,7 @@ export default function TeacherRoom() {
       {/* ГҮЙЦЭТГЭЖ ДУУСАХ САР ӨДӨР, ЦАГ МИНУТ СОНГОХ MODAL */}
       {sendingBundle && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10000, padding: '20px' }}>
-          <div style={{ backgroundColor: '#fff', width: '100%', maxWidth: '460px', borderRadius: '16px', padding: '24px', border: '1px solid #fbbf24' }}>
+          <div style={{ backgroundColor: '#fff', width: '100%', maxWidth: '460px', borderRadius: '16px', padding: '24px', border: '1px solid #fbbf24', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold', color: '#0f172a' }}>
               🚀 9Е анги руу даалгавар илгээх
             </h3>
@@ -437,14 +467,14 @@ export default function TeacherRoom() {
         </div>
       )}
 
-      {/* ДААЛГАВРЫН САН POPUP */}
+      {/* ДААЛГАВРЫН САН */}
       {showTaskBank && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, padding: '20px' }}>
-          <div style={{ backgroundColor: '#fffdf0', width: '100%', maxWidth: '1200px', borderRadius: '20px', border: '1px solid #fde047', padding: '24px', maxHeight: '92vh', overflowY: 'auto' }}>
+          <div style={{ backgroundColor: '#fffdf0', width: '100%', maxWidth: '1400px', borderRadius: '20px', border: '1px solid #fde047', padding: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', maxHeight: '92vh', overflowY: 'auto' }}>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <div>
-                <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                   📁 Даалгаврын сан
                 </h2>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>
@@ -457,7 +487,7 @@ export default function TeacherRoom() {
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#475569', marginBottom: '8px' }}>Хичээлээр ангилах:</div>
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#475569', marginBottom: '8px' }}>Хичээлээр ангилах (Тоо ширхэгтэй):</div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {['Бүх хичээл', ...subjects].map((subj) => {
                   const count = getSubjectCount(subj);
@@ -488,48 +518,102 @@ export default function TeacherRoom() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {filteredBundles.map((bundle) => {
-                const isExpanded = expandedBundleId === bundle.id;
-                return (
-                  <div key={bundle.id} style={{ border: '1px solid #fde047', borderRadius: '16px', padding: '16px', backgroundColor: '#fffbe8' }}>
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ backgroundColor: '#0284c7', color: '#fff', fontSize: '11px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '6px' }}>
-                          {bundle.subject}
-                        </span>
-                        <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a' }}>
-                          {bundle.title}
-                        </span>
-                      </div>
+              {filteredBundles.length > 0 ? (
+                filteredBundles.map((bundle) => {
+                  const isExpanded = expandedBundleId === bundle.id;
+                  return (
+                    <div key={bundle.id} style={{ border: '1px solid #fde047', borderRadius: '16px', padding: '16px', backgroundColor: '#fffbe8' }}>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <span style={{ backgroundColor: '#0284c7', color: '#fff', fontSize: '11px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '6px' }}>
+                            {bundle.subject}
+                          </span>
+                          <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a' }}>
+                            {bundle.title}
+                          </span>
+                        </div>
 
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button onClick={() => openSendModal(bundle)} style={{ backgroundColor: '#059669', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                          🚀 9Е ангид илгээх
-                        </button>
-                        <button onClick={() => handleLoadBundle(bundle)} style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                          📥 Үндсэн ажилд ачаалах
-                        </button>
-                        <button onClick={() => handleDeleteBundle(bundle.id)} style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '7px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                          🗑️ Устгах
-                        </button>
-                        <button onClick={() => setExpandedBundleId(isExpanded ? null : bundle.id)} style={{ backgroundColor: '#e0f2fe', color: '#0284c7', border: '1px solid #bae6fd', padding: '7px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                          {isExpanded ? '▲ Хумих' : '▼ Дэлгэрэнгүй'}
-                        </button>
-                      </div>
-                    </div>
-
-                    {isExpanded && (
-                      <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #fde047' }}>
-                        <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a', marginBottom: '6px' }}>📖 Эх бичвэр:</div>
-                        <div style={{ fontSize: '11px', color: '#334155', backgroundColor: '#fffdf0', padding: '10px', borderRadius: '8px', border: '1px solid #fde047', maxHeight: '120px', overflowY: 'auto', lineHeight: '1.6' }}>
-                          {bundle.text}
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => openSendModal(bundle)}
+                            style={{ backgroundColor: '#059669', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                          >
+                            🚀 9Е ангид илгээх
+                          </button>
+                          <button
+                            onClick={() => handleLoadBundle(bundle)}
+                            style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                          >
+                            📥 Үндсэн ажилд ачаалах
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBundle(bundle.id)}
+                            style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '7px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                          >
+                            🗑️ Устгах
+                          </button>
+                          <button
+                            onClick={() => setExpandedBundleId(isExpanded ? null : bundle.id)}
+                            style={{ backgroundColor: '#e0f2fe', color: '#0284c7', border: '1px solid #bae6fd', padding: '7px 12px', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                          >
+                            {isExpanded ? '▲ Хумих' : '▼ Дэлгэрэнгүй'}
+                          </button>
                         </div>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+
+                      {isExpanded && (
+                        <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '16px', alignItems: 'start', marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #fde047' }}>
+                          
+                          {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
+                          <div style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '16px' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '10px' }}>
+                              📖 Эх бичвэр
+                            </div>
+                            <div style={{ marginBottom: '10px' }}>
+                              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Эх бичвэрийн гарчиг:</label>
+                              <input
+                                type="text"
+                                readOnly
+                                value={bundle.title}
+                                style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #fde047', fontSize: '11px', backgroundColor: '#fffbe8', fontWeight: 'bold', boxSizing: 'border-box' }}
+                              />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Агуулга:</label>
+                              <div style={{ fontSize: '11px', color: '#1e293b', backgroundColor: '#fffbe8', padding: '12px', borderRadius: '8px', border: '1px solid #fde047', maxHeight: '220px', overflowY: 'auto', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+                                {bundle.text}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* БАРУУН ТАЛ: ДААЛГАВРУУД */}
+                          <div style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '16px' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '10px' }}>
+                              ✏️ Багч даалгаврууд ({bundle.tasks.length})
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '300px', overflowY: 'auto' }}>
+                              {bundle.tasks.map((task, idx) => (
+                                <div key={idx} style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '8px', padding: '10px' }}>
+                                  <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '4px' }}>
+                                    📌 Даалгавар {task.no} ({task.cognitive}) - Оноо: {task.score}
+                                  </div>
+                                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>
+                                    {task.question}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div style={{ textAlign: 'center', color: '#64748b', padding: '30px' }}>Сонгосон хичээл дээр даалгавар одоогоор хадгалагдаагүй байна.</div>
+              )}
             </div>
           </div>
         </div>
@@ -604,7 +688,7 @@ export default function TeacherRoom() {
             onClick={handleGenerateTasks}
             style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
           >
-            ⚡ {selectedSubject} хичээлийн даалгавар боловсруулах
+            {loadingTasks ? '⏳ Боловсруулж байна...' : `⚡ ${selectedSubject} хичээлийн даалгавар боловсруулах`}
           </button>
         </div>
 
@@ -614,13 +698,14 @@ export default function TeacherRoom() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>✏️ Асуулт даалгавар</h2>
               
-              {/* ХЯНАЛТ ШИНЖИЛГЭЭ РҮҮ ШУУД ХОЛБОГДОХ LINK */}
-              <Link
-                href="/analytics"
-                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block' }}
+              {/* ЗУРАГ-1 ДЭЭРХ ХЯНАЛТ ШИНЖИЛГЭЭ ТОВЧЛУУР (https://creative-reading.vercel.app/analytics РҮҮ ШУУД НЭВТРЭХ) */}
+              <button
+                type="button"
+                onClick={handleOpenAnalytics}
+                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', display: 'inline-block' }}
               >
                 📊 Хяналт шинжилгээ ➔
-              </Link>
+              </button>
             </div>
 
             {currentTasks.length === 0 ? (
@@ -637,7 +722,12 @@ export default function TeacherRoom() {
                 {currentTasks.map((t, idx) => (
                   <div key={idx} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '10px', marginBottom: '10px' }}>
                     <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#3730a3', marginBottom: '4px' }}>📌 {t.cognitive} | Оноо: {t.score}</div>
-                    <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>Даалгавар {t.no}: {t.question}</div>
+                    <input
+                      type="text"
+                      value={t.question}
+                      onChange={(e) => handleUpdateTaskQuestion(idx, e.target.value)}
+                      style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', fontWeight: 'bold', color: '#0f172a', boxSizing: 'border-box' }}
+                    />
                   </div>
                 ))}
               </div>

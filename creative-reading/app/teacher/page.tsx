@@ -222,13 +222,13 @@ export default function TeacherRoom() {
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
-      {/* HEADER SECTION (ЗУРАГ-3 СТИЛЬ) */}
+      {/* HEADER SECTION */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: '2px 0 0 0' }}>9Е ангид зориулсан PISA даалгавар боловсруулах орчин</p>
+            <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>Creative reading-2 project</p>
           </div>
         </div>
 
@@ -459,7 +459,7 @@ export default function TeacherRoom() {
         </div>
       )}
 
-      {/* MAIN WORKSPACE LAYOUT (ЗУРАГ-3 СТИЛЬ) */}
+      {/* MAIN WORKSPACE LAYOUT */}
       <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
         
         {/* LEFT COLUMN: TEXT EDITOR */}
@@ -538,7 +538,6 @@ export default function TeacherRoom() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>✏️ Асуулт даалгавар</h2>
               
-              {/* ЗУРАГ-2, 3 ДЭЭРХ ЦЭНХЭР ХЯНАЛТ ШИНЖИЛГЭЭ ТОВЧ */}
               <Link
                 href="/analytics"
                 style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none' }}

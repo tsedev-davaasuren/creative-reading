@@ -29,7 +29,6 @@ export default function TeacherRoom() {
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [showTaskBank, setShowTaskBank] = useState(false);
 
-  // ГҮЙЦЭТГЭЖ ДУУСАХ ХУГАЦАА СУУРИЛУУЛАХ MODAL-ИЙН СТЭЙТҮҮД
   const [sendingBundle, setSendingBundle] = useState<TaskBundle | null>(null);
   const [dueDate, setDueDate] = useState('');
 
@@ -40,23 +39,27 @@ export default function TeacherRoom() {
 
   const initialSubjectData: Record<string, { title: string; text: string }> = {
     'Уран зохиол': {
-      title: '10. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
-      text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг\nМанайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.\nБөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа юулүүлэх гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явсаар барих морио тэгхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.\nБөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
+      title: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
+      text: `Манайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
+
+Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа үлдээнэ гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явахаар барих морио тэгэхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
+
+Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
     },
     'Хими': {
       title: 'Хими: "Усны бүтэц ба химийн холбоос"',
       text: 'Усны молекул (H2O) нь хоёр водород ба нэг кислородын атомоос тогтоно.',
     },
     'Биологи': {
-      title: 'Биологи: "Фотосинтезийн үзэгдэл"',
-      text: 'Ургамал нарны гэрлийн энергийг ашиглан нүүрсхүчлийн хий болон уснаас органик бодис синтезлэн хлоропластдаа глюкоз үйлдвэрлэдэг.',
+      title: 'Биологи: "Эс ба амьд организмын удамшил"',
+      text: 'Амьд өртөнцийн хамгийн бага бөгөөд суурь нэгж нь эс юм.',
     },
     'Түүх': {
       title: 'Түүх: "1921 оны Ардын хувьсгал"',
       text: '1921 оны Ардын хувьсгалын гол зорилго нь Гадаад дарлалаас чөлөөлөх, тусгаар тогтнолоо сэргээн мандуулах явдал байв.',
     },
     'Физик': {
-      title: 'Физик: "10. Механик энергийн хувирал ба хадгалагдах хууль"',
+      title: 'Физик: "Механик энергийн хувирал"',
       text: 'Биед үйлчлэх хүч нь түүний масс болон хурдасгалын үржвэртэй тэнцүү (F=ma).',
     },
     'Газар зүй': {
@@ -66,71 +69,16 @@ export default function TeacherRoom() {
   };
 
   const blueprintTasks: Task[] = [
-    {
-      no: 1,
-      cognitive: 'Мэдээлэл олох сэргээн санах',
-      type: 'Сонгох тест',
-      score: '0-1',
-      action: 'ABCD сонголтоос зөв нэг хариултыг сонгох',
-      question: 'Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна?',
-      options: ['А. Адуу', 'Б. Тэмээ', 'В. Үхэр', 'Г. Морь'],
-      answer: 'Б. Тэмээ',
-      rubric: 'Зөв сонгосон бол 1 оноо, буруу сонгосон бол 0 оноо.'
-    },
-    {
-      no: 2,
-      cognitive: 'Мэдээлэл олох сэргээн санах',
-      type: 'Задгай даалгавар',
-      score: '0-1',
-      action: 'Эхээс холбогдох нэг өгүүлбэр олж бичих',
-      question: 'Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан байна вэ?',
-      answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас, нуурын баруун овоон дээр харуулдан суусан.',
-      rubric: 'Зөв олсон бол 1 оноо, огт бичээгүй бол 0 оноо.'
-    },
-    {
-      no: 3,
-      cognitive: 'Задлан шинжлэх',
-      type: 'Задгай даалгавар',
-      score: '0-2',
-      action: '1-2 өгүүлбэрээр тайлбарлан бичих',
-      question: 'Номын эх бүтцэд Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй.',
-      answer: 'Хархан мөр, тэгш цагаан шүд, шооч байрын хүрээн нүд болон хороомон гутал өмссөн нь түүний сайхныг харуулж байна.',
-      rubric: 'Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу бол 1 оноо.'
-    },
-    {
-      no: 4,
-      cognitive: 'Задлан шинжлэх',
-      type: 'Задгай даалгавар',
-      score: '0-2',
-      action: '1-2 өгүүлбэрээр тайлбарлан бичих',
-      question: 'Номын эх бүтцэд Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу.',
-      answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч хамгийн жаргалтай байсан.',
-      rubric: 'Зөв тайлбарлан 1-2 өгүүлбэрээр бичсэн бол 2 оноо, тайлбар дутуу бол 1 оноо.'
-    },
-    {
-      no: 5,
-      cognitive: 'Эргэцүүлэн дүгнэх',
-      type: 'Задгай даалгавар',
-      score: '0-3',
-      action: '2-3 өгүүлбэр бичих',
-      question: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байгаа вэ?',
-      answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн, бие биедээ тэмүүлэх далд сэтгэл ба эх орны цэргийн албаны үнэ цэнийг харуулсан.',
-      rubric: '2-3 өгүүлбэрээр шинэ санаа гарган дүгнэсэн бол 3 оноо, шинэ санаагүй бол 2 оноо, дутуу бол 1 оноо.'
-    },
-    {
-      no: 6,
-      cognitive: 'Эргэцүүлэн дүгнэх',
-      type: 'Задгай даалгавар',
-      score: '0-3',
-      action: '2-3 өгүүлбэр бичих',
-      question: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор энэ өгүүлэг агуулагдаж буй санаа нь хүмүүст ямар ач холбогдолтой байх вэ?',
-      answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэл болон цэргийн албаар дамжин төлөвших ухамсарыг залууст харуулах зорилготой.',
-      rubric: '2-3 өгүүлбэрээр шинэ санаа гарган дүгнэсэн бол 3 оноо, шинэ санаагүй бол 2 оноо, дутуу бол 1 оноо.'
-    }
+    { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Сонгох тест', score: '0-1', action: 'ABCD сонголтоос зөв нэг хариултыг сонгох', question: 'Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна?', options: ['А. Адуу', 'Б. Тэмээ', 'В. Үхэр', 'Г. Морь'], answer: 'Б. Тэмээ', rubric: 'Зөв сонгосон бол 1 оноо.' },
+    { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Эхээс холбогдох нэг өгүүлбэр олж бичих', question: 'Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан байна вэ?', rubric: 'Зөв олсон бол 1 оноо.' },
+    { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: '1-2 өгүүлбэрээр тайлбарлан бичих', question: 'Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
+    { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: '1-2 өгүүлбэрээр тайлбарлан бичих', question: 'Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
+    { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: '2-3 өгүүлбэр бичих', question: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байгаа вэ?', rubric: '3 оноо.' },
+    { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: '2-3 өгүүлбэр бичих', question: 'Өгүүлэгийн гол санаа, зориулго ямар?', rubric: '3 оноо.' }
   ];
 
   const [subjectTexts, setSubjectTexts] = useState(initialSubjectData);
-  const [currentTasks, setCurrentTasks] = useState<Task[]>(blueprintTasks);
+  const [currentTasks, setCurrentTasks] = useState<Task[]>([]);
   const [savedBundles, setSavedBundles] = useState<TaskBundle[]>([]);
   const [expandedBundleId, setExpandedBundleId] = useState<string | null>('TASK-001');
 
@@ -171,6 +119,10 @@ export default function TeacherRoom() {
   const saveBundlesToStorage = (newBundles: TaskBundle[]) => {
     setSavedBundles(newBundles);
     localStorage.setItem('creative_reading_task_bank_v12', JSON.stringify(newBundles));
+  };
+
+  const handleGenerateTasks = () => {
+    setCurrentTasks(blueprintTasks);
   };
 
   const handleSaveToBank = () => {
@@ -270,45 +222,38 @@ export default function TeacherRoom() {
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
-      {/* HEADER SECTION */}
+      {/* HEADER SECTION (ЗУРАГ-3 СТИЛЬ) */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>Бүтээлч уншлага-2 төсөл (Багшийн танхим)</h1>
-            <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>Creative reading-2 project</p>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: '2px 0 0 0' }}>9Е ангид зориулсан PISA даалгавар боловсруулах орчин</p>
           </div>
         </div>
 
-        {/* ШУУД ХОЛБОГДОХ ТОВЧНУУД (NEXT/LINK) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button onClick={() => setShowBlueprint(!showBlueprint)} style={{ padding: '8px 14px', borderRadius: '12px', border: 'none', backgroundColor: '#fef08a', color: '#854d0e', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-            📋 Блюпринт {showBlueprint ? '▲' : '▼'}
-          </button>
-
-          <button onClick={() => setShowChat(!showChat)} style={{ padding: '8px 14px', borderRadius: '12px', border: 'none', backgroundColor: '#fef08a', color: '#854d0e', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-            💬 Цэндао багш
-          </button>
-
-          <button onClick={() => setShowTaskBank(true)} style={{ padding: '8px 14px', borderRadius: '12px', border: 'none', backgroundColor: '#0284c7', color: '#fff', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-            📁 Даалгаврын сан ({savedBundles.length})
-          </button>
-
-          {/* ХЯНАЛТ ШИНЖИЛГЭЭ РҮҮ ШУУД ХОЛБОГДОХ LINK */}
-          <Link
-            href="/analytics"
-            style={{ backgroundColor: '#059669', color: '#fff', padding: '8px 16px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block' }}
-          >
-            📊 Хяналт шинжилгээ ➔
-          </Link>
+        {/* MENTOR AI BADGE & BUTTONS */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <span style={{ backgroundColor: '#f59e0b', color: '#000', fontWeight: 'bold', padding: '4px 16px', borderRadius: '16px', fontSize: '11px' }}>
+            Mentor AI Цэндао багштай
+          </span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => setShowBlueprint(!showBlueprint)} style={{ padding: '6px 14px', borderRadius: '12px', border: 'none', backgroundColor: '#fef08a', color: '#000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+              📋 Блюпринт харах {showBlueprint ? '▲' : '▼'}
+            </button>
+            <button onClick={() => setShowChat(!showChat)} style={{ padding: '6px 14px', borderRadius: '12px', border: 'none', backgroundColor: '#fef08a', color: '#000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+              💬 Цэндао багштай ярилцах
+            </button>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 10px', backgroundColor: '#fef9c3', borderRadius: '12px', border: '1px solid #fde047' }}>
+        {/* AVATAR */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '13px', fontWeight: '800', color: '#0f172a' }}>Таны Ментор</div>
-            <div style={{ fontSize: '10px', color: '#16a34a', fontWeight: 'bold' }}>Онлайн</div>
+            <div style={{ fontSize: '10px', color: '#16a34a', fontWeight: 'bold' }}>• Онлайн</div>
           </div>
-          <img src="/tsendao.jpg" alt="Цэндао багш" style={{ width: '42px', height: '42px', borderRadius: '50%', border: '2px solid #f59e0b', objectFit: 'cover' }} />
+          <img src="/tsendao.jpg" alt="Цэндао багш" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #f59e0b', objectFit: 'cover' }} />
         </div>
       </header>
 
@@ -514,70 +459,86 @@ export default function TeacherRoom() {
         </div>
       )}
 
-      {/* MAIN WORKSPACE LAYOUT */}
+      {/* MAIN WORKSPACE LAYOUT (ЗУРАГ-3 СТИЛЬ) */}
       <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
         
         {/* LEFT COLUMN: TEXT EDITOR */}
-        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>📖 Эх бичвэр</h2>
-            <button
-              onClick={() => setShowTaskBank(true)}
-              style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
-            >
-              📁 Даалгаврын сан ({savedBundles.length}) ➔
-            </button>
-          </div>
-
-          <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {subjects.map((sub) => (
-              <button
-                key={sub}
-                type="button"
-                onClick={() => setSelectedSubject(sub)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '18px',
-                  border: 'none',
-                  fontSize: '11px',
-                  fontWeight: 'bold',
-                  backgroundColor: selectedSubject === sub ? '#0284c7' : '#38bdf8',
-                  color: '#fff',
-                  cursor: 'pointer'
-                }}
-              >
-                {sub}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Эх бичвэрийн гарчиг:</label>
-            <input
-              type="text"
-              value={subjectTexts[selectedSubject]?.title || ''}
-              onChange={(e) => setSubjectTexts({ ...subjectTexts, [selectedSubject]: { ...subjectTexts[selectedSubject], title: e.target.value } })}
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #fde047', fontSize: '12px', backgroundColor: '#fff', fontWeight: 'bold', color: '#0f172a', boxSizing: 'border-box' }}
-            />
-          </div>
-
+        <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Унших эх бичвэр:</label>
-            <textarea
-              value={subjectTexts[selectedSubject]?.text || ''}
-              onChange={(e) => setSubjectTexts({ ...subjectTexts, [selectedSubject]: { ...subjectTexts[selectedSubject], text: e.target.value } })}
-              style={{ width: '100%', height: '420px', padding: '14px', backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '10px', fontSize: '12px', color: '#1e293b', lineHeight: '1.7', resize: 'vertical', boxSizing: 'border-box', outline: 'none' }}
-            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>📖 Эх бичвэр</h2>
+              <button
+                onClick={() => setShowTaskBank(true)}
+                style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                📁 Даалгаврын сан ({savedBundles.length}) ➔
+              </button>
+            </div>
+
+            {/* SUBJECT BUTTONS */}
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '6px' }}>Хичээл сонгох:</label>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {subjects.map((sub) => (
+                  <button
+                    key={sub}
+                    type="button"
+                    onClick={() => setSelectedSubject(sub)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '16px',
+                      border: 'none',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      backgroundColor: selectedSubject === sub ? '#0284c7' : '#38bdf8',
+                      color: '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* TITLE */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Эх бичвэрийн гарчиг</label>
+              <input
+                type="text"
+                value={subjectTexts[selectedSubject]?.title || ''}
+                onChange={(e) => setSubjectTexts({ ...subjectTexts, [selectedSubject]: { ...subjectTexts[selectedSubject], title: e.target.value } })}
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #fde047', fontSize: '12px', backgroundColor: '#fff', fontWeight: 'bold', color: '#0f172a', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            {/* TEXTAREA */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Унших эх бичвэр (Бүрэн эхээр)</label>
+              <textarea
+                value={subjectTexts[selectedSubject]?.text || ''}
+                onChange={(e) => setSubjectTexts({ ...subjectTexts, [selectedSubject]: { ...subjectTexts[selectedSubject], text: e.target.value } })}
+                style={{ width: '100%', height: '320px', padding: '14px', backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '10px', fontSize: '12px', color: '#1e293b', lineHeight: '1.7', resize: 'vertical', boxSizing: 'border-box', outline: 'none' }}
+              />
+            </div>
           </div>
+
+          {/* GREEN GENERATE BUTTON */}
+          <button
+            onClick={handleGenerateTasks}
+            style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+          >
+            ⚡ {selectedSubject} хичээлийн даалгавар боловсруулах
+          </button>
         </div>
 
         {/* RIGHT COLUMN: TASKS & LINK */}
         <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>✏️ Асуулт даалгавар (6)</h2>
+              <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a' }}>✏️ Асуулт даалгавар</h2>
               
-              {/* ХЯНАЛТ ШИНЖИЛГЭЭ РҮҮ ШУУД ХОЛБОГДОХ LINK */}
+              {/* ЗУРАГ-2, 3 ДЭЭРХ ЦЭНХЭР ХЯНАЛТ ШИНЖИЛГЭЭ ТОВЧ */}
               <Link
                 href="/analytics"
                 style={{ backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none' }}
@@ -586,31 +547,34 @@ export default function TeacherRoom() {
               </Link>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '500px', overflowY: 'auto' }}>
-              {currentTasks.map((t, idx) => (
-                <div key={idx} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '10px', marginBottom: '10px' }}>
-                  <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#3730a3', marginBottom: '4px' }}>📌 {t.cognitive} | Оноо: {t.score}</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>Даалгавар {t.no}: {t.question}</div>
+            {currentTasks.length === 0 ? (
+              <div style={{ backgroundColor: '#fff', border: '1px solid #fde047', borderRadius: '12px', padding: '40px 20px', textAlign: 'center', margin: '40px 0' }}>
+                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '8px' }}>
+                  Даалгавар боловсруулаагүй байна.
                 </div>
-              ))}
-            </div>
+                <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                  "⚡ Даалгавар боловсруулах" товчийг дараарай.
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '420px', overflowY: 'auto' }}>
+                {currentTasks.map((t, idx) => (
+                  <div key={idx} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '10px', marginBottom: '10px' }}>
+                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#3730a3', marginBottom: '4px' }}>📌 {t.cognitive} | Оноо: {t.score}</div>
+                    <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>Даалгавар {t.no}: {t.question}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
-            <button
-              onClick={handleSaveToBank}
-              style={{ width: '100%', padding: '12px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-            >
-              ✅ Баталж, даалгаврын санд илгээх
-            </button>
-
-            <Link
-              href="/analytics"
-              style={{ width: '100%', padding: '12px', backgroundColor: '#0284c7', color: '#fff', textAlign: 'center', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', textDecoration: 'none', boxSizing: 'border-box', display: 'block' }}
-            >
-              📊 Хяналт шинжилгээний хуудас руу очих ➔
-            </Link>
-          </div>
+          {/* GREEN SAVE BUTTON */}
+          <button
+            onClick={handleSaveToBank}
+            style={{ width: '100%', padding: '14px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', marginTop: '12px' }}
+          >
+            💾 Даалгаврыг баталж, санд илгээх
+          </button>
         </div>
 
       </div>

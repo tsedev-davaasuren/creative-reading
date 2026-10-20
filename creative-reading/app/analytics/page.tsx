@@ -80,7 +80,7 @@ export default function AnalyticsPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <img src="/project-logo.jpg" alt="Logo" style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
-            <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>📊 Хяналт шинжилгээ & Аналитик танчим</h1>
+            <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>📊 Хяналт шинжилгээ & Аналитик танхим</h1>
             <p style={{ fontSize: '12px', color: '#0284c7', margin: '4px 0 0 0', fontWeight: 'bold' }}>Бүтээлч уншлага-2 төсөл | Анги: 9Е</p>
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
         </div>
       </header>
 
-      {/* АНАЛИТИК НЭГДСЭН САТАСТИК КАРТУУД */}
+      {/* АНАЛИТИК НЭГДСЭН СТАТИСТИК КАРТУУД */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
         <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', padding: '16px', borderRadius: '14px' }}>
           <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Нийт шалгуулсан сурагч</div>

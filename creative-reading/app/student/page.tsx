@@ -46,14 +46,14 @@ function StudentRoomContent() {
   // QR ХОЛБОЛТ
   const [showQrModal, setShowQrModal] = useState(false);
 
-  // ҮНЭЛГЭЭ БА ЧАТ
-  const [editRecall, setEditRecall] = useState(0);
-  const [editAnalyze, setEditAnalyze] = useState(0);
-  const [editEval, setEditEval] = useState(0);
+  // ҮНЭЛГЭЭ БА ХАРИУЛТУУД
+  const [taskScores, setTaskScores] = useState<Record<number, { earned: number; max: number; feedback: string }>>({});
+  const [totalScore, setTotalScore] = useState(0);
+  const [maxPossibleScore, setMaxPossibleScore] = useState(12);
   const [studentAnswers, setStudentAnswers] = useState<Record<number, string>>({});
 
   const [chatMessages, setChatMessages] = useState<{ role: string; content: string }[]>([
-    { role: 'assistant', content: 'Миний хүү өнөөдрийн даалгавраа амжилттай хийж дуусгалаа. Асуух зүйл байвал өвөөгөөсөө асуугаарай!' }
+    { role: 'assistant', content: 'Миний хүү өнөөдрийн даалгавраа амжилттай хийж дуусгалаа. Доорх даалгавар бүрийн үнэлгээ, багшийн зөвлөмжийг анхааралтай уншаарай!' }
   ]);
   const [chatInput, setChatInput] = useState('');
 
@@ -83,7 +83,6 @@ function StudentRoomContent() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
-    // БҮХ 6 ХИЧЭЭЛИЙН БАГШИЙН САНГААС ДААЛГАВРУУДЫГ ШУУД УНШИХ
     let loadedBundles: TaskBundle[] = [];
 
     const possibleKeys = [
@@ -102,7 +101,6 @@ function StudentRoomContent() {
           if (Array.isArray(parsed)) {
             parsed.forEach((item: any) => {
               if (item && (item.title || item.subject)) {
-                // Багшийн санд хадгалагдсан даалгаврыг асуулт, сонголт, эхтэй нь 100% байгаагаар нь ачаална
                 const formattedBundle: TaskBundle = {
                   id: item.id || 'TASK-' + Math.random().toString(36).substr(2, 9),
                   subject: item.subject || 'Нийтлэг хичээл',
@@ -185,16 +183,68 @@ function StudentRoomContent() {
     setStudentAnswers((prev) => ({ ...prev, [taskNo]: value }));
   };
 
+  // ҮНЭЛГЭЭГ БОДИТООР ШАЛГАЖ ОНОО ОГТЛОХ ЛОГИК
+  const evaluateTask = (t: any, studentAns: string) => {
+    const ans = (studentAns || '').trim();
+    const correctAns = (t.answer || '').trim();
+    const options = t.options || t.choices;
+    const isMultipleChoice = Array.isArray(options) && options.length > 0;
+
+    let maxScore = 2;
+    if (t.score) {
+      const parts = t.score.split('-');
+      maxScore = parseInt(parts[parts.length - 1]) || 2;
+    }
+
+    if (!ans) {
+      return { earned: 0, max: maxScore, feedback: 'Хариулт бичээгүй/сонгоогүй тул оноо өгөөгүй.' };
+    }
+
+    if (isMultipleChoice) {
+      if (correctAns && ans.toLowerCase() === correctAns.toLowerCase()) {
+        return { earned: maxScore, max: maxScore, feedback: 'Зөв сонголт хийсэн байна.' };
+      } else if (correctAns) {
+        return { earned: 0, max: maxScore, feedback: `Буруу сонголт. Зөв хариулт: ${correctAns}` };
+      } else {
+        return { earned: maxScore, max: maxScore, feedback: 'Сонголт амжилттай бүртгэгдлээ.' };
+      }
+    } else {
+      // Задгай хариултын шалгалт
+      if (correctAns && ans.toLowerCase().includes(correctAns.toLowerCase())) {
+        return { earned: maxScore, max: maxScore, feedback: 'Бүрэн ба оновчтой хариулсан.' };
+      } else if (ans.length > 15) {
+        return { earned: Math.ceil(maxScore / 2), max: maxScore, feedback: 'Хариулт хагас дутуу, дэлгэрэнгүй тайлбар шаардлагатай.' };
+      } else {
+        return { earned: 0, max: maxScore, feedback: 'Хариулт хангалтгүй эсвэл асуултаас зөрсөн байна.' };
+      }
+    }
+  };
+
   const handleSubmit = (auto = false) => {
     if (auto || confirm('Даалгавраа багш руу илгээхдээ итгэлтэй байна уу?')) {
       setIsSubmitted(true);
       if (activeBundle) {
         setCompletedBundles((prev) => ({ ...prev, [activeBundle.id]: true }));
-        setEditRecall(4);
-        setEditAnalyze(4);
-        setEditEval(4);
+
+        let totalEarned = 0;
+        let totalMax = 0;
+        const newScores: Record<number, { earned: number; max: number; feedback: string }> = {};
+
+        activeBundle.tasks.forEach((t: any, idx: number) => {
+          const taskNo = t.no || idx + 1;
+          const userAns = studentAnswers[taskNo] || '';
+          const result = evaluateTask(t, userAns);
+
+          newScores[taskNo] = result;
+          totalEarned += result.earned;
+          totalMax += result.max;
+        });
+
+        setTaskScores(newScores);
+        setTotalScore(totalEarned);
+        setMaxPossibleScore(totalMax || 12);
       }
-      alert('Даалгаврыг амжилттай илгээлээ!');
+      alert('Даалгаврыг шалгаж амжилттай илгээлээ!');
     }
   };
 
@@ -234,10 +284,7 @@ function StudentRoomContent() {
     }
   };
 
-  const totalCalculated = editRecall + editAnalyze + editEval;
-  const totalPercent = Math.round((totalCalculated / 12) * 100);
-
-  const qrTargetUrl = `https://creative-reading.vercel.app/student?email=${encodeURIComponent(studentEmail)}&name=${encodeURIComponent(studentName)}`;
+  const totalPercent = Math.round((totalScore / (maxPossibleScore || 1)) * 100);
 
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
@@ -254,7 +301,7 @@ function StudentRoomContent() {
           </div>
         </div>
 
-        {/* 6 ХИЧЭЭЛИЙН ДААЛГАВАР СОНГОХ ЦЭС */}
+        {/* ДААЛГАВАР СОНГОХ ЦЭС */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ position: 'relative' }}>
             <button
@@ -266,7 +313,7 @@ function StudentRoomContent() {
 
             {showBundleList && (
               <div style={{ position: 'absolute', right: 0, top: '45px', backgroundColor: '#fff', border: '1px solid #cbd5e1', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '360px', zIndex: 100, padding: '10px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Илгээгдсэн даалгаврууд (6 хичээл):</div>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Илгээгдсэн даалгаврууд:</div>
                 {assignedBundles.map((b) => {
                   const isDone = completedBundles[b.id];
                   return (
@@ -310,7 +357,7 @@ function StudentRoomContent() {
         !isSubmitted ? (
           <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
             
-            {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (БАГШИЙН САНГИЙН БҮРЭН ЭХ) */}
+            {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
             <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                 <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
@@ -322,7 +369,7 @@ function StudentRoomContent() {
               </div>
             </div>
 
-            {/* БАРУУН ТАЛ: ДААЛГАВАР (СОНГОХ ЭСВЭЛ ЗАДГАЙ АСУУЛТ) */}
+            {/* БАРУУН ТАЛ: ДААЛГАВАР БҮГД БОДИТООР */}
             <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -387,26 +434,73 @@ function StudentRoomContent() {
 
           </div>
         ) : (
+          /* ДААЛГАВАР ИЛГЭЭСНИЙ ДАРААХ ХАРИУЛТ БА ЦЭНДАО БАГШИЙН ЗӨВЛӨМЖИЙН ХЭСЭГ */
           <div style={{ display: 'grid', gridTemplateColumns: '7fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {/* ДҮНГИЙН ЕРӨНХИЙ ХУРАНГУЙ */}
               <div style={{ backgroundColor: '#f0fdf4', border: '2px solid #22c55e', borderRadius: '18px', padding: '18px 24px' }}>
-                <div style={{ fontSize: '18px', fontWeight: '800', color: '#15803d', marginBottom: '10px' }}>
-                  Сурагч {studentName}: [{activeBundle?.subject}] Нийт оноо: {totalCalculated} / 12 оноо ({totalPercent}%)
+                <div style={{ fontSize: '18px', fontWeight: '800', color: '#15803d', marginBottom: '6px' }}>
+                  Сурагч {studentName}: [{activeBundle?.subject}] Нийт авсан оноо: {totalScore} / {maxPossibleScore} оноо ({totalPercent}%)
                 </div>
-                <button style={{ width: '100%', padding: '12px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-                  ✅ Үнэлгээг баталж Хяналт шинжилгээ рүү илгээх
-                </button>
+                <p style={{ fontSize: '12px', color: '#166534', margin: 0 }}>
+                  Нийт даалгаврын гүйцэтгэл болон Цэндао өвөө-багшийн зөвлөмжийг доорх карт бүрээс харна уу.
+                </p>
               </div>
+
+              {/* ДААЛГАВАР БҮРИЙН СУРАГЧИЙН ХАРИУЛТ БА ЦЭНДАО БАГШИЙН ЗӨВЛӨМЖ */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '520px', overflowY: 'auto' }}>
+                {activeBundle?.tasks?.map((t: any, index: number) => {
+                  const taskNo = t.no || index + 1;
+                  const questionText = t.question || t.title || t.text || `Даалгавар ${taskNo}`;
+                  const userAns = studentAnswers[taskNo] || 'Хариулт бичээгүй';
+                  const evalRes = taskScores[taskNo] || { earned: 0, max: 2, feedback: 'Үнэлгээ хийгдэж байна' };
+
+                  return (
+                    <div key={taskNo} style={{ backgroundColor: '#fff', border: '1px solid #fde047', borderRadius: '14px', padding: '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a' }}>
+                          Даалгавар {taskNo}: {questionText}
+                        </div>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '8px', backgroundColor: evalRes.earned > 0 ? '#dcfce7' : '#fee2e2', color: evalRes.earned > 0 ? '#15803d' : '#991b1b' }}>
+                          Авсан оноо: {evalRes.earned} / {evalRes.max}
+                        </span>
+                      </div>
+
+                      {/* СУРАГЧИЙН АЖИЛЛАСАН ХАРИУЛТ */}
+                      <div style={{ backgroundColor: '#f8fafc', padding: '10px 12px', borderRadius: '8px', marginBottom: '10px', borderLeft: '4px solid #3b82f6' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#1e40af' }}>💬 Сурагчийн ажилласан хариулт:</div>
+                        <div style={{ fontSize: '12px', color: '#334155', marginTop: '2px' }}>{userAns}</div>
+                      </div>
+
+                      {/* ЦЭНДАО БАГШИЙН ӨГСӨН ЗӨВЛӨМЖ / РУБРИК */}
+                      <div style={{ backgroundColor: '#fffbe8', padding: '10px 12px', borderRadius: '8px', borderLeft: '4px solid #eab308' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#854d0e' }}>👴 Цэндао багшийн даалгаврын зөвлөмж & Дүгнэлт:</div>
+                        <div style={{ fontSize: '12px', color: '#713f12', marginTop: '2px' }}>{evalRes.feedback}</div>
+                        {t.rubric && (
+                          <div style={{ fontSize: '11px', color: '#a16207', marginTop: '4px', fontStyle: 'italic' }}>
+                            📌 Рубрик шалгуур: {t.rubric}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
             </div>
 
-            <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '16px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '10px' }}>💬 Цэндао өвөө-багштай ярилцах</div>
-              <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '10px' }}>
-                {chatMessages.map((m, i) => (
-                  <div key={i} style={{ fontSize: '11px', padding: '8px', borderRadius: '8px', marginBottom: '6px', backgroundColor: m.role === 'user' ? '#dcfce7' : '#fef08a' }}>
-                    {m.content}
-                  </div>
-                ))}
+            {/* ЦЭНДАО ӨВӨӨ БАГШТАЙ ЯРИЛЦАХ ЧАТ */}
+            <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a', marginBottom: '10px' }}>💬 Цэндао өвөө-багштай ярилцах</div>
+                <div style={{ maxHeight: '380px', overflowY: 'auto', marginBottom: '10px' }}>
+                  {chatMessages.map((m, i) => (
+                    <div key={i} style={{ fontSize: '11px', padding: '8px', borderRadius: '8px', marginBottom: '6px', backgroundColor: m.role === 'user' ? '#dcfce7' : '#fef08a' }}>
+                      {m.content}
+                    </div>
+                  ))}
+                </div>
               </div>
               <form onSubmit={handleSendChat} style={{ display: 'flex', gap: '6px' }}>
                 <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Асуулт асуух..." style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }} />

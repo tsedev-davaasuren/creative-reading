@@ -64,26 +64,8 @@ function StudentRoomContent() {
   ]);
   const [chatInput, setChatInput] = useState('');
 
-  // 🏛️ 3 ХИЧЭЭЛИЙН НИЙТИЙН ДААЛГАВРЫН САН (УЗ, Биологи, Хими)
+  // 🏛️ БҮХ БАГШИЙН НЭГТГЭСЭН 2 ХИЧЭЭЛИЙН НИЙТИЙН ДААЛГАВРЫН САН (Зөвхөн Биологи, Хими)
   const globalDefaultBundles: TaskBundle[] = [
-    {
-      id: 'TASK-UZ-01',
-      subject: 'Уран зохиол',
-      title: '10. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
-      text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг
-Манайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
-Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа юулүүлэх гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явсаар барих морио тэгхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
-Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
-      createdAt: new Date().toLocaleDateString('mn-MN'),
-      tasks: [
-        { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 1: Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна? (1 оноо)', answer: 'Тэмээ', rubric: 'Зөв хариулсан бол 1 оноо.' },
-        { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 2: Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан бэ? (1 оноо)', answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас', rubric: 'Зөв тайлбарласан бол 1 оноо.' },
-        { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 3: Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй. (2 оноо)', answer: 'Тэгш цагаан шүд, шооч нүд, хороомон гутал өмссөн нь түүний сайхныг харуулна.', rubric: '1-2 өгүүлбэрээр бичсэн бол 2 оноо.' },
-        { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 4: Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу. (2 оноо)', answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
-        { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байна вэ? (3 оноо)', answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн ба бие биедээ тэмүүлэх далд сэтгэлийг харуулсан.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' },
-        { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Энэ өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор ач холбогдол нь юу вэ? (3 оноо)', answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэлийг залууст харуулах зорилготой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
-      ]
-    },
     {
       id: 'TASK-BIO-01',
       subject: 'Биологи',
@@ -142,6 +124,7 @@ function StudentRoomContent() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
+    // УРАН ЗОХИОЛЫН ДААЛГАВРЫГ ЦЭВЭРЛЭЖ, ЗӨВХӨН БИОЛОГИ БА ХИМИЙГ ҮЛДЭЭХ ЛОГИК
     let allBundles = [...globalDefaultBundles];
     const loaded = localStorage.getItem('creative_reading_task_bank_v12');
 
@@ -150,8 +133,11 @@ function StudentRoomContent() {
         const parsed = JSON.parse(loaded);
         if (Array.isArray(parsed)) {
           parsed.forEach((localItem: TaskBundle) => {
-            if (!allBundles.some((b) => b.id === localItem.id)) {
-              allBundles.push(localItem);
+            // Уран зохиолын даалгавар эсвэл TASK-UZ-01-ийг оруулахгүй
+            if (localItem.subject !== 'Уран зохиол' && localItem.id !== 'TASK-UZ-01') {
+              if (!allBundles.some((b) => b.id === localItem.id)) {
+                allBundles.push(localItem);
+              }
             }
           });
         }
@@ -160,6 +146,7 @@ function StudentRoomContent() {
       }
     }
 
+    // Шинэчилсэн 2 хичээлийн санг хадгална
     localStorage.setItem('creative_reading_task_bank_v12', JSON.stringify(allBundles));
     setAssignedBundles(allBundles);
 
@@ -280,7 +267,7 @@ function StudentRoomContent() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: promptText, subject: activeBundle?.subject || 'Уран зохиол' }),
+        body: JSON.stringify({ message: promptText, subject: activeBundle?.subject || 'Биологи' }),
       });
 
       const rawReply = await res.text();
@@ -318,7 +305,7 @@ function StudentRoomContent() {
           </div>
         </div>
 
-        {/* 3 ХИЧЭЭЛИЙН ДААЛГАВАР СОНГОХ ЦЭС */}
+        {/* 2 ХИЧЭЭЛИЙН ДААЛГАВАР СОНГОХ ЦЭС */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           
           <div style={{ position: 'relative' }}>
@@ -331,7 +318,7 @@ function StudentRoomContent() {
 
             {showBundleList && (
               <div style={{ position: 'absolute', right: 0, top: '45px', backgroundColor: '#fff', border: '1px solid #cbd5e1', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '360px', zIndex: 100, padding: '10px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Нийт 3 хичээлийн даалгаврын сан:</div>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Нийт даалгаврын сан (Биологи, Хими):</div>
                 {assignedBundles.map((b) => {
                   const isDone = completedBundles[b.id];
                   return (

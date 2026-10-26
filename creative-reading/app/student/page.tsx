@@ -45,20 +45,37 @@ function StudentRoomContent() {
 
   // QR ХОЛБОЛТ
   const [showQrModal, setShowQrModal] = useState(false);
-  const [mobileConnected, setMobileConnected] = useState(false);
 
   // ҮНЭЛГЭЭ БА ЧАТ
   const [editRecall, setEditRecall] = useState(0);
   const [editAnalyze, setEditAnalyze] = useState(0);
   const [editEval, setEditEval] = useState(0);
-  const [teacherFeedback, setTeacherFeedback] = useState('Цэндао өвөө-багшийн дүгнэлт: Даалгавар амжилттай шалгагдлаа.');
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [studentAnswers, setStudentAnswers] = useState<Record<number, string>>({});
 
   const [chatMessages, setChatMessages] = useState<{ role: string; content: string }[]>([
     { role: 'assistant', content: 'Миний хүү өнөөдрийн даалгавраа амжилттай хийж дуусгалаа. Асуух зүйл байвал өвөөгөөсөө асуугаарай!' }
   ]);
   const [chatInput, setChatInput] = useState('');
+
+  // БАГШИЙН САНД БАЙГАА УРАН ЗОХИОЛЫН ДААЛГАВАР (Бэлтгэл/Fallback багц)
+  const defaultLiteratureBundle: TaskBundle = {
+    id: 'TASK-UZ-01',
+    subject: 'Уран зохиол',
+    title: '1. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
+    text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг
+Манайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
+Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа юулүүлэх гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явсаар барих морио тэгхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
+Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
+    createdAt: new Date().toLocaleDateString('mn-MN'),
+    tasks: [
+      { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна? (1 оноо)', answer: 'Тэмээ', rubric: 'Зөв хариулсан бол 1 оноо.' },
+      { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан бэ? (1 оноо)', answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас', rubric: 'Зөв тайлбарласан бол 1 оноо.' },
+      { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй. (2 оноо)', answer: 'Тэгш цагаан шүд, шооч нүд, хороомон гутал өмссөн нь түүний сайхныг харуулна.', rubric: '1-2 өгүүлбэрээр бичсэн бол 2 оноо.' },
+      { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу. (2 оноо)', answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
+      { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байна вэ? (3 оноо)', answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн ба бие биедээ тэмүүлэх далд сэтгэлийг харуулсан.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' },
+      { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Энэ өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор ач холбогдол нь юу вэ? (3 оноо)', answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэлийг залууст харуулах зорилготой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
+    ]
+  };
 
   useEffect(() => {
     const emailParam = searchParams.get('email');
@@ -86,7 +103,6 @@ function StudentRoomContent() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
-    // БАГШИЙН САНГААС ЯГ ИЛГЭЭСЭН ДААЛГАВРУУДЫГ LOCALSTORAGE-ООС УНШИХ
     let loadedBundles: TaskBundle[] = [];
 
     const possibleKeys = [
@@ -117,14 +133,14 @@ function StudentRoomContent() {
       }
     });
 
+    if (loadedBundles.length === 0) {
+      loadedBundles = [defaultLiteratureBundle];
+    }
+
     setAssignedBundles(loadedBundles);
 
-    if (loadedBundles.length > 0) {
-      const selectedTask = loadedBundles.find((b: TaskBundle) => b.id === taskIdParam) || loadedBundles[0];
-      setActiveBundle(selectedTask);
-    } else {
-      setActiveBundle(null);
-    }
+    const selectedTask = loadedBundles.find((b: TaskBundle) => b.id === taskIdParam) || loadedBundles[0];
+    setActiveBundle(selectedTask);
   }, [searchParams]);
 
   useEffect(() => {
@@ -383,7 +399,7 @@ function StudentRoomContent() {
                 <div style={{ fontSize: '18px', fontWeight: '800', color: '#15803d', marginBottom: '10px' }}>
                   Сурагч {studentName}: [{activeBundle?.subject}] Нийт оноо: {totalCalculated} / 12 оноо ({totalPercent}%)
                 </div>
-                <button onClick={() => setShowApprovalModal(true)} style={{ width: '100%', padding: '12px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+                <button style={{ width: '100%', padding: '12px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
                   ✅ Үнэлгээг баталж Хяналт шинжилгээ рүү илгээх
                 </button>
               </div>

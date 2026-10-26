@@ -117,15 +117,14 @@ export default function StudentRoom() {
       setStudentName('Сурагч');
     }
 
-    // 2. БАГШ НАРЫН ДААЛГАВРУУДЫГ НЭГТГЭХ ЛОГИК
-    const loaded = localStorage.getItem('creative_reading_task_bank_v12');
+    // 2. БАГШ НАРЫН ДААЛГАВРУУДЫГ ШИНЭЧЛЭН НЭГТГЭХ (Хуучин кэш датаг шинэ сантай заавал нийлүүлнэ)
     let allBundles = [...globalDefaultBundles];
+    const loaded = localStorage.getItem('creative_reading_task_bank_v12');
 
     if (loaded) {
       try {
         const parsed = JSON.parse(loaded);
         if (Array.isArray(parsed)) {
-          // LocalStorage дээрх шинэ даалгавруудыг нийтийн сантай нэгтгэнэ
           parsed.forEach((localItem: TaskBundle) => {
             if (!allBundles.some((b) => b.id === localItem.id)) {
               allBundles.push(localItem);
@@ -137,9 +136,10 @@ export default function StudentRoom() {
       }
     }
 
+    // Шинэчилсэн санг буцаагаад localStorage-д хадгална
+    localStorage.setItem('creative_reading_task_bank_v12', JSON.stringify(allBundles));
     setAssignedBundles(allBundles);
 
-    // Сонгосон эсвэл эхний даалгаврыг ачаалах
     const selectedTask = allBundles.find((b: TaskBundle) => b.id === taskIdParam) || allBundles[0];
     setActiveBundle(selectedTask);
   }, []);

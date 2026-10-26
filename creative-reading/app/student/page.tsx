@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 interface Task {
   no: number;
@@ -24,13 +25,15 @@ interface TaskBundle {
   dueDate?: string;
 }
 
-export default function StudentRoom() {
+function StudentRoomContent() {
+  const searchParams = useSearchParams();
+
   const [assignedBundles, setAssignedBundles] = useState<TaskBundle[]>([]);
   const [showBundleList, setShowBundleList] = useState(false);
   const [activeBundle, setActiveBundle] = useState<TaskBundle | null>(null);
 
   // СУРАГЧИЙН ДИНАМИК МЭДЭЭЛЭЛ
-  const [studentName, setStudentName] = useState('');
+  const [studentName, setStudentName] = useState('Сурагч');
   const [studentEmail, setStudentEmail] = useState('');
 
   // ТАЙМЕР БА ТӨЛӨВҮҮД
@@ -40,7 +43,7 @@ export default function StudentRoom() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [completedBundles, setCompletedBundles] = useState<Record<string, boolean>>({});
 
-  // QR ХОЛБОЛТ БА СҮЛЖЭЭНИЙ IP ХАЯГ
+  // QR ХОЛБОЛТ
   const [showQrModal, setShowQrModal] = useState(false);
   const [mobileConnected, setMobileConnected] = useState(false);
   const [customIp, setCustomIp] = useState('192.168.1.100');
@@ -61,7 +64,7 @@ export default function StudentRoom() {
   ]);
   const [chatInput, setChatInput] = useState('');
 
-  // 🏛️ БҮХ БАГШИЙН НЭГТГЭСЭН 3 ХИЧЭЭЛИЙН НИЙТИЙН ДААЛГАВРЫН САН
+  // 🏛️ 3 ХИЧЭЭЛИЙН НИЙТИЙН ДААЛГАВРЫН САН (УЗ, Биологи, Хими)
   const globalDefaultBundles: TaskBundle[] = [
     {
       id: 'TASK-UZ-01',
@@ -114,8 +117,6 @@ export default function StudentRoom() {
   ];
 
   useEffect(() => {
-    // 1. URL-ААС СУРАГЧИЙН НЭР, ИМЭЙЛ БА ХИЧЭЭЛИЙГ УНШИХ
-    const searchParams = new URLSearchParams(window.location.search);
     const emailParam = searchParams.get('email');
     const nameParam = searchParams.get('name');
     const taskIdParam = searchParams.get('taskId');
@@ -141,7 +142,6 @@ export default function StudentRoom() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
-    // 2. БАГШ НАРЫН 3 ХИЧЭЭЛИЙН ДААЛГАВРУУДЫГ АВТОМАТААР НЭГТГЭЖ ШИНЭЧЛЭХ
     let allBundles = [...globalDefaultBundles];
     const loaded = localStorage.getItem('creative_reading_task_bank_v12');
 
@@ -160,15 +160,13 @@ export default function StudentRoom() {
       }
     }
 
-    // Шинэчилсэн 3 хичээлийн санг хадгална
     localStorage.setItem('creative_reading_task_bank_v12', JSON.stringify(allBundles));
     setAssignedBundles(allBundles);
 
     const selectedTask = allBundles.find((b: TaskBundle) => b.id === taskIdParam) || allBundles[0];
     setActiveBundle(selectedTask);
-  }, []);
+  }, [searchParams]);
 
-  // 40 МИНУТЫН ДААЛГАВАР ГҮЙЦЭТГЭХ ТАЙМЕР
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (testStarted && !isSubmitted && timeLeft > 0) {
@@ -186,7 +184,6 @@ export default function StudentRoom() {
     return () => clearInterval(timer);
   }, [testStarted, isSubmitted, timeLeft]);
 
-  // 20 МИНУТЫН ЧАТНЫ ТАЙМЕР
   useEffect(() => {
     let chatTimer: NodeJS.Timeout;
     if (isSubmitted && chatTimeLeft > 0) {
@@ -301,47 +298,15 @@ export default function StudentRoom() {
     }
   };
 
-  const handleApproveAndSendToAnalytics = () => {
-    const finalData = {
-      id: 'STU-' + Date.now().toString().slice(-4),
-      name: studentName,
-      class: '9Е',
-      subject: activeBundle?.subject || 'Уран зохиол',
-      recall: editRecall,
-      analyze: editAnalyze,
-      eval: editEval,
-      total: editRecall + editAnalyze + editEval,
-      feedback: teacherFeedback,
-      approvedAt: new Date().toLocaleString('mn-MN'),
-    };
-
-    const existing = localStorage.getItem('student_approved_analytics_data');
-    let updatedList = [];
-    if (existing) {
-      try {
-        const parsed = JSON.parse(existing);
-        updatedList = Array.isArray(parsed) ? [finalData, ...parsed] : [finalData, parsed];
-      } catch {
-        updatedList = [finalData];
-      }
-    } else {
-      updatedList = [finalData];
-    }
-
-    localStorage.setItem('student_approved_analytics_data', JSON.stringify(updatedList));
-    setShowApprovalModal(false);
-    alert(`${studentName} сурагчийн үнэлгээг Хяналт шинжилгээ рүү илгээлээ!`);
-  };
-
   const totalCalculated = editRecall + editAnalyze + editEval;
   const totalPercent = Math.round((totalCalculated / 12) * 100);
 
-  const qrTargetUrl = `http://${customIp}:3000/student?email=${encodeURIComponent(studentEmail)}&name=${encodeURIComponent(studentName)}`;
+  const qrTargetUrl = `https://creative-reading.vercel.app/student?email=${encodeURIComponent(studentEmail)}&name=${encodeURIComponent(studentName)}`;
 
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
-      {/* HEADER SECTION (ДИНАМИК СУРАГЧИЙН НЭР БА ХИЧЭЭЛҮҮД) */}
+      {/* HEADER SECTION */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
@@ -427,7 +392,6 @@ export default function StudentRoom() {
       {!isSubmitted ? (
         <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
           
-          {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
           <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
@@ -439,7 +403,6 @@ export default function StudentRoom() {
             </div>
           </div>
 
-          {/* БАРУУН ТАЛ: ДААЛГАВАР ГҮЙЦЭТГЭХ */}
           <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -479,7 +442,6 @@ export default function StudentRoom() {
 
         </div>
       ) : (
-        /* ДҮНГИЙН ХЭСЭГ */
         <div style={{ display: 'grid', gridTemplateColumns: '7fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ backgroundColor: '#f0fdf4', border: '2px solid #22c55e', borderRadius: '18px', padding: '18px 24px' }}>
@@ -510,5 +472,13 @@ export default function StudentRoom() {
       )}
 
     </div>
+  );
+}
+
+export default function StudentRoom() {
+  return (
+    <Suspense fallback={<div style={{ padding: '20px', textAlign: 'center' }}>Ачаалж байна...</div>}>
+      <StudentRoomContent />
+    </Suspense>
   );
 }

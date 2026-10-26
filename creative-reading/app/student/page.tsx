@@ -29,8 +29,8 @@ export default function StudentRoom() {
   const [showBundleList, setShowBundleList] = useState(false);
   const [activeBundle, setActiveBundle] = useState<TaskBundle | null>(null);
 
-  // СУРАГЧИЙН ДИНАМИК МЭДЭЭЛЭЛ (URL-аас уншина)
-  const [studentName, setStudentName] = useState('Сурагч');
+  // СУРАГЧИЙН ДИНАМИК МЭДЭЭЛЭЛ
+  const [studentName, setStudentName] = useState('');
   const [studentEmail, setStudentEmail] = useState('');
 
   // ТАЙМЕР БА ТӨЛӨВҮҮД
@@ -61,7 +61,7 @@ export default function StudentRoom() {
   ]);
   const [chatInput, setChatInput] = useState('');
 
-  // 🏛️ БҮХ БАГШИЙН НЭГТГЭСЭН НИЙТИЙН ДААЛГАВРЫН САН
+  // 🏛️ БҮХ БАГШИЙН НЭГТГЭСЭН 3 ХИЧЭЭЛИЙН НИЙТИЙН ДААЛГАВРЫН САН
   const globalDefaultBundles: TaskBundle[] = [
     {
       id: 'TASK-UZ-01',
@@ -95,29 +95,53 @@ export default function StudentRoom() {
         { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Хэрэв эс бөөмгүй болбол ямар асуудал үүсэхийг эргэцүүлэн 2 өгүүлбэрээр бичээрэй. (3 оноо)', answer: 'Генетикийн мэдээлэл алдагдаж, эсийн хуваагдал болон амьдрах чадвар зогсоно.', rubric: '2 өгүүлбэрээр үндэслэлтэй бичсэн бол 3 оноо.' },
         { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Эсийн бүтцийг судалснаар анагаах ухаанд ямар ач холбогдолтой вэ? (3 оноо)', answer: 'Өвчнийг эсийн түвшинд оношлох болон эм бэлдмэл гарган авахад ач холбогдолтой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
       ]
+    },
+    {
+      id: 'TASK-CHEM-01',
+      subject: 'Хими',
+      title: '1. Бодисын төлөв ба химийн урвал',
+      text: `Бодис нь хатуу, шингэн, хийн төлөвт оршдог. Химийн урвалын үед бодисын атомын холбоос тасарч, шинэ бодис ба шинэ шинж чанар үүсдэг. Молекул дахь атомын тоо урвалын өмнө ба дараа тэнцүү байх ёстой бөгөөд үүнийг бодисын масс хадгалагдах хууль гэнэ.`,
+      createdAt: new Date().toLocaleDateString('mn-MN'),
+      tasks: [
+        { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 1: Бодисын оршин байх үндсэн 3 төлөвийг нэрлэнэ үү. (1 оноо)', answer: 'Хатуу, шингэн, хий', rubric: '3 төлөвийг зөв бичсэн бол 1 оноо.' },
+        { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 2: Химийн урвалын үед атомуудын тоо хадгалагддаг хуулийг юу гэж нэрлэдэг вэ? (1 оноо)', answer: 'Бодисын масс хадгалагдах хууль', rubric: 'Хуулийн нэрийг зөв бичсэн бол 1 оноо.' },
+        { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 3: Физикийн үзэгдэл болон химийн урвалын гол ялгааг тайлбарлан бичнэ үү. (2 оноо)', answer: 'Химийн урвалаар шинэ бодис үүсдэг бол физикийн үзэгдлээр шинэ бодис үүсэхгүй.', rubric: 'Гол ялгааг зөв тайлбарласан бол 2 оноо.' },
+        { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 4: Химийн урвал явагдсаныг илтгэх 2 шинж тэмдгийг эхээс санаж бичнэ үү. (2 оноо)', answer: 'Шинэ шинж чанар үүсэх, дулаан ялгарах эсвэл өнгө солигдох.', rubric: '2 шинжийг бичсэн бол 2 оноо.' },
+        { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Бодисын масс хадгалагдах хууль амьдрал дээр яагаад чухал вэ? 2 өгүүлбэрээр бичээрэй. (3 оноо)', answer: 'Урвалын бүтээгдэхүүний тоо хэмжээг тооцоолоход болон технологийн процесст ач холбогдолтой.', rubric: '2 өгүүлбэрээр тайлбарласан бол 3 оноо.' },
+        { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Байгаль дээрх химийн урвалын нэг жишээг авч, ач холбогдлыг дүгнэн бичнэ үү. (3 оноо)', answer: 'Фотосинтез нь ургамал хүчилтөрөгч ялгаруулах химийн урвал бөгөөд амьдралыг тэтгэдэг.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
+      ]
     }
   ];
 
   useEffect(() => {
-    // 1. URL-ААС СУРАГЧИЙН ИМЭЙЛ, НЭР БА ХИЧЭЭЛИЙН СОНГОЛТЫГ УНШИХ
+    // 1. URL-ААС СУРАГЧИЙН НЭР, ИМЭЙЛ БА ХИЧЭЭЛИЙГ УНШИХ
     const searchParams = new URLSearchParams(window.location.search);
     const emailParam = searchParams.get('email');
     const nameParam = searchParams.get('name');
     const taskIdParam = searchParams.get('taskId');
 
+    let currentName = '';
+    let currentEmail = '';
+
     if (nameParam) {
-      setStudentName(decodeURIComponent(nameParam));
+      currentName = decodeURIComponent(nameParam).trim();
     } else if (emailParam) {
       const decodedEmail = decodeURIComponent(emailParam).toLowerCase().trim();
-      setStudentEmail(decodedEmail);
+      currentEmail = decodedEmail;
       const namePart = decodedEmail.split('@')[0].replace(/[0-9]/g, '');
-      const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-      setStudentName(formattedName);
+      currentName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
     } else {
-      setStudentName('Сурагч');
+      currentName = 'Сурагч';
     }
 
-    // 2. БАГШ НАРЫН ДААЛГАВРУУДЫГ ШИНЭЧЛЭН НЭГТГЭХ (Хуучин кэш датаг шинэ сантай заавал нийлүүлнэ)
+    if (emailParam) {
+      currentEmail = decodeURIComponent(emailParam).toLowerCase().trim();
+    }
+
+    setStudentName(currentName);
+    setStudentEmail(currentEmail);
+
+    // 2. БАГШ НАРЫН 3 ХИЧЭЭЛИЙН ДААЛГАВРУУДЫГ АВТОМАТААР НЭГТГЭЖ ШИНЭЧЛЭХ
     let allBundles = [...globalDefaultBundles];
     const loaded = localStorage.getItem('creative_reading_task_bank_v12');
 
@@ -136,7 +160,7 @@ export default function StudentRoom() {
       }
     }
 
-    // Шинэчилсэн санг буцаагаад localStorage-д хадгална
+    // Шинэчилсэн 3 хичээлийн санг хадгална
     localStorage.setItem('creative_reading_task_bank_v12', JSON.stringify(allBundles));
     setAssignedBundles(allBundles);
 
@@ -312,24 +336,24 @@ export default function StudentRoom() {
   const totalCalculated = editRecall + editAnalyze + editEval;
   const totalPercent = Math.round((totalCalculated / 12) * 100);
 
-  const qrTargetUrl = `http://${customIp}:3000/student?email=${encodeURIComponent(studentEmail)}`;
+  const qrTargetUrl = `http://${customIp}:3000/student?email=${encodeURIComponent(studentEmail)}&name=${encodeURIComponent(studentName)}`;
 
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
-      {/* HEADER SECTION (ДИНАМИК СУРАГЧИЙН НЭР) */}
+      {/* HEADER SECTION (ДИНАМИК СУРАГЧИЙН НЭР БА ХИЧЭЭЛҮҮД) */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#0f172a' }}>Бүтээлч уншлага-2 төсөл (Сурагчийн танхим)</h1>
-            <p style={{ fontSize: '12px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>
-              Анги: 9Е | Сурагч: {studentName} {studentEmail && `(${studentEmail})`}
+            <p style={{ fontSize: '13px', color: '#0284c7', margin: '2px 0 0 0', fontWeight: 'bold' }}>
+              Анги: 9Е | Сурагч: <span style={{ color: '#b91c1c', fontSize: '14px', textDecoration: 'underline' }}>{studentName || 'Сурагч'}</span> {studentEmail && `(${studentEmail})`}
             </p>
           </div>
         </div>
 
-        {/* ДААЛГАВАР СОНГОХ БА БУСАД ТОВЧУУД */}
+        {/* 3 ХИЧЭЭЛИЙН ДААЛГАВАР СОНГОХ ЦЭС */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           
           <div style={{ position: 'relative' }}>
@@ -337,12 +361,12 @@ export default function StudentRoom() {
               onClick={() => setShowBundleList(!showBundleList)}
               style={{ backgroundColor: '#059669', color: '#fff', fontWeight: 'bold', padding: '9px 16px', borderRadius: '20px', fontSize: '12px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              📚 Бүх хичээлийн даалгаврууд ({assignedBundles.length}) {showBundleList ? '▲' : '▼'}
+              📚 Багшаас өгсөн даалгаврууд ({assignedBundles.length}) {showBundleList ? '▲' : '▼'}
             </button>
 
             {showBundleList && (
-              <div style={{ position: 'absolute', right: 0, top: '45px', backgroundColor: '#fff', border: '1px solid #cbd5e1', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '340px', zIndex: 100, padding: '10px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Нийт даалгаврын сан:</div>
+              <div style={{ position: 'absolute', right: 0, top: '45px', backgroundColor: '#fff', border: '1px solid #cbd5e1', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '360px', zIndex: 100, padding: '10px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Нийт 3 хичээлийн даалгаврын сан:</div>
                 {assignedBundles.map((b) => {
                   const isDone = completedBundles[b.id];
                   return (
@@ -353,7 +377,7 @@ export default function StudentRoom() {
                     >
                       <div>
                         <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>{b.title}</div>
-                        <div style={{ fontSize: '10px', color: '#0284c7', fontWeight: 'bold' }}>📌 {b.subject}</div>
+                        <div style={{ fontSize: '10px', color: '#0284c7', fontWeight: 'bold' }}>📌 [{b.subject}]</div>
                       </div>
                       <span style={{ fontSize: '10px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '6px', backgroundColor: isDone ? '#e2e8f0' : '#bbf7d0', color: isDone ? '#64748b' : '#166534' }}>
                         {isDone ? 'Гүйцэтгэсэн' : 'Нээх ➔'}

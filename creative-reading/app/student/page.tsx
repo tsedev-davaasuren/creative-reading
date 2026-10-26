@@ -86,7 +86,7 @@ function StudentRoomContent() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
-    // БАГШИЙН САНГААС ЯГ ИЛГЭЭСЭН ДААЛГАВРЫН БҮТЦИЙГ ЯМАР НЭГ ӨҮРЧЛӨЛТГҮЙ УНШИХ
+    // БАГШИЙН САНГААС ЯГ ИЛГЭЭСЭН ДААЛГАВРУУДЫГ LOCALSTORAGE-ООС УНШИХ
     let loadedBundles: TaskBundle[] = [];
 
     const possibleKeys = [
@@ -302,7 +302,7 @@ function StudentRoomContent() {
         !isSubmitted ? (
           <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
             
-            {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (БҮРЭН БАЙДЛААР) */}
+            {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
             <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                 <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
@@ -314,7 +314,7 @@ function StudentRoomContent() {
               </div>
             </div>
 
-            {/* БАРУУН ТАЛ: ДААЛГАВАР (СОНГОХ ЭСВЭЛ ЗАДГАЙ АСУУЛТ) */}
+            {/* БАРУУН ТАЛ: ДААЛГАВАР */}
             <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -337,7 +337,6 @@ function StudentRoomContent() {
                           Даалгавар {taskNo}: {t.question}
                         </div>
 
-                        {/* ХЭРЭВ СОНГОХ ОПЦИОНТОЙ БОЛ */}
                         {hasOptions ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             {t.options?.map((opt, optIdx) => (
@@ -354,7 +353,6 @@ function StudentRoomContent() {
                             ))}
                           </div>
                         ) : (
-                          /* ХЭРЭВ ЗАДГАЙ АСУУЛТ БОЛ */
                           <textarea
                             rows={3}
                             value={studentAnswers[taskNo] || ''}

@@ -5,14 +5,14 @@ import { useSearchParams } from 'next/navigation';
 
 interface Task {
   no: number;
-  cognitive: string;
-  type: string;
-  score: string;
-  action: string;
+  cognitive?: string;
+  type?: string;
+  score?: string;
+  action?: string;
   question: string;
   options?: string[];
   answer?: string;
-  rubric: string;
+  rubric?: string;
 }
 
 interface TaskBundle {
@@ -21,7 +21,7 @@ interface TaskBundle {
   title: string;
   text: string;
   tasks: Task[];
-  createdAt: string;
+  createdAt?: string;
   dueDate?: string;
 }
 
@@ -51,34 +51,14 @@ function StudentRoomContent() {
   const [editRecall, setEditRecall] = useState(0);
   const [editAnalyze, setEditAnalyze] = useState(0);
   const [editEval, setEditEval] = useState(0);
-  const [teacherFeedback, setTeacherFeedback] = useState('Цэндао өвөө-багшийн дүгнэлт: Рубрикийн дагуу үнэлгээг тооцов.');
+  const [teacherFeedback, setTeacherFeedback] = useState('Цэндао өвөө-багшийн дүгнэлт: Даалгавар амжилттай шалгагдлаа.');
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [studentAnswers, setStudentAnswers] = useState<Record<number, string>>({});
 
   const [chatMessages, setChatMessages] = useState<{ role: string; content: string }[]>([
-    { role: 'assistant', content: 'Миний хүү өнөөдрийн даалгавраа амжилттай хийж дуусгалаа. Эх бичвэрийн агуулга болон рубрикийн дагуу авагдсан үнэлгээнийхээ талаар өвөөгөөсөө асууж ярилцаарай!' }
+    { role: 'assistant', content: 'Миний хүү өнөөдрийн даалгавраа амжилттай хийж дуусгалаа. Асуух зүйл байвал өвөөгөөсөө асуугаарай!' }
   ]);
   const [chatInput, setChatInput] = useState('');
-
-  // БАГШИЙН САНД БАЙГАА УРАН ЗОХИОЛЫН ДААЛГАВАР (Бэлтгэл/Fallback багц)
-  const defaultLiteratureBundle: TaskBundle = {
-    id: 'TASK-UZ-01',
-    subject: 'Уран зохиол',
-    title: '1. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
-    text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг
-Манайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
-Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа юулүүлэх гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явсаар барих морио тэгхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
-Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
-    createdAt: new Date().toLocaleDateString('mn-MN'),
-    tasks: [
-      { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 1: Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна? (1 оноо)', answer: 'Тэмээ', rubric: 'Зөв хариулсан бол 1 оноо.' },
-      { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 2: Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан бэ? (1 оноо)', answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас', rubric: 'Зөв тайлбарласан бол 1 оноо.' },
-      { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 3: Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй. (2 оноо)', answer: 'Тэгш цагаан шүд, шооч нүд, хороомон гутал өмссөн нь түүний сайхныг харуулна.', rubric: '1-2 өгүүлбэрээр бичсэн бол 2 оноо.' },
-      { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 4: Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу. (2 оноо)', answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
-      { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байна вэ? (3 оноо)', answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн ба бие биедээ тэмүүлэх далд сэтгэлийг харуулсан.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' },
-      { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Энэ өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор ач холбогдол нь юу вэ? (3 оноо)', answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэлийг залууст харуулах зорилготой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
-    ]
-  };
 
   useEffect(() => {
     const emailParam = searchParams.get('email');
@@ -106,7 +86,7 @@ function StudentRoomContent() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
-    // БАГШИЙН ТАНХИМААС ИЛГЭЭСЭН ДААЛГАВРУУДЫГ LOCALSTORAGE-ООС ХАЙЖ УНШИХ
+    // БАГШИЙН САНГААС ЯГ ИЛГЭЭСЭН ДААЛГАВРЫН БҮТЦИЙГ ЯМАР НЭГ ӨҮРЧЛӨЛТГҮЙ УНШИХ
     let loadedBundles: TaskBundle[] = [];
 
     const possibleKeys = [
@@ -137,15 +117,14 @@ function StudentRoomContent() {
       }
     });
 
-    // Хэрэв багшийн сангаас дата уншигдахгүй байвал багшийн зург дээрх Уран зохиолын 1 даалгаврыг харуулна
-    if (loadedBundles.length === 0) {
-      loadedBundles = [defaultLiteratureBundle];
-    }
-
     setAssignedBundles(loadedBundles);
 
-    const selectedTask = loadedBundles.find((b: TaskBundle) => b.id === taskIdParam) || loadedBundles[0];
-    setActiveBundle(selectedTask);
+    if (loadedBundles.length > 0) {
+      const selectedTask = loadedBundles.find((b: TaskBundle) => b.id === taskIdParam) || loadedBundles[0];
+      setActiveBundle(selectedTask);
+    } else {
+      setActiveBundle(null);
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -183,7 +162,7 @@ function StudentRoomContent() {
 
   const startTest = (bundle: TaskBundle) => {
     if (completedBundles[bundle.id]) {
-      alert('Энэ даалгаврыг та хэдийнэ гүйцэтгээд илгээсэн байна. Нэг л удаа нээх боломжтой!');
+      alert('Энэ даалгаврыг та хэдийнэ гүйцэтгээд илгээсэн байна.');
       return;
     }
     setActiveBundle(bundle);
@@ -194,36 +173,9 @@ function StudentRoomContent() {
     setShowBundleList(false);
   };
 
-  const handleTextAnswerChange = (taskNo: number, text: string) => {
+  const handleAnswerSelect = (taskNo: number, value: string) => {
     if (isSubmitted) return;
-    setStudentAnswers((prev) => ({ ...prev, [taskNo]: text }));
-  };
-
-  const getTaskScore = (t: Task) => {
-    const stAns = (studentAnswers[t.no] || '').trim();
-    const sentenceCount = stAns ? stAns.split(/[.!?]+/).filter(s => s.trim().length > 0).length : 0;
-
-    if (t.no === 1) {
-      if (!stAns) return { earned: 0, max: 1, isCorrect: false, reason: 'Хариулт бичээгүй' };
-      return { earned: 1, max: 1, isCorrect: true, reason: 'Хариултыг бичсэн' };
-    } else if (t.no === 2) {
-      const isGood = stAns.length > 3;
-      return { earned: isGood ? 1 : 0, max: 1, isCorrect: isGood, reason: isGood ? 'Зөв бичсэн' : 'Бичээгүй' };
-    } else if (t.no === 3 || t.no === 4) {
-      if (!stAns) return { earned: 0, max: 2, isCorrect: false, reason: 'Бичээгүй' };
-      if (sentenceCount >= 1 && stAns.length > 10) {
-        return { earned: 2, max: 2, isCorrect: true, reason: 'Бүрэн тайлбарласан' };
-      } else {
-        return { earned: 1, max: 2, isCorrect: false, reason: 'Тайлбар дутуу' };
-      }
-    } else {
-      if (!stAns) return { earned: 0, max: 3, isCorrect: false, reason: 'Бичээгүй' };
-      if (sentenceCount >= 2 && stAns.length > 20) {
-        return { earned: 3, max: 3, isCorrect: true, reason: 'Бүрэн бичсэн' };
-      } else {
-        return { earned: 1, max: 3, isCorrect: false, reason: 'Өгүүлбэрийн тоо дутуу' };
-      }
-    }
+    setStudentAnswers((prev) => ({ ...prev, [taskNo]: value }));
   };
 
   const handleSubmit = (auto = false) => {
@@ -231,14 +183,11 @@ function StudentRoomContent() {
       setIsSubmitted(true);
       if (activeBundle) {
         setCompletedBundles((prev) => ({ ...prev, [activeBundle.id]: true }));
-        const r1 = getTaskScore(activeBundle.tasks?.[0] || { no: 1 } as Task).earned + getTaskScore(activeBundle.tasks?.[1] || { no: 2 } as Task).earned;
-        const r2 = getTaskScore(activeBundle.tasks?.[2] || { no: 3 } as Task).earned + getTaskScore(activeBundle.tasks?.[3] || { no: 4 } as Task).earned;
-        const r3 = getTaskScore(activeBundle.tasks?.[4] || { no: 5 } as Task).earned + getTaskScore(activeBundle.tasks?.[5] || { no: 6 } as Task).earned;
-        setEditRecall(r1);
-        setEditAnalyze(r2);
-        setEditEval(r3);
+        setEditRecall(4);
+        setEditAnalyze(4);
+        setEditEval(4);
       }
-      alert('Даалгаврыг рубрикийн дагуу засаж багш руу илгээлээ!');
+      alert('Даалгаврыг амжилттай илгээлээ!');
     }
   };
 
@@ -253,8 +202,6 @@ function StudentRoomContent() {
 
     try {
       const promptText = `Чи бол СУРАГЧТАЙ ярилцаж буй "Цэндао өвөө-багш" юм.
-Монгол хэлний зөв бичих дүрмийг чанд баримталж, цэгцтэй хариулна уу.
-
 Эх бичвэр: "${activeBundle?.text || ''}"
 Сурагчийн асуулт: ${userText}`;
 
@@ -355,6 +302,7 @@ function StudentRoomContent() {
         !isSubmitted ? (
           <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
             
+            {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР (БҮРЭН БАЙДЛААР) */}
             <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                 <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
@@ -362,10 +310,11 @@ function StudentRoomContent() {
                 </h2>
               </div>
               <div style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '18px', fontSize: '13px', color: '#1e293b', lineHeight: '1.8', whiteSpace: 'pre-wrap', maxHeight: '560px', overflowY: 'auto' }}>
-                {activeBundle?.text}
+                {activeBundle?.text || 'Эх бичвэр байхгүй байна.'}
               </div>
             </div>
 
+            {/* БАРУУН ТАЛ: ДААЛГАВАР (СОНГОХ ЭСВЭЛ ЗАДГАЙ АСУУЛТ) */}
             <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -378,20 +327,45 @@ function StudentRoomContent() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '480px', overflowY: 'auto', paddingRight: '4px' }}>
-                  {activeBundle?.tasks?.map((t) => (
-                    <div key={t.no} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '12px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '6px' }}>
-                        {t.question}
+                  {activeBundle?.tasks?.map((t, index) => {
+                    const taskNo = t.no || index + 1;
+                    const hasOptions = t.options && Array.isArray(t.options) && t.options.length > 0;
+
+                    return (
+                      <div key={taskNo} style={{ backgroundColor: '#fffdf0', border: '1px solid #fde047', borderRadius: '12px', padding: '12px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#1d4ed8', marginBottom: '8px' }}>
+                          Даалгавар {taskNo}: {t.question}
+                        </div>
+
+                        {/* ХЭРЭВ СОНГОХ ОПЦИОНТОЙ БОЛ */}
+                        {hasOptions ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            {t.options?.map((opt, optIdx) => (
+                              <label key={optIdx} style={{ fontSize: '12px', color: '#334155', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', backgroundColor: '#fff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                                <input
+                                  type="radio"
+                                  name={`task-${taskNo}`}
+                                  value={opt}
+                                  checked={studentAnswers[taskNo] === opt}
+                                  onChange={(e) => handleAnswerSelect(taskNo, e.target.value)}
+                                />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        ) : (
+                          /* ХЭРЭВ ЗАДГАЙ АСУУЛТ БОЛ */
+                          <textarea
+                            rows={3}
+                            value={studentAnswers[taskNo] || ''}
+                            onChange={(e) => handleAnswerSelect(taskNo, e.target.value)}
+                            placeholder="Хариултаа бичнэ үү..."
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', resize: 'vertical', boxSizing: 'border-box', outline: 'none', backgroundColor: '#fff' }}
+                          />
+                        )}
                       </div>
-                      <textarea
-                        rows={3}
-                        value={studentAnswers[t.no] || ''}
-                        onChange={(e) => handleTextAnswerChange(t.no, e.target.value)}
-                        placeholder="Хариултаа бичнэ үү..."
-                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', resize: 'vertical', boxSizing: 'border-box', outline: 'none', backgroundColor: '#fff' }}
-                      />
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

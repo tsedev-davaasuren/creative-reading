@@ -49,7 +49,7 @@ export default function StudentRoom() {
   const [editRecall, setEditRecall] = useState(2);
   const [editAnalyze, setEditAnalyze] = useState(3);
   const [editEval, setEditEval] = useState(4);
-  const [teacherFeedback, setTeacherFeedback] = useState('Цэндао өвөө-багшийн дүгнэлт: Сурагч даалгавар 5, 6 дээр өгүүлбэрийн тоо дутуу бичсэн тул рубрикийн дагуу оноо хасаж үнэлэв.');
+  const [teacherFeedback, setTeacherFeedback] = useState('Цэндао өвөө-багшийн дүгнэлт: Рубрикийн дагуу үнэлгээг тооцов.');
   const [showApprovalModal, setShowApprovalModal] = useState(false);
 
   // Сурагчийн хариултууд
@@ -61,121 +61,87 @@ export default function StudentRoom() {
   ]);
   const [chatInput, setChatInput] = useState('');
 
-  // ҮНДСЭН ДААЛГАВАР (Хэрэв санд юу ч байхгүй бол харуулах анхны даалгавар)
-  const defaultInitialBundle: TaskBundle = {
-    id: 'TASK-001',
-    subject: 'Уран зохиол',
-    title: '10. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
-    text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг
+  // 🏛️ БҮХ БАГШИЙН НЭГТГЭСЭН НИЙТИЙН ДААЛГАВРЫН САН
+  const globalDefaultBundles: TaskBundle[] = [
+    {
+      id: 'TASK-UZ-01',
+      subject: 'Уран зохиол',
+      title: '10. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
+      text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг
 Манайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
 Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа юулүүлэх гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явсаар барих морио тэгхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
 Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
-    createdAt: new Date().toLocaleDateString('mn-MN'),
-    tasks: [
-      {
-        no: 1,
-        cognitive: 'Мэдээлэл олох сэргээн санах',
-        type: 'Задгай даалгавар',
-        score: '0-1',
-        action: 'Хариултаа бичнэ үү',
-        question: 'Даалгавар 1: Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна? (1 оноо)',
-        answer: 'Тэмээ',
-        rubric: 'Зөв хариулсан бол 1 оноо.'
-      },
-      {
-        no: 2,
-        cognitive: 'Мэдээлэл олох сэргээн санах',
-        type: 'Задгай даалгавар',
-        score: '0-1',
-        action: 'Хариултаа бичнэ үү',
-        question: 'Даалгавар 2: Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан бэ? (1 оноо)',
-        answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас',
-        rubric: 'Зөв тайлбарласан бол 1 оноо.'
-      },
-      {
-        no: 3,
-        cognitive: 'Задлан шинжлэх',
-        type: 'Задгай даалгавар',
-        score: '0-2',
-        action: 'Хариултаа бичнэ үү',
-        question: 'Даалгавар 3: Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй. (2 оноо)',
-        answer: 'Тэгш цагаан шүд, шооч нүд, хороомон гутал өмссөн нь түүний сайхныг харуулна.',
-        rubric: '1-2 өгүүлбэрээр бичсэн бол 2 оноо.'
-      },
-      {
-        no: 4,
-        cognitive: 'Задлан шинжлэх',
-        type: 'Задгай даалгавар',
-        score: '0-2',
-        action: 'Хариултаа бичнэ үү',
-        question: 'Даалгавар 4: Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу. (2 оноо)',
-        answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч.',
-        rubric: 'Зөв тайлбарласан бол 2 оноо.'
-      },
-      {
-        no: 5,
-        cognitive: 'Эргэцүүлэн дүгнэх',
-        type: 'Задгай даалгавар',
-        score: '0-3',
-        action: 'Хариултаа бичнэ үү',
-        question: 'Даалгавар 5: Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байна вэ? (3 оноо)',
-        answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн ба бие биедээ тэмүүлэх далд сэтгэлийг харуулсан.',
-        rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.'
-      },
-      {
-        no: 6,
-        cognitive: 'Эргэцүүлэн дүгнэх',
-        type: 'Задгай даалгавар',
-        score: '0-3',
-        action: 'Хариултаа бичнэ үү',
-        question: 'Даалгавар 6: Энэ өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор ач холбогдол нь юу вэ? (3 оноо)',
-        answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэлийг залууст харуулах зорилготой.',
-        rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.'
-      }
-    ]
-  };
+      createdAt: new Date().toLocaleDateString('mn-MN'),
+      tasks: [
+        { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 1: Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна? (1 оноо)', answer: 'Тэмээ', rubric: 'Зөв хариулсан бол 1 оноо.' },
+        { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 2: Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан бэ? (1 оноо)', answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас', rubric: 'Зөв тайлбарласан бол 1 оноо.' },
+        { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 3: Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй. (2 оноо)', answer: 'Тэгш цагаан шүд, шооч нүд, хороомон гутал өмссөн нь түүний сайхныг харуулна.', rubric: '1-2 өгүүлбэрээр бичсэн бол 2 оноо.' },
+        { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 4: Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу. (2 оноо)', answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
+        { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байна вэ? (3 оноо)', answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн ба бие биедээ тэмүүлэх далд сэтгэлийг харуулсан.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' },
+        { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Энэ өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор ач холбогдол нь юу вэ? (3 оноо)', answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэлийг залууст харуулах зорилготой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
+      ]
+    },
+    {
+      id: 'TASK-BIO-01',
+      subject: 'Биологи',
+      title: '1. Эсийн бүтэц ба амьд организмын амин үйл ажиллагаа',
+      text: `Амьд организмын үндсэн нэгж нь эс юм. Эс нь эсийн хана, цитоплазм, бөөм болон бусад органоидуудаас бүрдэнэ. Ургамлын эс нь амьтны эсээс ялгаатай нь фотосинтез явуулах хлоропласт болон хатуу эсийн ханатай байдаг. Бөөм нь генетикийн мэдээллийг агуулж, эсийн бүх үйл ажиллагааг зохицуулна.`,
+      createdAt: new Date().toLocaleDateString('mn-MN'),
+      tasks: [
+        { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 1: Амьд организмын бүтэц, үйл ажиллагааны үндсэн нэгж юу вэ? (1 оноо)', answer: 'Эс', rubric: 'Эс гэж зөв хариулсан бол 1 оноо.' },
+        { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 2: Ургамлын эсэд фотосинтез явуулахад оролцдог органоид юу бэ? (1 оноо)', answer: 'Хлоропласт', rubric: 'Зөв нэрлэсэн бол 1 оноо.' },
+        { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 3: Ургамлын эс болон амьтны эсийн гол 2 ялгааг тайлбарлан бичнэ үү. (2 оноо)', answer: 'Ургамлын эс нь хлоропласт болон хатуу эсийн ханатай байдгаараа ялгаатай.', rubric: '2 ялгааг зөв бичсэн бол 2 оноо.' },
+        { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 4: Эсийн бөөмийн гүйцэтгэх үндсэн үүргийг эхээс олж тайлбарла. (2 оноо)', answer: 'Генетикийн мэдээллийг агуулж, эсийн үйл ажиллагааг зохицуулна.', rubric: 'Үүргийг гүйцэд бичсэн бол 2 оноо.' },
+        { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Хэрэв эс бөөмгүй болбол ямар асуудал үүсэхийг эргэцүүлэн 2 өгүүлбэрээр бичээрэй. (3 оноо)', answer: 'Генетикийн мэдээлэл алдагдаж, эсийн хуваагдал болон амьдрах чадвар зогсоно.', rubric: '2 өгүүлбэрээр үндэслэлтэй бичсэн бол 3 оноо.' },
+        { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Эсийн бүтцийг судалснаар анагаах ухаанд ямар ач холбогдолтой вэ? (3 оноо)', answer: 'Өвчнийг эсийн түвшинд оношлох болон эм бэлдмэл гарган авахад ач холбогдолтой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
+      ]
+    }
+  ];
 
   useEffect(() => {
-    // 1. URL-ААС СУРАГЧИЙН ИМЭЙЛ БА ХИЧЭЭЛИЙН СӨНГОЛТЫГ УНШИХ
+    // 1. URL-ААС СУРАГЧИЙН ИМЭЙЛ, НЭР БА ХИЧЭЭЛИЙН СОНГОЛТЫГ УНШИХ
     const searchParams = new URLSearchParams(window.location.search);
     const emailParam = searchParams.get('email');
+    const nameParam = searchParams.get('name');
     const taskIdParam = searchParams.get('taskId');
 
-    if (emailParam) {
+    if (nameParam) {
+      setStudentName(decodeURIComponent(nameParam));
+    } else if (emailParam) {
       const decodedEmail = decodeURIComponent(emailParam).toLowerCase().trim();
       setStudentEmail(decodedEmail);
-      
-      // Имэйлээс сурагчийн нэрийг тодорхойлж тохируулах
-      const namePart = decodedEmail.split('@')[0];
+      const namePart = decodedEmail.split('@')[0].replace(/[0-9]/g, '');
       const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
       setStudentName(formattedName);
     } else {
-      setStudentName('Анужин Т.');
+      setStudentName('Сурагч');
     }
 
-    // 2. БАГШИЙН САНААС БҮХ ДААЛГАВАРУУДЫГ УНШИХ
+    // 2. БАГШ НАРЫН ДААЛГАВРУУДЫГ НЭГТГЭХ ЛОГИК
     const loaded = localStorage.getItem('creative_reading_task_bank_v12');
+    let allBundles = [...globalDefaultBundles];
+
     if (loaded) {
       try {
         const parsed = JSON.parse(loaded);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setAssignedBundles(parsed);
-          
-          // Хэрэв URL дээр тусгай даалгавар заасан бол түүнийг, үгүй бол эхнийхийг ачаална
-          const selectedTask = parsed.find((b: TaskBundle) => b.id === taskIdParam) || parsed[0];
-          setActiveBundle(selectedTask);
-        } else {
-          setAssignedBundles([defaultInitialBundle]);
-          setActiveBundle(defaultInitialBundle);
+        if (Array.isArray(parsed)) {
+          // LocalStorage дээрх шинэ даалгавруудыг нийтийн сантай нэгтгэнэ
+          parsed.forEach((localItem: TaskBundle) => {
+            if (!allBundles.some((b) => b.id === localItem.id)) {
+              allBundles.push(localItem);
+            }
+          });
         }
       } catch (e) {
-        setAssignedBundles([defaultInitialBundle]);
-        setActiveBundle(defaultInitialBundle);
+        console.error(e);
       }
-    } else {
-      setAssignedBundles([defaultInitialBundle]);
-      setActiveBundle(defaultInitialBundle);
     }
+
+    setAssignedBundles(allBundles);
+
+    // Сонгосон эсвэл эхний даалгаврыг ачаалах
+    const selectedTask = allBundles.find((b: TaskBundle) => b.id === taskIdParam) || allBundles[0];
+    setActiveBundle(selectedTask);
   }, []);
 
   // 40 МИНУТЫН ДААЛГАВАР ГҮЙЦЭТГЭХ ТАЙМЕР
@@ -233,31 +199,27 @@ export default function StudentRoom() {
 
   const getTaskScore = (t: Task) => {
     const stAns = (studentAnswers[t.no] || '').trim();
-    const correctAns = (t.answer || '').trim();
     const sentenceCount = stAns ? stAns.split(/[.!?]+/).filter(s => s.trim().length > 0).length : 0;
 
     if (t.no === 1) {
       if (!stAns) return { earned: 0, max: 1, isCorrect: false, reason: 'Хариулт бичээгүй' };
-      const isCorrect = stAns.toLowerCase().includes('тэмээ');
-      return { earned: isCorrect ? 1 : 0, max: 1, isCorrect, reason: isCorrect ? 'Зөв бичсэн' : 'Буруу бичсэн' };
+      return { earned: 1, max: 1, isCorrect: true, reason: 'Хариултыг бичсэн' };
     } else if (t.no === 2) {
-      const isGood = stAns.length > 5;
-      return { earned: isGood ? 1 : 0, max: 1, isCorrect: isGood, reason: isGood ? 'Эхээс зөв олж бичсэн' : 'Дутуу эсвэл бичээгүй' };
+      const isGood = stAns.length > 3;
+      return { earned: isGood ? 1 : 0, max: 1, isCorrect: isGood, reason: isGood ? 'Зөв бичсэн' : 'Бичээгүй' };
     } else if (t.no === 3 || t.no === 4) {
       if (!stAns) return { earned: 0, max: 2, isCorrect: false, reason: 'Бичээгүй' };
-      if (sentenceCount >= 1 && stAns.length > 15) {
-        return { earned: 2, max: 2, isCorrect: true, reason: '1-2 өгүүлбэрээр бүрэн тайлбарласан' };
+      if (sentenceCount >= 1 && stAns.length > 10) {
+        return { earned: 2, max: 2, isCorrect: true, reason: 'Бүрэн тайлбарласан' };
       } else {
         return { earned: 1, max: 2, isCorrect: false, reason: 'Тайлбар дутуу' };
       }
     } else {
       if (!stAns) return { earned: 0, max: 3, isCorrect: false, reason: 'Бичээгүй' };
-      if (sentenceCount >= 2 && stAns.length > 30) {
-        return { earned: 3, max: 3, isCorrect: true, reason: '2-3 өгүүлбэрээр шинэ санаа гарган бүрэн бичсэн' };
-      } else if (sentenceCount === 1) {
-        return { earned: 1, max: 3, isCorrect: false, reason: 'Рубрик хангаагүй (Зөвхөн 1 өгүүлбэр бичсэн)' };
+      if (sentenceCount >= 2 && stAns.length > 20) {
+        return { earned: 3, max: 3, isCorrect: true, reason: 'Бүрэн бичсэн' };
       } else {
-        return { earned: 2, max: 3, isCorrect: false, reason: 'Өгүүлбэрийн тоо дутуу' };
+        return { earned: 1, max: 3, isCorrect: false, reason: 'Өгүүлбэрийн тоо дутуу' };
       }
     }
   };
@@ -287,25 +249,11 @@ export default function StudentRoom() {
     setChatMessages(newMsgs);
     setChatInput('');
 
-    const answersSummary = activeBundle?.tasks.map(t => {
-      const score = getTaskScore(t);
-      return `Даалгавар ${t.no} ("${t.question}"): Рубрик шаардлага: "${t.rubric}". Сурагчийн хариулт: "${studentAnswers[t.no] || 'Хариулаагүй'}", Авсан оноо: ${score.earned}/${score.max} (${score.reason})`;
-    }).join('\n') || '';
-
     try {
-      const promptText = `Чи бол 9Е ангийн СУРАГЧТАЙ ярилцаж буй ачлалт "Цэндао өвөө-багш" юм.
+      const promptText = `Чи бол СУРАГЧТАЙ ярилцаж буй "Цэндао өвөө-багш" юм.
+Монгол хэлний зөв бичих дүрмийг чанд баримталж, цэгцтэй хариулна уу.
 
-ТУХАЙН ӨДРИЙН ДААЛГАВАР БА РУБРИКИЙН МЭДЭЭЛЭЛ:
-- Эх бичвэр: "
-${activeBundle?.text || ''}"
-- Сурагчийн хариултууд ба Рубрикийн засалт:
-${answersSummary}
-
-ЧАТНЫ ХАТУУ ДҮРЭМ:
-1. Даалгаврын РУБРИК шаардлагыг чанд барь!
-2. ЗӨВХӨН ӨНӨӨДРИЙН ДААЛГАВАР, ЭХ БИЧВЭР БА ҮНЭЛГЭЭНИЙ РУБРИКИЙН ХҮРЭЭНД ЯРИЛЦ.
-3. Ярианы эхэнд "Сайн байна уу?", "Мэндээ" гэж ДАХИН ДАХИН МЭНДЧИЛЖ БОЛОХГҮЙ! Шууд хариулна уу.
-
+Эх бичвэр: "${activeBundle?.text || ''}"
 Сурагчийн асуулт: ${userText}`;
 
       const res = await fetch('/api/chat', {
@@ -334,6 +282,7 @@ ${answersSummary}
       id: 'STU-' + Date.now().toString().slice(-4),
       name: studentName,
       class: '9Е',
+      subject: activeBundle?.subject || 'Уран зохиол',
       recall: editRecall,
       analyze: editAnalyze,
       eval: editEval,
@@ -357,23 +306,18 @@ ${answersSummary}
 
     localStorage.setItem('student_approved_analytics_data', JSON.stringify(updatedList));
     setShowApprovalModal(false);
-    alert(`${studentName} сурагчийн үнэлгээг баталж, Хяналт шинжилгээ рүү амжилттай илгээлээ!`);
+    alert(`${studentName} сурагчийн үнэлгээг Хяналт шинжилгээ рүү илгээлээ!`);
   };
 
   const totalCalculated = editRecall + editAnalyze + editEval;
   const totalPercent = Math.round((totalCalculated / 12) * 100);
-
-  // МИНИЙ ДҮН БА АНАЛИТИК ХУУДАС РУУ ШУУД НЭВТРЭХ ФУНКЦ
-  const handleOpenAnalytics = () => {
-    window.location.href = 'https://creative-reading.vercel.app/analytics';
-  };
 
   const qrTargetUrl = `http://${customIp}:3000/student?email=${encodeURIComponent(studentEmail)}`;
 
   return (
     <div style={{ backgroundColor: '#fffdf0', minHeight: '100vh', padding: '16px 24px', fontFamily: 'Arial, sans-serif' }}>
       
-      {/* HEADER SECTION (ДИНАМИК СУРАГЧИЙН НЭР БА ХИЧЭЭЛИЙН СОНГОЛТ) */}
+      {/* HEADER SECTION */}
       <header style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '16px', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img src="/project-logo.jpg" alt="Logo" style={{ width: '52px', height: '52px', borderRadius: '10px', border: '1px solid #fbbf24', objectFit: 'cover' }} />
@@ -385,32 +329,31 @@ ${answersSummary}
           </div>
         </div>
 
-        {/* ЗУРАГ-1 ДЭЭРХ 2 ЦЭНХЭР БА БАННИР ТОВЧНУУД */}
+        {/* ДААЛГАВАР СОНГОХ БА БУСАД ТОВЧУУД */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           
-          {/* БАГШААС ИЛГЭЭСЭН ДААЛГАВРУУДЫГ СОНГОХ ЦЭС */}
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setShowBundleList(!showBundleList)}
               style={{ backgroundColor: '#059669', color: '#fff', fontWeight: 'bold', padding: '9px 16px', borderRadius: '20px', fontSize: '12px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              📚 Багшийн даалгаврууд ({assignedBundles.length}) {showBundleList ? '▲' : '▼'}
+              📚 Бүх хичээлийн даалгаврууд ({assignedBundles.length}) {showBundleList ? '▲' : '▼'}
             </button>
 
             {showBundleList && (
-              <div style={{ position: 'absolute', right: 0, top: '45px', backgroundColor: '#fff', border: '1px solid #cbd5e1', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '320px', zIndex: 100, padding: '10px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Боломжит даалгаврын жагсаалт:</div>
+              <div style={{ position: 'absolute', right: 0, top: '45px', backgroundColor: '#fff', border: '1px solid #cbd5e1', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '340px', zIndex: 100, padding: '10px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>Нийт даалгаврын сан:</div>
                 {assignedBundles.map((b) => {
                   const isDone = completedBundles[b.id];
                   return (
                     <div
                       key={b.id}
                       onClick={() => startTest(b)}
-                      style={{ padding: '10px', borderRadius: '8px', backgroundColor: isDone ? '#f1f5f9' : '#f0fdf4', border: '1px solid #cbd5e1', marginBottom: '6px', cursor: isDone ? 'not-allowed' : 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                      style={{ padding: '10px', borderRadius: '8px', backgroundColor: activeBundle?.id === b.id ? '#dbeafe' : isDone ? '#f1f5f9' : '#f0fdf4', border: '1px solid #cbd5e1', marginBottom: '6px', cursor: isDone ? 'not-allowed' : 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                     >
                       <div>
                         <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>{b.title}</div>
-                        <div style={{ fontSize: '10px', color: '#0284c7', fontWeight: 'bold' }}>{b.subject}</div>
+                        <div style={{ fontSize: '10px', color: '#0284c7', fontWeight: 'bold' }}>📌 {b.subject}</div>
                       </div>
                       <span style={{ fontSize: '10px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '6px', backgroundColor: isDone ? '#e2e8f0' : '#bbf7d0', color: isDone ? '#64748b' : '#166534' }}>
                         {isDone ? 'Гүйцэтгэсэн' : 'Нээх ➔'}
@@ -430,7 +373,7 @@ ${answersSummary}
           </button>
 
           <button
-            onClick={handleOpenAnalytics}
+            onClick={() => window.location.href = 'https://creative-reading.vercel.app/analytics'}
             style={{ backgroundColor: '#0284c7', color: '#fff', fontWeight: 'bold', padding: '9px 16px', borderRadius: '20px', fontSize: '12px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             📊 Миний Дүн & Аналитик ➔
@@ -438,83 +381,32 @@ ${answersSummary}
         </div>
       </header>
 
-      {/* 📱 QR КОД МЕДИАТОР MODAL */}
+      {/* 📱 QR MODAL */}
       {showQrModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10000, padding: '20px' }}>
-          <div style={{ backgroundColor: '#fffdf0', width: '100%', maxWidth: '520px', borderRadius: '20px', padding: '24px', border: '2px solid #7c3aed', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #fef08a', paddingBottom: '10px' }}>
+          <div style={{ backgroundColor: '#fffdf0', width: '100%', maxWidth: '520px', borderRadius: '20px', padding: '24px', border: '2px solid #7c3aed', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: '#5b21b6' }}>📱 Гар утаснаас хариулах (QR Холболт)</h3>
-              <button onClick={() => setShowQrModal(false)} style={{ border: 'none', background: '#e2e8f0', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+              <button onClick={() => setShowQrModal(false)} style={{ border: 'none', background: '#e2e8f0', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}>✕</button>
             </div>
-            <div style={{ backgroundColor: '#f3e8ff', border: '1px solid #d8b4fe', padding: '12px', borderRadius: '12px', marginBottom: '16px', textAlign: 'left' }}>
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#5b21b6', display: 'block', marginBottom: '4px' }}>⚙️ Компьютерийн Wi-Fi IP хаяг:</label>
-              <input type="text" value={customIp} onChange={(e) => setCustomIp(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', fontWeight: 'bold' }} />
-            </div>
-            <div style={{ backgroundColor: '#fff', padding: '16px', borderRadius: '16px', border: '1px solid #e9d5ff', display: 'inline-block', marginBottom: '16px' }}>
+            <div style={{ backgroundColor: '#fff', padding: '16px', borderRadius: '16px', display: 'inline-block', marginBottom: '16px' }}>
               <img src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrTargetUrl)}`} alt="Mobile QR Code" style={{ width: '180px', height: '180px' }} />
-              <div style={{ fontSize: '11px', color: '#6b21a8', fontWeight: 'bold', marginTop: '8px' }}>Утасныхаа Камераар уншуулна уу</div>
             </div>
-            <button onClick={() => { setMobileConnected(true); setShowQrModal(false); alert('Гар утас холбогдлоо!'); }} style={{ width: '100%', padding: '12px', backgroundColor: '#7c3aed', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button onClick={() => { setMobileConnected(true); setShowQrModal(false); alert('Гар утас холбогдлоо!'); }} style={{ width: '100%', padding: '12px', backgroundColor: '#7c3aed', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold' }}>
               ✅ Холбогдсоныг баталгаажуулах
             </button>
           </div>
         </div>
       )}
 
-      {/* POPUP MODAL: ҮНЭЛГЭЭ БАТЛАХ */}
-      {showApprovalModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10000, padding: '20px' }}>
-          <div style={{ backgroundColor: '#fffdf0', width: '100%', maxWidth: '650px', borderRadius: '16px', padding: '24px', border: '2px solid #22c55e', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #bbf7d0', paddingBottom: '10px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: '#14532d' }}>
-                📋 {studentName} сурагчийн үнэлгээг Хяналт шинжилгээ рүү илгээх
-              </h3>
-              <button onClick={() => setShowApprovalModal(false)} style={{ border: 'none', background: '#e2e8f0', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
-            </div>
-
-            <div style={{ backgroundColor: '#fff', padding: '16px', borderRadius: '12px', border: '1px solid #bbf7d0', marginBottom: '16px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '800', color: '#15803d', marginBottom: '10px' }}>
-                Нийт зассан оноо: {totalCalculated} / 12 оноо ({totalPercent}%)
-              </div>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-                <div style={{ fontSize: '11px', color: '#3730a3', fontWeight: 'bold' }}>📌 Сэргээн санах: {editRecall}/2</div>
-                <div style={{ fontSize: '11px', color: '#6b21a8', fontWeight: 'bold' }}>📝 Задлан шинжлэх: {editAnalyze}/4</div>
-                <div style={{ fontSize: '11px', color: '#854d0e', fontWeight: 'bold' }}>💡 Эргэцүүлэн дүгнэх: {editEval}/6</div>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '4px' }}>Нэгдсэн тайлбар дүгнэлт:</label>
-                <textarea
-                  value={teacherFeedback}
-                  onChange={(e) => setTeacherFeedback(e.target.value)}
-                  style={{ width: '100%', height: '70px', padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', resize: 'vertical', boxSizing: 'border-box' }}
-                />
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button onClick={() => setShowApprovalModal(false)} style={{ padding: '10px 18px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#fff', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
-                Цуцлах
-              </button>
-              <button onClick={handleApproveAndSendToAnalytics} style={{ padding: '10px 22px', borderRadius: '8px', border: 'none', backgroundColor: '#059669', color: '#fff', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}>
-                🚀 Баталж, Хяналт шинжилгээ рүү илгээх
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* АЖЛЫН ТАНХИМ: ЗҮҮН ТАЛ НЬ ЭХ БИЧВЭР, БАРУУН ТАЛ НЬ ДААЛГАВАР ГҮЙЦЭТГЭХ */}
+      {/* АЖЛЫН ТАНХИМ */}
       {!isSubmitted ? (
         <div style={{ display: 'grid', gridTemplateColumns: '5fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
           
           {/* ЗҮҮН ТАЛ: ЭХ БИЧВЭР */}
           <div style={{ backgroundColor: '#fffbe8', border: '1px solid #fde047', borderRadius: '18px', padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>
                 📖 [{activeBundle?.subject}] {activeBundle?.title}
               </h2>
             </div>
@@ -563,17 +455,12 @@ ${answersSummary}
 
         </div>
       ) : (
-        /* ДҮНГИЙН ХЭСЭГ (ИЛГЭЭСНИЙ ДАРААХ) */
+        /* ДҮНГИЙН ХЭСЭГ */
         <div style={{ display: 'grid', gridTemplateColumns: '7fr 3fr', gap: '20px', maxWidth: '1440px', margin: '0 auto' }}>
-          
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ backgroundColor: '#f0fdf4', border: '2px solid #22c55e', borderRadius: '18px', padding: '18px 24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ backgroundColor: '#16a34a', color: '#fff', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '12px' }}>🎉 РУБРИКИЙН ДАГУУ ҮНЭЛЭГДСЭН</span>
-                <span style={{ fontSize: '18px', fontWeight: '800', color: '#15803d' }}>{totalPercent}%</span>
-              </div>
-              <div style={{ fontSize: '20px', fontWeight: '800', color: '#14532d', marginBottom: '12px' }}>
-                Сурагч {studentName}: Нийт оноо: {totalCalculated} / 12 оноо
+              <div style={{ fontSize: '18px', fontWeight: '800', color: '#15803d', marginBottom: '10px' }}>
+                Сурагч {studentName}: [{activeBundle?.subject}] Нийт оноо: {totalCalculated} / 12 оноо ({totalPercent}%)
               </div>
               <button onClick={() => setShowApprovalModal(true)} style={{ width: '100%', padding: '12px', backgroundColor: '#059669', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✅ Үнэлгээг баталж Хяналт шинжилгээ рүү илгээх
@@ -595,7 +482,6 @@ ${answersSummary}
               <button type="submit" style={{ padding: '8px 14px', backgroundColor: '#f59e0b', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '11px' }}>Илгээх</button>
             </form>
           </div>
-
         </div>
       )}
 

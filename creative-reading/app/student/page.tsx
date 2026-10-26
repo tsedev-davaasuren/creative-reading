@@ -60,6 +60,26 @@ function StudentRoomContent() {
   ]);
   const [chatInput, setChatInput] = useState('');
 
+  // БАГШИЙН САНД БАЙГАА УРАН ЗОХИОЛЫН ДААЛГАВАР (Бэлтгэл/Fallback багц)
+  const defaultLiteratureBundle: TaskBundle = {
+    id: 'TASK-UZ-01',
+    subject: 'Уран зохиол',
+    title: '1. Ж.Лхагва "Арван долоотой байхад" өгүүлэг',
+    text: `Ж.Лхагва "Арван долоотой байхад" өгүүлэг
+Манайх Цээлд, Бөөдэйнх Улаандэлд зусч байлаа. Цээлийн тойром нуурлачихсанаас хойш тэдний адуу тэмээ усны үнэрээр цуван ирэх болж бид хоёрын уулзаж байхад ганц сайн шалтаг болсон юм.
+Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор тэмээ малдаа өөрөө л явна. Хааяа унагаа юулүүлэх гэж адуугаа тууж ирэхэд нь би уургынхаа хээрийг барьж мордоод хорь хүрэхгүй адууг нь хураан хөндөлцүүлж явсаар барих морио тэгхээс тэгж адуунаас нь гарган элдээд сүүл дэрлэн дагах хэвтээ дэмтэй сайхан хээрийнхээ дөрөө зуран эргэх яг л тэр агшинд бөхийн цацаж, сүүлэндээ салхи татуулан зугатах морины нарийн хоншоороор уургалан эргүүлээд урган давхисан адууныхаа хойноос янцгаан тэмүүлэх түүнийг эмнэг уургалсан мэт цухалзуураар нь эргүүлж Бөөдэйг хүлээж зогсоно.
+Бөөдэй үсрэн бууж олмоо тавиад, эмээлээ өргөн, мориныхоо нурууг нар харвахаас болгоомжлон салхи оруулж хэсэг сүүдэрлэн зогссоноо хазаараа мулталж инээсээр ирнэ.`,
+    createdAt: new Date().toLocaleDateString('mn-MN'),
+    tasks: [
+      { no: 1, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 1: Бөөдэй ээжтэйгээ хоёрулхаа суудаг болохоор ямар амьтан малдаа өөрөө л явна? (1 оноо)', answer: 'Тэмээ', rubric: 'Зөв хариулсан бол 1 оноо.' },
+      { no: 2, cognitive: 'Мэдээлэл олох сэргээн санах', type: 'Задгай даалгавар', score: '0-1', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 2: Бөөдийн бэлчээрт байсан адууг Цээлийн нуурт хөөн ирснийхээ шалтгааныг би баатар юу гэж тайлбарласан бэ? (1 оноо)', answer: 'Маргааш нь Бөөдэйг ирнэ гэж итгэсэн учраас', rubric: 'Зөв тайлбарласан бол 1 оноо.' },
+      { no: 3, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 3: Ойдовын сайн сайхныг тодорхойлогч үзүүлэлтүүдийг өгүүлбэрээр тайлбарлан бичээрэй. (2 оноо)', answer: 'Тэгш цагаан шүд, шооч нүд, хороомон гутал өмссөн нь түүний сайхныг харуулна.', rubric: '1-2 өгүүлбэрээр бичсэн бол 2 оноо.' },
+      { no: 4, cognitive: 'Задлан шинжлэх', type: 'Задгай даалгавар', score: '0-2', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 4: Бөөдэйтэй уулзаж байхдаа ямар агшин нь арван долоон насанд хамгийн жаргалтай мөч байсныг тайлбарлана уу. (2 оноо)', answer: 'Адуугаа тууж ирээд уургалан эргүүлж Бөөдэйг хүлээж зогсох тэр мөч.', rubric: 'Зөв тайлбарласан бол 2 оноо.' },
+      { no: 5, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 5: Ж.Лхагва "Арван долоотой байхад" өгүүлэгт эхээс Харьцаа, холбоо хэлбэрээр ямар агуулга илэрхийлэгдэж байна вэ? (3 оноо)', answer: 'Дүрүүдийн сэтгэлийн хөдөлгөөн ба бие биедээ тэмүүлэх далд сэтгэлийг харуулсан.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' },
+      { no: 6, cognitive: 'Эргэцүүлэн дүгнэх', type: 'Задгай даалгавар', score: '0-3', action: 'Хариултаа бичнэ үү', question: 'Даалгавар 6: Энэ өгүүлэгийн гол санаа, зориулго ямар? Таны бодлоор ач холбогдол нь юу вэ? (3 оноо)', answer: 'Залуу насны гэгээн дурсгал, баатарлаг сэтгэлийг залууст харуулах зорилготой.', rubric: '2-3 өгүүлбэрээр бичсэн бол 3 оноо.' }
+    ]
+  };
+
   useEffect(() => {
     const emailParam = searchParams.get('email');
     const nameParam = searchParams.get('name');
@@ -86,26 +106,30 @@ function StudentRoomContent() {
     setStudentName(currentName);
     setStudentEmail(currentEmail);
 
-    // БАГШИЙН ТАНХИМААС ИЛГЭЭСЭН ДААЛГАВРУУДЫГ УНШИХ (Хуучин ноорогуудыг цэвэрлэнэ)
-    let allBundles: TaskBundle[] = [];
+    // БАГШИЙН ТАНХИМААС ИЛГЭЭСЭН ДААЛГАВРУУДЫГ LOCALSTORAGE-ООС ХАЙЖ УНШИХ
+    let loadedBundles: TaskBundle[] = [];
 
-    const storageKeys = [
-      'creative_reading_task_bank_v12',
+    const possibleKeys = [
+      'teacher_assigned_tasks',
       'teacher_created_task_bundles',
-      'teacher_assigned_tasks'
+      'creative_reading_task_bank_v12',
+      'assigned_tasks_9E',
+      'sent_tasks_9E'
     ];
 
-    storageKeys.forEach((key) => {
-      const loaded = localStorage.getItem(key);
-      if (loaded) {
+    possibleKeys.forEach((key) => {
+      const data = localStorage.getItem(key);
+      if (data) {
         try {
-          const parsed = JSON.parse(loaded);
+          const parsed = JSON.parse(data);
           if (Array.isArray(parsed)) {
-            parsed.forEach((localItem: TaskBundle) => {
-              if (localItem && localItem.title && !allBundles.some((b) => b.id === localItem.id || b.title === localItem.title)) {
-                allBundles.push(localItem);
+            parsed.forEach((item: TaskBundle) => {
+              if (item && item.title && !loadedBundles.some((b) => b.id === item.id || b.title === item.title)) {
+                loadedBundles.push(item);
               }
             });
+          } else if (parsed && parsed.title && !loadedBundles.some((b) => b.id === parsed.id)) {
+            loadedBundles.push(parsed);
           }
         } catch (e) {
           console.error(e);
@@ -113,14 +137,15 @@ function StudentRoomContent() {
       }
     });
 
-    setAssignedBundles(allBundles);
-
-    if (allBundles.length > 0) {
-      const selectedTask = allBundles.find((b: TaskBundle) => b.id === taskIdParam) || allBundles[0];
-      setActiveBundle(selectedTask);
-    } else {
-      setActiveBundle(null);
+    // Хэрэв багшийн сангаас дата уншигдахгүй байвал багшийн зург дээрх Уран зохиолын 1 даалгаврыг харуулна
+    if (loadedBundles.length === 0) {
+      loadedBundles = [defaultLiteratureBundle];
     }
+
+    setAssignedBundles(loadedBundles);
+
+    const selectedTask = loadedBundles.find((b: TaskBundle) => b.id === taskIdParam) || loadedBundles[0];
+    setActiveBundle(selectedTask);
   }, [searchParams]);
 
   useEffect(() => {
@@ -206,9 +231,9 @@ function StudentRoomContent() {
       setIsSubmitted(true);
       if (activeBundle) {
         setCompletedBundles((prev) => ({ ...prev, [activeBundle.id]: true }));
-        const r1 = getTaskScore(activeBundle.tasks[0] || { no: 1 } as Task).earned + getTaskScore(activeBundle.tasks[1] || { no: 2 } as Task).earned;
-        const r2 = getTaskScore(activeBundle.tasks[2] || { no: 3 } as Task).earned + getTaskScore(activeBundle.tasks[3] || { no: 4 } as Task).earned;
-        const r3 = getTaskScore(activeBundle.tasks[4] || { no: 5 } as Task).earned + getTaskScore(activeBundle.tasks[5] || { no: 6 } as Task).earned;
+        const r1 = getTaskScore(activeBundle.tasks?.[0] || { no: 1 } as Task).earned + getTaskScore(activeBundle.tasks?.[1] || { no: 2 } as Task).earned;
+        const r2 = getTaskScore(activeBundle.tasks?.[2] || { no: 3 } as Task).earned + getTaskScore(activeBundle.tasks?.[3] || { no: 4 } as Task).earned;
+        const r3 = getTaskScore(activeBundle.tasks?.[4] || { no: 5 } as Task).earned + getTaskScore(activeBundle.tasks?.[5] || { no: 6 } as Task).earned;
         setEditRecall(r1);
         setEditAnalyze(r2);
         setEditEval(r3);
